@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center"
+    android:background="@drawable/fondoparamain">
+
+    <!-- Desayuno -->
+
+    <TextView
+        android:id="@+id/tvFechaComida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="Comidas del día: --"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnSeleccionarFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Fecha"
+        android:backgroundTint="@color/orange"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Desayuno:"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinnerDesayuno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/cbDesayuno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Marcar como hecho"/>
+
+    <!-- Comida -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comida:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerComida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:id="@+id/cbComida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Marcar como hecho"/>
+
+    <!-- Cena -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cena:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerCena"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:id="@+id/cbCena"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Marcar como hecho"/>
+
+    <!-- Total de kcal -->
+    <TextView
+        android:id="@+id/tvTotalKcal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total kcal: 0"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="15dp"/>
+
+    <!-- Botón Guardar -->
+    <Button
+        android:id="@+id/btnGuardarComida"
+        android:layout_width="266dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/orange"
+        android:contentDescription="Botón para guardar las comidas del día"
+        android:importantForAccessibility="yes"
+        android:text="Guardar Comidas"
+        android:textColor="@android:color/white" />
+</LinearLayout>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center"
+    android:background="@drawable/fondoperfil">
+
+    <TextView
+        android:id="@+id/tvTituloPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Perfil de Usuario"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- EditText para modificar el nombre -->
+    <EditText
+        android:id="@+id/etNombrePerfil"
+        android:layout_width="307dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:hint="Nombre"
+        android:inputType="textPersonName" />
+
+    <!-- EditText para modificar el peso -->
+    <EditText
+        android:id="@+id/etPesoPerfil"
+        android:layout_width="309dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:hint="Peso (kg)"
+        android:inputType="numberDecimal" />
+
+    <!-- EditText para modificar la altura -->
+    <EditText
+        android:id="@+id/etAlturaPerfil"
+        android:layout_width="312dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:hint="Altura (m)"
+        android:inputType="numberDecimal" />
+
+    <!-- TextView para mostrar el IMC actual -->
+    <TextView
+        android:id="@+id/tvIMCPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IMC: --"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- TextView para mostrar la racha de días completados -->
+    <TextView
+        android:id="@+id/tvRacha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Días cumplidos este mes: 0"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+
+    <Button
+        android:id="@+id/btnGuardarPerfil"
+        android:layout_width="245dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/orange"
+        android:text="Guardar Cambios"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnIrAmain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/orange"
+        android:text="Ir a Inicio"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

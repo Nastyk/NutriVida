@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center"
+    android:background="@drawable/fondocomida">
+
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IMC"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
+
+    <EditText
+        android:id="@+id/etNombre"
+        android:layout_width="227dp"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etPeso"
+        android:layout_width="227dp"
+        android:layout_height="wrap_content"
+        android:hint="Peso (kg)"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/etAltura"
+        android:layout_width="227dp"
+        android:layout_height="wrap_content"
+        android:hint="Altura (m)"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/btnGuardar"
+        android:layout_width="197dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/orange"
+        android:text="Guardar Datos"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
