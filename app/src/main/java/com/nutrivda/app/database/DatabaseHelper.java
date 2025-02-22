@@ -4,12 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "controlpeso.db";
-    private static final int DATABASE_VERSION = 4; // Aumentamos la versión para aplicar mejoras
+    private static final int DATABASE_VERSION = 1; // Aumentamos la versión para aplicar mejoras
 
     // Tabla Persona
     public static final String TABLE_PERSONA = "persona";
@@ -69,53 +70,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 4) {
-            // Se eliminan las tablas antiguas y se recrean con mejoras
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIAS_COMPLETADOS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMIDAS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PERSONA);
-            onCreate(db);
-        }
     }
 
     public void insertarComidasPorDefecto(SQLiteDatabase db) {
-        // Verificar si ya hay comidas registradas para evitar duplicados
         String checkQuery = "SELECT COUNT(*) FROM " + TABLE_COMIDAS;
         Cursor cursor = db.rawQuery(checkQuery, null);
         boolean hayDatos = false;
 
-        if (cursor.moveToFirst()) {
-            hayDatos = cursor.getInt(0) > 0;
+        try {
+            if (cursor.moveToFirst()) {
+                hayDatos = cursor.getInt(0) > 0;
+            }
+        } finally {
+            cursor.close();
         }
-        cursor.close();
 
-        if (!hayDatos) { // Solo insertar comidas si la tabla está vacía
-            String[] comidas = {
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Avena con frutas', 'Desayuno', 370);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Huevo revuelto con pan', 'Desayuno', 320);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Ensalada de pollo', 'Comida', 500);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Pechuga de pollo con arroz', 'Comida', 623);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Sopa de verduras', 'Cena', 250);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Atún con ensalada', 'Cena', 300);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Tostadas con aguacate y huevo', 'Desayuno', 350);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Panqueques de avena con miel', 'Desayuno', 400);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Batido de plátano con proteína y almendras', 'Desayuno', 300);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Yogur con granola y frutos secos', 'Desayuno', 320);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Arepa con queso y jamón de pavo', 'Desayuno', 330);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Pollo a la plancha con quinoa y verduras', 'Comida', 500);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Salmón al horno con ensalada y arroz integral', 'Comida', 720);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Pasta integral con salsa de tomate y albóndigas de pavo', 'Comida', 580);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Tacos de pescado con ensalada y guacamole', 'Comida', 500);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Bowl de arroz con pollo teriyaki y brócoli', 'Comida', 620);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Ensalada de atún con tomate, lechuga y huevo cocido', 'Cena', 314);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Sopa de calabaza con semillas de girasol', 'Cena', 300);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Tostadas de pan integral con aguacate y queso cottage', 'Cena', 320);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Rollitos de jamón con queso y frutos secos', 'Cena', 285);",
-                    "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES ('Pechuga de pollo con espárragos y puré de papa', 'Cena', 400);"
-            };
+        if (!hayDatos) {
+            db.beginTransaction();
 
-            for (String comida : comidas) {
-                db.execSQL(comida);
+            try {
+                String sql = "INSERT INTO " + TABLE_COMIDAS + " (nombre, momento, kcal) VALUES (?, ?, ?)";
+                SQLiteStatement stmt = db.compileStatement(sql);
+
+                String[][] comidas = {
+                        {"Avena con frutas", "Desayuno", "370"},
+                        {"Huevo revuelto con pan", "Desayuno", "320"},
+                        {"Ensalada de pollo", "Comida", "500"},
+                        {"Pechuga de pollo con arroz", "Comida", "623"},
+                        {"Sopa de verduras", "Cena", "250"},
+                        {"Atún con ensalada", "Cena", "300"},
+                        {"Tostadas con aguacate y huevo", "Desayuno", "350"},
+                        {"Panqueques de avena con miel", "Desayuno", "400"},
+                        {"Batido de plátano con proteína y almendras", "Desayuno", "300"},
+                        {"Yogur con granola y frutos secos", "Desayuno", "320"},
+                        {"Arepa con queso y jamón de pavo", "Desayuno", "330"},
+                        {"Pollo a la plancha con quinoa y verduras", "Comida", "500"},
+                        {"Salmón al horno con ensalada y arroz integral", "Comida", "720"},
+                        {"Pasta integral con salsa de tomate y albóndigas de pavo", "Comida", "580"},
+                        {"Tacos de pescado con ensalada y guacamole", "Comida", "500"},
+                        {"Bowl de arroz con pollo teriyaki y brócoli", "Comida", "620"},
+                        {"Ensalada de atún con tomate, lechuga y huevo cocido", "Cena", "314"},
+                        {"Sopa de calabaza con semillas de girasol", "Cena", "300"},
+                        {"Tostadas de pan integral con aguacate y queso cottage", "Cena", "320"},
+                        {"Rollitos de jamón con queso y frutos secos", "Cena", "285"},
+                        {"Pechuga de pollo con espárragos y puré de papa", "Cena", "400"}
+                };
+
+                for (String[] comida : comidas) {
+                    stmt.bindString(1, comida[0]);
+                    stmt.bindString(2, comida[1]);
+                    stmt.bindLong(3, Integer.parseInt(comida[2]));
+                    stmt.executeInsert();
+                }
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
         }
     }
