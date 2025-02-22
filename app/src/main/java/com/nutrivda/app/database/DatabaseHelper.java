@@ -32,6 +32,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FECHA = "fecha";
     public static final String COLUMN_COMPLETADO = "completado";
     public static final String COLUMN_PERSONA_ID = "persona_id"; // Relación con persona
+    public static final String COLUMN_DESAYUNO = "desayuno";
+    public static final String COLUMN_COMIDA = "comida";
+    public static final String COLUMN_CENA = "cena";
 
     // Sentencias SQL para crear las tablas
     private static final String CREATE_TABLE_PERSONA =
@@ -54,6 +57,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_FECHA + " TEXT PRIMARY KEY, " +
                     COLUMN_COMPLETADO + " INTEGER DEFAULT 0, " +
                     COLUMN_PERSONA_ID + " INTEGER, " +
+                    COLUMN_DESAYUNO + " TEXT, " +
+                    COLUMN_COMIDA + " TEXT, " +
+                    COLUMN_CENA + " TEXT, " +
                     "FOREIGN KEY(" + COLUMN_PERSONA_ID + ") REFERENCES " + TABLE_PERSONA + "(" + COLUMN_ID + ") ON DELETE CASCADE);";
 
     public DatabaseHelper(Context context) {

@@ -15,17 +15,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.nutrivda.app.database.DatabaseHelper;
+import com.nutrivda.app.utils.EventDecorator;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,10 +39,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvNombreUsuario, tvObjetivoKcal, tvIMC;
     private EditText etPesoDiario;
     private Button btnGuardarPeso, btnIrComida, btnIrPerfil;
-    private CalendarView calendarView;
+    private MaterialCalendarView materialCalendarView;
     private DatabaseHelper dbHelper;
     private double imc = 0;
     private int objetivoKcal = 2200; // Valor por defecto
+    private String fechaSeleccionadaCalendario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         btnIrComida = findViewById(R.id.btnIrComida);
         btnIrPerfil = findViewById(R.id.btnIrPerfil);
         tvIMC = findViewById(R.id.tvIMC);
-        calendarView = findViewById(R.id.calendarView);
+        materialCalendarView = findViewById(R.id.calendarView);
         Button btnLogOut = findViewById(R.id.btnLogout);
 
         btnLogOut.setOnClickListener(v -> {
@@ -83,7 +89,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Ir a la actividad de comidas
         btnIrComida.setOnClickListener(v -> {
+            if (fechaSeleccionadaCalendario == null || fechaSeleccionadaCalendario.isEmpty()) {
+                // Si el usuario no seleccionó una fecha, usar la fecha actual
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                fechaSeleccionadaCalendario = sdf.format(Calendar.getInstance().getTime());
+            }
+
             Intent intent = new Intent(MainActivity.this, ActividadComida.class);
+            intent.putExtra("fechaSeleccionada", fechaSeleccionadaCalendario);
             startActivity(intent);
         });
 
@@ -94,8 +107,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Manejo de calendario: Detectar cambio de día
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            String fechaSeleccionada = year + "-" + (month + 1) + "-" + dayOfMonth;
+        materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
+            String fechaSeleccionada = date.getYear() + "-" +
+                    String.format("%02d", (date.getMonth() + 1)) + "-" +
+                    String.format("%02d", date.getDay());
+            int year = date.getYear();
+            int month = date.getMonth() + 1;
+            int day = date.getDay();
+
+            fechaSeleccionadaCalendario = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, day);
             verificarDiaCompletado(fechaSeleccionada);
         });
     }
@@ -180,43 +200,108 @@ public class MainActivity extends AppCompatActivity {
 
     private void marcarDiasEnCalendario() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT fecha FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS, null);
-        List<Long> fechasCompletadas = new ArrayList<>();
+        Cursor cursor = null;
+        HashSet<CalendarDay> fechasCompletadas = new HashSet<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        while (cursor.moveToNext()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                Date date = sdf.parse(cursor.getString(0));
-                if (date != null) {
-                    fechasCompletadas.add(date.getTime());
+        try {
+            cursor = db.rawQuery("SELECT fecha FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE completado = 1", null);
+            while (cursor.moveToNext()) {
+                try {
+                    Date date = sdf.parse(cursor.getString(0));
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);
+                    fechasCompletadas.add(CalendarDay.from(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+            db.close();
         }
-        cursor.close();
-        db.close();
-
         runOnUiThread(() -> {
-            for (long fecha : fechasCompletadas) {
-                calendarView.setDate(fecha, true, true);
-            }
+            materialCalendarView.removeDecorators();
+            materialCalendarView.addDecorator(new EventDecorator(fechasCompletadas));
         });
     }
 
-    private void verificarDiaCompletado(String fecha) {
+    private void  verificarDiaCompletado(String fechaSeleccionada) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE fecha = ?", new String[]{fecha});
+        Cursor cursor = null;
 
-        if (cursor.getCount() > 0) {
-            Toast.makeText(this, "Este día está marcado como completado 🎉", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Este día no ha sido completado", Toast.LENGTH_SHORT).show();
+        try {
+            cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE fecha = ?", new String[]{fechaSeleccionada});
+
+            if (cursor.getCount() > 0) {
+                mostrarComidasDelDia(fechaSeleccionada);
+            } else {
+                Toast.makeText(this, "Este día no ha sido completado", Toast.LENGTH_SHORT).show();
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+    }
+
+    private void mostrarComidasDelDia(String fechaSeleccionada) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        String desayuno = "No registrado";
+        String comida = "No registrado";
+        String cena = "No registrado";
+        boolean diaIncompleto = false;
+
+        try {
+            // Obtener desayuno, comida y cena desde `dias_completados`
+            cursor = db.rawQuery(
+                    "SELECT desayuno, comida, cena FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
+                            " WHERE fecha = ?", new String[]{fechaSeleccionada});
+
+            if (cursor.moveToFirst()) {
+                desayuno = cursor.getString(0) != null ? cursor.getString(0) : "No registrado";
+                comida = cursor.getString(1) != null ? cursor.getString(1) : "No registrado";
+                cena = cursor.getString(2) != null ? cursor.getString(2) : "No registrado";
+
+                if (desayuno.equals("No registrado") || comida.equals("No registrado") || cena.equals("No registrado")) {
+                    diaIncompleto = true;
+                }
+            } else {
+                diaIncompleto = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
         }
 
-        cursor.close();
-        db.close();
+        // Crear el mensaje del diálogo
+        String mensaje = "📅 Día: " + fechaSeleccionada + "\n\n" +
+                "🍽️ Desayuno: " + desayuno + "\n" +
+                "🍛 Comida: " + comida + "\n" +
+                "🍲 Cena: " + cena;
+
+        if (diaIncompleto) {
+            mensaje += "\n\n⚠️ Día Incompleto ⚠️";
+        }
+
+        // Mostrar en un AlertDialog con opción de editar
+        new AlertDialog.Builder(this)
+                .setTitle("Comidas del Día")
+                .setMessage(mensaje)
+                .setPositiveButton("Cerrar", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton("Editar", (dialog, which) -> {
+                    // Ir a la actividad de edición de comidas y pasar la fecha seleccionada
+                    Intent intent = new Intent(MainActivity.this, ActividadComida.class);
+                    intent.putExtra("fechaSeleccionada", fechaSeleccionada);
+                    startActivity(intent);
+                })
+                .show();
     }
+
 
     private void configurarAlarmaDiaria() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

@@ -1,6 +1,7 @@
 package com.nutrivda.app;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,11 +12,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import android.widget.Spinner;
 import android.app.DatePickerDialog;
 import android.widget.Toast;
@@ -36,7 +35,7 @@ public class ActividadComida extends AppCompatActivity {
     private CheckBox cbDesayuno, cbComida, cbCena;
     private Button btnGuardarComida;
     private DatabaseHelper dbHelper;
-    private String fechaActual;
+    private String fechaDeComida;
     private int totalKcal = 0;
     private DatePickerDialog datePicker;
 
@@ -58,12 +57,18 @@ public class ActividadComida extends AppCompatActivity {
         cbComida = findViewById(R.id.cbComida);
         cbCena = findViewById(R.id.cbCena);
         btnGuardarComida = findViewById(R.id.btnGuardarComida);
-        Button btnSeleccionarFecha = findViewById(R.id.btnSeleccionarFecha);
+        Button btnIrAtras = findViewById(R.id.btnIrAtras);
 
-        // Obtener la fecha actual
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        fechaActual = sdf.format(Calendar.getInstance().getTime());
-        tvFechaComida.setText("Comidas del día: " + fechaActual);
+        // Obtener la fecha enviada desde MainActivity
+        Intent intent = getIntent();
+        if (intent.hasExtra("fechaSeleccionada")) {
+            fechaDeComida = intent.getStringExtra("fechaSeleccionada");
+            tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            fechaDeComida = sdf.format(Calendar.getInstance().getTime());
+            tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+        }
 
         // Cargar opciones en los Spinners
         if (verificarTablaComidas()) {
@@ -78,7 +83,10 @@ public class ActividadComida extends AppCompatActivity {
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
 
         // Seleccionar Fecha
-        btnSeleccionarFecha.setOnClickListener(v -> mostrarDatePicker());
+        btnIrAtras.setOnClickListener(v -> {
+            Intent intentVolver = new Intent(ActividadComida.this, MainActivity.class);
+            startActivity(intentVolver);
+        });
 
         // Listeners para los Spinners
         spinnerDesayuno.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -149,31 +157,58 @@ public class ActividadComida extends AppCompatActivity {
         boolean comidaHecha = cbComida.isChecked();
         boolean cenaHecha = cbCena.isChecked();
 
-        if (!desayunoHecho || !comidaHecha || !cenaHecha) {
-            Toast.makeText(this, "Comida guardada, pero el día no será marcado en el calendario.", Toast.LENGTH_SHORT).show();
+        String desayunoSeleccionado = desayunoHecho ? spinnerDesayuno.getSelectedItem().toString() : null;
+        String comidaSeleccionada = comidaHecha ? spinnerComida.getSelectedItem().toString() : null;
+        String cenaSeleccionada = cenaHecha ? spinnerCena.getSelectedItem().toString() : null;
+
+        boolean diaIncompleto = !desayunoHecho || !comidaHecha || !cenaHecha;
+
+        // Si el día está incompleto, mostrar alerta antes de guardar
+        if (diaIncompleto) {
+            new AlertDialog.Builder(this)
+                    .setTitle("⚠️ Día Incompleto")
+                    .setMessage("Has registrado comidas, pero el día no será marcado como completo en el calendario. ¿Quieres continuar?")
+                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, false))
+                    .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                    .show();
             return;
         }
 
+        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, true);
+    }
+
+
+    private void guardarDatosComida(String desayuno, String comida, String cena, boolean marcarComoCompleto) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT fecha FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE fecha = ?", new String[]{fechaDeComida});
+        boolean existe = cursor.moveToFirst();
+        cursor.close();
+
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_FECHA, fechaActual);
-        values.put("completado", 1);
+        values.put(DatabaseHelper.COLUMN_FECHA, fechaDeComida);
+        values.put(DatabaseHelper.COLUMN_COMPLETADO, marcarComoCompleto ? 1 : 0);
+        if (desayuno != null) values.put(DatabaseHelper.COLUMN_DESAYUNO, desayuno);
+        if (comida != null) values.put(DatabaseHelper.COLUMN_COMIDA, comida);
+        if (cena != null) values.put(DatabaseHelper.COLUMN_CENA, cena);
 
-        long resultado = db.insertWithOnConflict(
-                DatabaseHelper.TABLE_DIAS_COMPLETADOS,
-                null,
-                values,
-                SQLiteDatabase.CONFLICT_REPLACE
-        );
+        long resultado;
+        if (existe) {
+            resultado = db.update(DatabaseHelper.TABLE_DIAS_COMPLETADOS, values, "fecha = ?", new String[]{fechaDeComida});
+        } else {
+            resultado = db.insert(DatabaseHelper.TABLE_DIAS_COMPLETADOS, null, values);
+        }
 
-        if (resultado == -1) {
+        db.close();
+
+        if (resultado < 0) {
             Toast.makeText(this, "❌ Error al guardar en calendario", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "✅ Día guardado en calendario 🎉", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "✅ Comida guardada correctamente", Toast.LENGTH_SHORT).show();
         }
-        db.close();
+
         finish();
     }
+
 
     // Calcula las calorías totales de las comidas seleccionadas
     private void actualizarTotalKcal() {
@@ -207,8 +242,8 @@ public class ActividadComida extends AppCompatActivity {
         datePicker = new DatePickerDialog(
                 this,
                 (view, year, month, day) -> {
-                    fechaActual = year + "-" + (month + 1) + "-" + day;
-                    tvFechaComida.setText("Comidas del día: " + fechaActual);
+                    fechaDeComida = year + "-" + (month + 1) + "-" + day;
+                    tvFechaComida.setText("Comidas del día: " + fechaDeComida);
                 },
                 calendario.get(Calendar.YEAR),
                 calendario.get(Calendar.MONTH),

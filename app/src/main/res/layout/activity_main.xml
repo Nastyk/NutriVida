@@ -66,16 +66,16 @@
 
     <!--Boton regristrar Comida-->
 
-    <CalendarView
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
+        android:layout_height="262dp"
+        app:mcv_showOtherDates="all" />
 
     <Button
         android:id="@+id/btnIrComida"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/orange"
         android:text="Registrar Comidas"
