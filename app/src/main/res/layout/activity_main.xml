@@ -18,14 +18,15 @@
         android:textStyle="bold"
         android:textColor="@color/red"
         android:layout_marginBottom="20dp"/>
-
+    
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cerrar Sesión" />
+        android:backgroundTint="@color/orange"
+        android:text="Cerrar Sesión"
+        android:textColor="@android:color/white" />
 
-    <!-- Objetivo de kcal diarias -->
     <TextView
         android:id="@+id/tvObjetivoKcal"
         android:layout_width="wrap_content"
