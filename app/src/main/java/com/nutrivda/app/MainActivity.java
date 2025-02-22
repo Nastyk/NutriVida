@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -55,6 +56,18 @@ public class MainActivity extends AppCompatActivity {
         btnIrPerfil = findViewById(R.id.btnIrPerfil);
         tvIMC = findViewById(R.id.tvIMC);
         calendarView = findViewById(R.id.calendarView);
+        Button btnLogOut = findViewById(R.id.btnLogout);
+
+        btnLogOut.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isLoggedIn", false);
+            editor.apply();
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         // Cargar datos del usuario
         cargarDatosUsuario();
