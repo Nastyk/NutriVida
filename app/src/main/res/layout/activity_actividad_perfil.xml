@@ -23,25 +23,29 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:hint="Nombre"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:focusable="false"
+        android:enabled="false" />
 
-    <!-- EditText para modificar el peso -->
     <EditText
         android:id="@+id/etPesoPerfil"
         android:layout_width="309dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:hint="Peso (kg)"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:focusable="false"
+        android:enabled="false" />
 
-    <!-- EditText para modificar la altura -->
     <EditText
         android:id="@+id/etAlturaPerfil"
         android:layout_width="312dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:hint="Altura (m)"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:focusable="false"
+        android:enabled="false" />
 
     <!-- TextView para mostrar el IMC actual -->
     <TextView
@@ -62,7 +66,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="10dp"/>
 
-
+    <!-- Botón Guardar Cambios -->
     <Button
         android:id="@+id/btnGuardarPerfil"
         android:layout_width="245dp"
@@ -72,6 +76,17 @@
         android:text="Guardar Cambios"
         android:textColor="@android:color/white" />
 
+    <!-- Botón Editar -->
+    <Button
+        android:id="@+id/btnEditarPerfil"
+        android:layout_width="245dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/orange"
+        android:text="Editar"
+        android:textColor="@android:color/white" />
+
+    <!-- Botón Ir a Inicio -->
     <Button
         android:id="@+id/btnIrAmain"
         android:layout_width="wrap_content"

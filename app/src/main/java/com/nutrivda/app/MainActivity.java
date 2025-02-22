@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -253,17 +254,23 @@ public class MainActivity extends AppCompatActivity {
         String comida = "No registrado";
         String cena = "No registrado";
         boolean diaIncompleto = false;
+        String checkDesayuno = "❌";
+        String checkComida = "❌";
+        String checkCena = "❌";
 
         try {
             // Obtener desayuno, comida y cena desde `dias_completados`
             cursor = db.rawQuery(
-                    "SELECT desayuno, comida, cena FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
+                    "SELECT desayuno, comida, cena, swdesayuno, swcomida, swcena FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
                             " WHERE fecha = ?", new String[]{fechaSeleccionada});
 
             if (cursor.moveToFirst()) {
                 desayuno = cursor.getString(0) != null ? cursor.getString(0) : "No registrado";
                 comida = cursor.getString(1) != null ? cursor.getString(1) : "No registrado";
                 cena = cursor.getString(2) != null ? cursor.getString(2) : "No registrado";
+                checkDesayuno = cursor.getInt(3) == 1 ? "✅" : "❌";
+                checkComida = cursor.getInt(4) == 1 ? "✅" : "❌";
+                checkCena = cursor.getInt(5) == 1 ? "✅" : "❌";
 
                 if (desayuno.equals("No registrado") || comida.equals("No registrado") || cena.equals("No registrado")) {
                     diaIncompleto = true;
@@ -278,28 +285,50 @@ public class MainActivity extends AppCompatActivity {
             db.close();
         }
 
-        // Crear el mensaje del diálogo
-        String mensaje = "📅 Día: " + fechaSeleccionada + "\n\n" +
-                "🍽️ Desayuno: " + desayuno + "\n" +
-                "🍛 Comida: " + comida + "\n" +
-                "🍲 Cena: " + cena;
+        //TODO: PASAR A UN NUEVO METODO ESTO MAS ADELANTE
+        View dialogView = getLayoutInflater().inflate(R.layout.pop_up_resumen_dia, null);
+
+        TextView tvFecha = dialogView.findViewById(R.id.tvFecha);
+        TextView tvDesayuno = dialogView.findViewById(R.id.tvDesayuno);
+        TextView tvComida = dialogView.findViewById(R.id.tvComida);
+        TextView tvCena = dialogView.findViewById(R.id.tvCena);
+        TextView tvEstado = dialogView.findViewById(R.id.tvEstado);
+        TextView tvCheckDesayuno = dialogView.findViewById(R.id.tvCheckDesayuno);
+        TextView tvCheckComida = dialogView.findViewById(R.id.tvCheckComida);
+        TextView tvCheckCena = dialogView.findViewById(R.id.tvCheckCena);
+        Button btnEditar = dialogView.findViewById(R.id.btnEditar);
+        Button btnCerrar = dialogView.findViewById(R.id.btnCerrar);
+
+        tvFecha.setText("📅 Día: " + fechaSeleccionada);
+        tvDesayuno.setText("🍽️ Desayuno: " + desayuno);
+        tvComida.setText("🍛 Comida: " + comida);
+        tvCena.setText("🍲 Cena: " + cena);
+
+        tvCheckDesayuno.setText(checkDesayuno);
+        tvCheckComida.setText(checkComida);
+        tvCheckCena.setText(checkCena);
 
         if (diaIncompleto) {
-            mensaje += "\n\n⚠️ Día Incompleto ⚠️";
+            tvEstado.setVisibility(View.VISIBLE); // Mostrar "Día Incompleto"
         }
 
-        // Mostrar en un AlertDialog con opción de editar
-        new AlertDialog.Builder(this)
-                .setTitle("Comidas del Día")
-                .setMessage(mensaje)
-                .setPositiveButton("Cerrar", (dialog, which) -> dialog.dismiss())
-                .setNegativeButton("Editar", (dialog, which) -> {
-                    // Ir a la actividad de edición de comidas y pasar la fecha seleccionada
-                    Intent intent = new Intent(MainActivity.this, ActividadComida.class);
-                    intent.putExtra("fechaSeleccionada", fechaSeleccionada);
-                    startActivity(intent);
-                })
-                .show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView) // Usar el layout personalizado
+                .create();
+
+        // Botón de Editar
+        btnEditar.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ActividadComida.class);
+            intent.putExtra("fechaSeleccionada", fechaSeleccionada);
+            startActivity(intent);
+            dialog.dismiss();
+        });
+
+        // Botón de Cerrar
+        btnCerrar.setOnClickListener(v -> dialog.dismiss());
+
+        // Mostrar el diálogo
+        dialog.show();
     }
 
 

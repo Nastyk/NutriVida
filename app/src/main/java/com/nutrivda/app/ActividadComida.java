@@ -79,6 +79,8 @@ public class ActividadComida extends AppCompatActivity {
             Toast.makeText(this, "⚠️ Error: No hay base de datos de comidas.", Toast.LENGTH_SHORT).show();
         }
 
+        cargarComidasDelDia(fechaDeComida);
+
         // Guardar selección de comidas
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
 
@@ -168,17 +170,17 @@ public class ActividadComida extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("⚠️ Día Incompleto")
                     .setMessage("Has registrado comidas, pero el día no será marcado como completo en el calendario. ¿Quieres continuar?")
-                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, false))
+                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, false))
                     .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
                     .show();
             return;
         }
 
-        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, true);
+        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, true);
     }
 
 
-    private void guardarDatosComida(String desayuno, String comida, String cena, boolean marcarComoCompleto) {
+    private void guardarDatosComida(String desayuno, String comida, String cena, boolean swDesayuno, boolean swComida, boolean swCena, boolean marcarComoCompleto) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT fecha FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE fecha = ?", new String[]{fechaDeComida});
         boolean existe = cursor.moveToFirst();
@@ -190,6 +192,9 @@ public class ActividadComida extends AppCompatActivity {
         if (desayuno != null) values.put(DatabaseHelper.COLUMN_DESAYUNO, desayuno);
         if (comida != null) values.put(DatabaseHelper.COLUMN_COMIDA, comida);
         if (cena != null) values.put(DatabaseHelper.COLUMN_CENA, cena);
+        values.put(DatabaseHelper.COLUMN_SW_DESAYUNO, swDesayuno ? 1 : 0);
+        values.put(DatabaseHelper.COLUMN_SW_COMIDA, swComida ? 1 : 0);
+        values.put(DatabaseHelper.COLUMN_SW_CENA, swCena ? 1 : 0);
 
         long resultado;
         if (existe) {
@@ -236,20 +241,60 @@ public class ActividadComida extends AppCompatActivity {
         return kcal;
     }
 
-    // DatePicker para seleccionar fechas anteriores
-    private void mostrarDatePicker() {
-        Calendar calendario = Calendar.getInstance();
-        datePicker = new DatePickerDialog(
-                this,
-                (view, year, month, day) -> {
-                    fechaDeComida = year + "-" + (month + 1) + "-" + day;
-                    tvFechaComida.setText("Comidas del día: " + fechaDeComida);
-                },
-                calendario.get(Calendar.YEAR),
-                calendario.get(Calendar.MONTH),
-                calendario.get(Calendar.DAY_OF_MONTH)
-        );
-        datePicker.show();
+    private void cargarComidasDelDia(String fechaSeleccionada) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        String desayunoGuardado = null;
+        String comidaGuardada = null;
+        String cenaGuardada = null;
+        boolean swDesayuno = false;
+        boolean swComida = false;
+        boolean swCena = false;
+
+        try {
+            cursor = db.rawQuery(
+                    "SELECT desayuno, comida, cena, swdesayuno, swcomida, swcena FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
+                            " WHERE fecha = ?", new String[]{fechaSeleccionada});
+
+            if (cursor.moveToFirst()) {
+                desayunoGuardado = cursor.getString(0);
+                comidaGuardada = cursor.getString(1);
+                cenaGuardada = cursor.getString(2);
+                swDesayuno = cursor.getInt(3) == 1;
+                swComida = cursor.getInt(4) == 1;
+                swCena = cursor.getInt(5) == 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        if (desayunoGuardado != null) {
+            seleccionarValorEnSpinner(spinnerDesayuno, desayunoGuardado);
+        }
+        if (comidaGuardada != null) {
+            seleccionarValorEnSpinner(spinnerComida, comidaGuardada);
+        }
+        if (cenaGuardada != null) {
+            seleccionarValorEnSpinner(spinnerCena, cenaGuardada);
+        }
+        cbDesayuno.setChecked(swDesayuno);
+        cbComida.setChecked(swComida);
+        cbCena.setChecked(swCena);
     }
+
+    private void seleccionarValorEnSpinner(Spinner spinner, String valor) {
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinner.getAdapter();
+        if (adapter != null) {
+            int position = adapter.getPosition(valor);
+            if (position >= 0) {
+                spinner.setSelection(position);
+            }
+        }
+    }
+
+
 
 }

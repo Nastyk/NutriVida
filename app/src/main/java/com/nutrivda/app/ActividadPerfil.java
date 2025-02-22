@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,9 +26,11 @@ public class ActividadPerfil extends AppCompatActivity {
 
     private EditText etNombre, etPeso, etAltura;
     private TextView tvIMC, tvRacha;
-    private Button btnGuardar, btnIrMain;
+    private Button btnEditarPerfil, btnGuardar, btnIrMain;
     private DatabaseHelper dbHelper;
     private int diasCumplidos = 0;
+
+    private static final int USUARIO_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,46 +46,56 @@ public class ActividadPerfil extends AppCompatActivity {
         etAltura = findViewById(R.id.etAlturaPerfil);
         tvIMC = findViewById(R.id.tvIMCPerfil);
         tvRacha = findViewById(R.id.tvRacha);
+        btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnGuardar = findViewById(R.id.btnGuardarPerfil);
         btnIrMain = findViewById(R.id.btnIrAmain);
 
         // Cargar datos actuales del usuario
         cargarDatosUsuario();
 
-        // Guardar cambios al presionar el botón
+        btnEditarPerfil.setOnClickListener(v -> activarEdicion(true));
         btnGuardar.setOnClickListener(v -> guardarDatos());
-
         btnIrMain.setOnClickListener(v -> {
-            Intent intent = new Intent(ActividadPerfil.this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(ActividadPerfil.this, MainActivity.class));
             finish();
         });
+
+        btnGuardar.setVisibility(View.GONE);
     }
+
+    private void activarEdicion(boolean activar) {
+        etNombre.setEnabled(activar);
+        etNombre.setFocusable(activar);
+        etNombre.setFocusableInTouchMode(activar);
+
+        etPeso.setEnabled(activar);
+        etPeso.setFocusable(activar);
+        etPeso.setFocusableInTouchMode(activar);
+
+        etAltura.setEnabled(activar);
+        etAltura.setFocusable(activar);
+        etAltura.setFocusableInTouchMode(activar);
+
+        if (activar) {
+            btnGuardar.setVisibility(View.VISIBLE);
+            btnEditarPerfil.setVisibility(View.GONE);
+        } else {
+            btnGuardar.setVisibility(View.GONE);
+            btnEditarPerfil.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void cargarDatosUsuario() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PERSONA, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PERSONA + " WHERE id = ?", new String[]{String.valueOf(USUARIO_ID)});
 
         if (cursor.moveToFirst()) {
-            int columnIndex = cursor.getColumnIndex(DatabaseHelper.COLUMN_NOMBRE);
-            @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NOMBRE));
-            if (columnIndex != -1) {
-                nombre = cursor.getString(columnIndex);
-            }
-            @SuppressLint("Range") double peso = cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_PESO));
-            @SuppressLint("Range") double altura = cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_ALTURA));
+            etNombre.setText(cursor.getString(0));
+            etPeso.setText(String.valueOf(cursor.getDouble(1)));
+            etAltura.setText(String.valueOf(cursor.getDouble(2)));
 
-            // Validar antes de calcular IMC
-            if (peso > 0 && altura > 0) {
-                double imc = peso / (altura * altura);
-                tvIMC.setText("IMC: " + String.format("%.2f", imc));
-            } else {
-                tvIMC.setText("IMC: No disponible");
-            }
-
-            etNombre.setText(nombre);
-            etPeso.setText(String.valueOf(peso));
-            etAltura.setText(String.valueOf(altura));
+            calcularIMC(cursor.getDouble(1), cursor.getDouble(2));
         } else {
             tvIMC.setText("IMC: No disponible");
         }
@@ -90,8 +103,16 @@ public class ActividadPerfil extends AppCompatActivity {
         cursor.close();
         db.close();
 
-        // Obtener racha de días cumplidos
         calcularDiasCumplidos();
+    }
+
+    private void calcularIMC(double peso, double altura) {
+        if (peso > 0 && altura > 0) {
+            double imc = peso / (altura * altura);
+            tvIMC.setText("IMC: " + String.format("%.2f", imc));
+        } else {
+            tvIMC.setText("IMC: No disponible");
+        }
     }
 
     private void calcularDiasCumplidos() {
@@ -140,40 +161,38 @@ public class ActividadPerfil extends AppCompatActivity {
             return;
         }
 
-        double imc = peso / (altura * altura);
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_NOMBRE, nombre);
         values.put(DatabaseHelper.COLUMN_PESO, peso);
         values.put(DatabaseHelper.COLUMN_ALTURA, altura);
 
-        if (usuarioExiste()) {
-            int filasAfectadas = db.update(DatabaseHelper.TABLE_PERSONA, values, "id = (SELECT id FROM persona LIMIT 1)", null);
-            if (filasAfectadas > 0) {
-                Toast.makeText(this, "Datos actualizados", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show();
-            }
+        boolean existe = usuarioExistePorID(db, USUARIO_ID);
+
+        long resultado;
+        if (existe) {
+            resultado = db.update(DatabaseHelper.TABLE_PERSONA, values, "id = ?", new String[]{String.valueOf(USUARIO_ID)});
         } else {
-            long resultado = db.insert(DatabaseHelper.TABLE_PERSONA, null, values);
-            if (resultado == -1) {
-                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Datos guardados", Toast.LENGTH_SHORT).show();
-            }
+            values.put(DatabaseHelper.COLUMN_ID, USUARIO_ID);
+            resultado = db.insert(DatabaseHelper.TABLE_PERSONA, null, values);
         }
 
         db.close();
-        tvIMC.setText("IMC: " + String.format("%.2f", imc));
+
+        if (resultado < 0) {
+            Toast.makeText(this, "❌ Error al guardar", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "✅ Datos guardados", Toast.LENGTH_SHORT).show();
+        }
+
+        calcularIMC(peso, altura);
+        activarEdicion(false);
     }
 
-    private boolean usuarioExiste() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PERSONA, null);
-        boolean existe = cursor.getCount() > 0;
+    private boolean usuarioExistePorID(SQLiteDatabase db, int userId) {
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + DatabaseHelper.TABLE_PERSONA + " WHERE id = ?", new String[]{String.valueOf(userId)});
+        boolean existe = cursor.moveToFirst();
         cursor.close();
-        db.close();
         return existe;
     }
 }
