@@ -14,7 +14,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.nutrivda.app.conf.SupabaseClient;
+import com.nutrivda.app.data.SupabaseApi;
+
+import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LoginActivity extends AppCompatActivity {
+
+    private SupabaseApi supabaseApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,26 +39,53 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
+
         EditText etUsername = findViewById(R.id.etUsername);
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
-        btnLogin.setOnClickListener(v -> {
-            String username = etUsername.getText().toString();
-            String password = etPassword.getText().toString();
 
-            if (username.equalsIgnoreCase("ADMIN") && password.equals("1234")) {
-                saveLoginState();
-                goToMainActivity();
-            } else {
-                Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+        btnLogin.setOnClickListener(v -> {
+            String username = etUsername.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Introduce usuario y contraseña", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            autenticarUsuario(username, password);
         });
     }
 
-    private void saveLoginState() {
+    private void autenticarUsuario(String username, String password) {
+        supabaseApi.verificarUsuario("eq." + username, "eq." + password)
+                .enqueue(new Callback<List<Map<String, Object>>>() {
+                    @Override
+                    public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
+                        if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                            Map<String, Object> user = response.body().get(0);
+                            int userId = ((Double) user.get("id")).intValue();  // Obtener ID del usuario
+
+                            saveLoginState(userId);
+                            goToMainActivity();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "❌ Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
+                        Toast.makeText(LoginActivity.this, "⚠️ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void saveLoginState(int userId) {
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isLoggedIn", true);
+        editor.putInt("userId", userId);
         editor.apply();
     }
 

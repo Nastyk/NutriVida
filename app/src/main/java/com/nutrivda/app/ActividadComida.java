@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,25 +20,36 @@ import android.widget.Spinner;
 import android.app.DatePickerDialog;
 import android.widget.Toast;
 
+import com.nutrivda.app.conf.SupabaseClient;
+import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.database.DatabaseHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ActividadComida extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 1;
     private TextView tvFechaComida, tvTotalKcal;
-    private Spinner spinnerDesayuno, spinnerComida, spinnerCena;
+    private TextView tvDesayunoSeleccionado, tvComidaSeleccionada, tvCenaSeleccionada;
+    private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena; // Campos de calorías
     private CheckBox cbDesayuno, cbComida, cbCena;
-    private Button btnGuardarComida;
+    private Button btnGuardarComida, btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
     private DatabaseHelper dbHelper;
     private String fechaDeComida;
-    private int totalKcal = 0;
-    private DatePickerDialog datePicker;
+    private double totalKcal = 0;
+    private int caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
+    private boolean isEditar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +62,15 @@ public class ActividadComida extends AppCompatActivity {
         // Vincular elementos del layout
         tvFechaComida = findViewById(R.id.tvFechaComida);
         tvTotalKcal = findViewById(R.id.tvTotalKcal);
-        spinnerDesayuno = findViewById(R.id.spinnerDesayuno);
-        spinnerComida = findViewById(R.id.spinnerComida);
-        spinnerCena = findViewById(R.id.spinnerCena);
+        tvDesayunoSeleccionado = findViewById(R.id.tvDesayunoSeleccionado);
+        tvComidaSeleccionada = findViewById(R.id.tvComidaSeleccionada);
+        tvCenaSeleccionada = findViewById(R.id.tvCenaSeleccionada);
+        tvCaloriasDesayuno = findViewById(R.id.tvCaloriasDesayuno);
+        tvCaloriasComida = findViewById(R.id.tvCaloriasComida);
+        tvCaloriasCena = findViewById(R.id.tvCaloriasCena);
+        btnAnadirDesayuno = findViewById(R.id.btnAnadirDesayuno);
+        btnAnadirComida = findViewById(R.id.btnAnadirComida);
+        btnAnadirCena = findViewById(R.id.btnAnadirCena);
         cbDesayuno = findViewById(R.id.cbDesayuno);
         cbComida = findViewById(R.id.cbComida);
         cbCena = findViewById(R.id.cbCena);
@@ -64,108 +82,88 @@ public class ActividadComida extends AppCompatActivity {
         if (intent.hasExtra("fechaSeleccionada")) {
             fechaDeComida = intent.getStringExtra("fechaSeleccionada");
             tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+            isEditar = intent.getBooleanExtra("isEditar", false);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             fechaDeComida = sdf.format(Calendar.getInstance().getTime());
             tvFechaComida.setText("Comidas del día: " + fechaDeComida);
         }
 
-        // Cargar opciones en los Spinners
-        if (verificarTablaComidas()) {
-            cargarOpcionesComida(spinnerDesayuno, "Desayuno");
-            cargarOpcionesComida(spinnerComida, "Comida");
-            cargarOpcionesComida(spinnerCena, "Cena");
-        } else {
-            Toast.makeText(this, "⚠️ Error: No hay base de datos de comidas.", Toast.LENGTH_SHORT).show();
+        if (isEditar) {
+            btnGuardarComida.setText("Guardar cambios");
         }
 
-        cargarComidasDelDia(fechaDeComida);
+        btnAnadirDesayuno.setOnClickListener(v -> abrirAniadirComida("Desayuno"));
+        btnAnadirComida.setOnClickListener(v -> abrirAniadirComida("Comida"));
+        btnAnadirCena.setOnClickListener(v -> abrirAniadirComida("Cena"));
 
         // Guardar selección de comidas
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
 
-        // Seleccionar Fecha
+        // Ir atrás
         btnIrAtras.setOnClickListener(v -> {
             Intent intentVolver = new Intent(ActividadComida.this, MainActivity.class);
             startActivity(intentVolver);
         });
-
-        // Listeners para los Spinners
-        spinnerDesayuno.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                actualizarTotalKcal();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        spinnerComida.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                actualizarTotalKcal();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        spinnerCena.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                actualizarTotalKcal();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
     }
 
-    // Verifica si la tabla de comidas existe antes de hacer consultas
-    private boolean verificarTablaComidas() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + DatabaseHelper.TABLE_COMIDAS + "'", null);
-        boolean existe = cursor.getCount() > 0;
-        cursor.close();
-        db.close();
-        return existe;
+    private void abrirAniadirComida(String tipoComida) {
+        Intent intent = new Intent(this, AniadirComidaActivity.class);
+        intent.putExtra("tipo_comida", tipoComida);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
-    // Carga las opciones de comidas desde la base de datos
-    private void cargarOpcionesComida(Spinner spinner, String momento) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        List<String> opciones = new ArrayList<>();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        Cursor cursor = db.rawQuery("SELECT nombre FROM " + DatabaseHelper.TABLE_COMIDAS + " WHERE momento = ?", new String[]{momento});
-        while (cursor.moveToNext()) {
-            opciones.add(cursor.getString(0));
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            String comidaSeleccionada = data.getStringExtra("recetaSeleccionada");
+            String tipoComida = data.getStringExtra("tipoComida");
+            int caloriasComidaSeleccionada = data.getIntExtra("calorias", 0);
+
+            if (tipoComida != null && comidaSeleccionada != null) {
+                switch (tipoComida.toLowerCase()) {
+                    case "desayuno":
+                        tvDesayunoSeleccionado.setText(comidaSeleccionada);
+                        caloriasDesayuno = caloriasComidaSeleccionada;
+                        tvCaloriasDesayuno.setText("Calorías: " + caloriasDesayuno);
+                        btnAnadirDesayuno.setText("Editar Desayuno");
+                        break;
+                    case "comida":
+                        tvComidaSeleccionada.setText(comidaSeleccionada);
+                        caloriasComida = caloriasComidaSeleccionada;
+                        tvCaloriasComida.setText("Calorías: " + caloriasComida);
+                        btnAnadirComida.setText("Editar Comida");
+                        break;
+                    case "cena":
+                        tvCenaSeleccionada.setText(comidaSeleccionada);
+                        caloriasCena = caloriasComidaSeleccionada;
+                        tvCaloriasCena.setText("Calorías: " + caloriasCena);
+                        btnAnadirCena.setText("Editar Cena");
+                        break;
+                }
+                actualizarTotalKcal();
+            }
         }
-        cursor.close();
-        db.close();
-
-        if (opciones.isEmpty()) {
-            opciones.add("No hay comidas registradas.");
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, opciones);
-        spinner.setAdapter(adapter);
     }
 
-    // Guarda las comidas seleccionadas y marca el día como completado si todas están seleccionadas
+    private void actualizarTotalKcal() {
+        totalKcal = caloriasDesayuno + caloriasComida + caloriasCena;
+        tvTotalKcal.setText("Total kcal: " + totalKcal);
+    }
+
     private void guardarComidas() {
         boolean desayunoHecho = cbDesayuno.isChecked();
         boolean comidaHecha = cbComida.isChecked();
         boolean cenaHecha = cbCena.isChecked();
 
-        String desayunoSeleccionado = desayunoHecho ? spinnerDesayuno.getSelectedItem().toString() : null;
-        String comidaSeleccionada = comidaHecha ? spinnerComida.getSelectedItem().toString() : null;
-        String cenaSeleccionada = cenaHecha ? spinnerCena.getSelectedItem().toString() : null;
+        String desayunoSeleccionado = desayunoHecho ? tvDesayunoSeleccionado.getText().toString() : null;
+        String comidaSeleccionada = comidaHecha ? tvComidaSeleccionada.getText().toString() : null;
+        String cenaSeleccionada = cenaHecha ? tvCenaSeleccionada.getText().toString() : null;
 
         boolean diaIncompleto = !desayunoHecho || !comidaHecha || !cenaHecha;
 
-        // Si el día está incompleto, mostrar alerta antes de guardar
         if (diaIncompleto) {
             new AlertDialog.Builder(this)
                     .setTitle("⚠️ Día Incompleto")
@@ -179,122 +177,36 @@ public class ActividadComida extends AppCompatActivity {
         guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, true);
     }
 
-
     private void guardarDatosComida(String desayuno, String comida, String cena, boolean swDesayuno, boolean swComida, boolean swCena, boolean marcarComoCompleto) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT fecha FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS + " WHERE fecha = ?", new String[]{fechaDeComida});
-        boolean existe = cursor.moveToFirst();
-        cursor.close();
+        // Crear objeto JSON con los datos correctos para la tabla dias_completados
+        Map<String, Object> comidaData = new HashMap<>();
+        comidaData.put("fecha", fechaDeComida);
+        comidaData.put("id_usuario_fk", 1); // TODO: Cambia este ID por el real del usuario mas adelante
+        comidaData.put("completado", marcarComoCompleto);
+        comidaData.put("desayuno", desayuno);
+        comidaData.put("sw_desayuno", swDesayuno);
+        comidaData.put("comida", comida);
+        comidaData.put("sw_comida", swComida);
+        comidaData.put("cena", cena);
+        comidaData.put("sw_cena", swCena);
 
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_FECHA, fechaDeComida);
-        values.put(DatabaseHelper.COLUMN_COMPLETADO, marcarComoCompleto ? 1 : 0);
-        if (desayuno != null) values.put(DatabaseHelper.COLUMN_DESAYUNO, desayuno);
-        if (comida != null) values.put(DatabaseHelper.COLUMN_COMIDA, comida);
-        if (cena != null) values.put(DatabaseHelper.COLUMN_CENA, cena);
-        values.put(DatabaseHelper.COLUMN_SW_DESAYUNO, swDesayuno ? 1 : 0);
-        values.put(DatabaseHelper.COLUMN_SW_COMIDA, swComida ? 1 : 0);
-        values.put(DatabaseHelper.COLUMN_SW_CENA, swCena ? 1 : 0);
-
-        long resultado;
-        if (existe) {
-            resultado = db.update(DatabaseHelper.TABLE_DIAS_COMPLETADOS, values, "fecha = ?", new String[]{fechaDeComida});
-        } else {
-            resultado = db.insert(DatabaseHelper.TABLE_DIAS_COMPLETADOS, null, values);
-        }
-
-        db.close();
-
-        if (resultado < 0) {
-            Toast.makeText(this, "❌ Error al guardar en calendario", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "✅ Comida guardada correctamente", Toast.LENGTH_SHORT).show();
-        }
-
-        finish();
-    }
-
-
-    // Calcula las calorías totales de las comidas seleccionadas
-    private void actualizarTotalKcal() {
-        int kcalDesayuno = obtenerKcal(spinnerDesayuno);
-        int kcalComida = obtenerKcal(spinnerComida);
-        int kcalCena = obtenerKcal(spinnerCena);
-        totalKcal = kcalDesayuno + kcalComida + kcalCena;
-        tvTotalKcal.setText("Total kcal: " + totalKcal);
-    }
-
-    // Obtiene las calorías de la comida seleccionada en el Spinner
-    private int obtenerKcal(Spinner spinner) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int kcal = 0;
-
-        Cursor cursor = db.rawQuery(
-                "SELECT kcal FROM " + DatabaseHelper.TABLE_COMIDAS + " WHERE nombre = ?",
-                new String[]{spinner.getSelectedItem().toString()}
-        );
-        if (cursor.moveToFirst()) {
-            kcal = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-        return kcal;
-    }
-
-    private void cargarComidasDelDia(String fechaSeleccionada) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = null;
-        String desayunoGuardado = null;
-        String comidaGuardada = null;
-        String cenaGuardada = null;
-        boolean swDesayuno = false;
-        boolean swComida = false;
-        boolean swCena = false;
-
-        try {
-            cursor = db.rawQuery(
-                    "SELECT desayuno, comida, cena, swdesayuno, swcomida, swcena FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
-                            " WHERE fecha = ?", new String[]{fechaSeleccionada});
-
-            if (cursor.moveToFirst()) {
-                desayunoGuardado = cursor.getString(0);
-                comidaGuardada = cursor.getString(1);
-                cenaGuardada = cursor.getString(2);
-                swDesayuno = cursor.getInt(3) == 1;
-                swComida = cursor.getInt(4) == 1;
-                swCena = cursor.getInt(5) == 1;
+        // Hacer petición POST a Supabase
+        SupabaseClient.getClient().create(SupabaseApi.class).insertarComida(comidaData).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ActividadComida.this, "✅ Comida guardada correctamente en Supabase", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(ActividadComida.this, "❌ Error al guardar en Supabase", Toast.LENGTH_SHORT).show();
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) cursor.close();
-            db.close();
-        }
 
-        if (desayunoGuardado != null) {
-            seleccionarValorEnSpinner(spinnerDesayuno, desayunoGuardado);
-        }
-        if (comidaGuardada != null) {
-            seleccionarValorEnSpinner(spinnerComida, comidaGuardada);
-        }
-        if (cenaGuardada != null) {
-            seleccionarValorEnSpinner(spinnerCena, cenaGuardada);
-        }
-        cbDesayuno.setChecked(swDesayuno);
-        cbComida.setChecked(swComida);
-        cbCena.setChecked(swCena);
-    }
-
-    private void seleccionarValorEnSpinner(Spinner spinner, String valor) {
-        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinner.getAdapter();
-        if (adapter != null) {
-            int position = adapter.getPosition(valor);
-            if (position >= 0) {
-                spinner.setSelection(position);
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(ActividadComida.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }
+        });
     }
-
-
 
 }

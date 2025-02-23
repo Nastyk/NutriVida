@@ -7,8 +7,7 @@
     android:gravity="center"
     android:background="@drawable/fondoparamain">
 
-    <!-- Desayuno -->
-
+    <!-- Fecha -->
     <TextView
         android:id="@+id/tvFechaComida"
         android:layout_width="match_parent"
@@ -26,18 +25,45 @@
         android:text="Atrás"
         android:backgroundTint="@color/orange"/>
 
-
-    <TextView
+    <!-- Desayuno -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Desayuno:"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
-    <Spinner
-        android:id="@+id/spinnerDesayuno"
+        <TextView
+            android:id="@+id/tvDesayuno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desayuno: "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDesayunoSeleccionado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ninguno"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCaloriasDesayuno"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="Calorías: 0"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"/>
+
+    <Button
+        android:id="@+id/btnAnadirDesayuno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Añadir Desayuno"
+        android:backgroundTint="@color/orange"
+        android:textColor="@android:color/white" />
 
     <CheckBox
         android:id="@+id/cbDesayuno"
@@ -46,18 +72,44 @@
         android:text="Marcar como hecho"/>
 
     <!-- Comida -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Comida:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
-    <Spinner
-        android:id="@+id/spinnerComida"
+        <TextView
+            android:id="@+id/tvComida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comida: "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvComidaSeleccionada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ninguna"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCaloriasComida"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Calorías: 0"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"/>
+
+    <Button
+        android:id="@+id/btnAnadirComida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Añadir Comida"
+        android:backgroundTint="@color/orange"
+        android:textColor="@android:color/white" />
 
     <CheckBox
         android:id="@+id/cbComida"
@@ -66,18 +118,44 @@
         android:text="Marcar como hecho"/>
 
     <!-- Cena -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cena:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
-    <Spinner
-        android:id="@+id/spinnerCena"
+        <TextView
+            android:id="@+id/tvCena"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cena: "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvCenaSeleccionada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ninguna"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCaloriasCena"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Calorías: 0"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"/>
+
+    <Button
+        android:id="@+id/btnAnadirCena"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Añadir Cena"
+        android:backgroundTint="@color/orange"
+        android:textColor="@android:color/white" />
 
     <CheckBox
         android:id="@+id/cbCena"
