@@ -5,90 +5,68 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:gravity="center"
-    android:background="@drawable/fondomain">
+    android:gravity="center">
 
-    <!-- Título con el nombre del usuario -->
-    <TextView
-        android:id="@+id/tvNombreUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¡Bienvenido, Usuario!"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/red"
-        android:layout_marginBottom="20dp"/>
-    
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/orange"
-        android:text="Cerrar Sesión"
-        android:textColor="@android:color/white" />
-
-    <TextView
-        android:id="@+id/tvObjetivoKcal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Objetivo: 2200 kcal"
-        android:textSize="18sp" />
-
-    <!-- EditText para ingresar el peso diario -->
-    <EditText
-        android:id="@+id/etPesoDiario"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:hint="Ingresa tu peso hoy (kg)"
-        android:inputType="numberDecimal" />
+        android:layout_marginTop="10dp"
+        android:padding="5dp">
 
-    <!-- Botón para guardar el peso -->
 
-    <!-- IMC Actual -->
-    <Button
-        android:id="@+id/btnGuardarPeso"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/orange"
-        android:text="Guardar Peso"
-        android:textColor="@android:color/white" />
+        <ImageButton
+            android:id="@+id/btnLogout"
+            android:layout_width="56dp"
+            android:layout_height="71dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="6dp"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Cerrar Sesión"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_salir"
+            app:tint="@color/verde" />
 
-    <TextView
-        android:id="@+id/tvIMC"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="IMC: --"
-        android:textSize="18sp" />
+        <TextView
+            android:id="@+id/tvNombreUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="casual"
+            android:text="NutriVida"
+            android:textColor="@color/orange"
+            android:textSize="35sp"
+            android:textStyle="bold" />
 
-    <!--Boton regristrar Comida-->
+        <ImageButton
+            android:id="@+id/btnIrPerfil"
+            android:layout_width="69dp"
+            android:layout_height="64dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Ir a Perfil"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_perfilusuario"
+            app:tint="@color/verde" />
+    </RelativeLayout>
 
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="262dp"
+        android:layout_height="436dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/calendar_background"
         app:mcv_showOtherDates="all" />
 
     <Button
         android:id="@+id/btnIrComida"
-        android:layout_width="match_parent"
+        android:layout_width="189dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/orange"
+        android:backgroundTint="@color/verde"
         android:text="Registrar Comidas"
         android:textColor="@android:color/white" />
-
-    <Button
-        android:id="@+id/btnIrPerfil"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ir a Perfil"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/orange"
-        android:textColor="@android:color/white"/>
-
 
 </LinearLayout>

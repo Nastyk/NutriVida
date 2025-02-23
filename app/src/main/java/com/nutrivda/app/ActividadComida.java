@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -45,7 +46,6 @@ public class ActividadComida extends AppCompatActivity {
     private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena; // Campos de calorías
     private CheckBox cbDesayuno, cbComida, cbCena;
     private Button btnGuardarComida, btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
-    private DatabaseHelper dbHelper;
     private String fechaDeComida;
     private double totalKcal = 0;
     private int caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
@@ -55,9 +55,6 @@ public class ActividadComida extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_actividad_comida);
-
-        // Inicializar base de datos
-        dbHelper = new DatabaseHelper(this);
 
         // Vincular elementos del layout
         tvFechaComida = findViewById(R.id.tvFechaComida);
@@ -75,7 +72,7 @@ public class ActividadComida extends AppCompatActivity {
         cbComida = findViewById(R.id.cbComida);
         cbCena = findViewById(R.id.cbCena);
         btnGuardarComida = findViewById(R.id.btnGuardarComida);
-        Button btnIrAtras = findViewById(R.id.btnIrAtras);
+        ImageButton btnIrAtras = findViewById(R.id.btnIrAtras);
 
         // Obtener la fecha enviada desde MainActivity
         Intent intent = getIntent();

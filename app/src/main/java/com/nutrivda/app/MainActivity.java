@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,14 +44,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
-    private TextView tvNombreUsuario, tvObjetivoKcal, tvIMC;
-    private EditText etPesoDiario;
-    private Button btnGuardarPeso, btnIrComida, btnIrPerfil;
+    private Button  btnIrComida;
+    private ImageButton btnIrPerfil;
     private MaterialCalendarView materialCalendarView;
     private DatabaseHelper dbHelper;
     private double imc = 0;
-    private int objetivoKcal = 2200; // Valor por defecto
     private String fechaSeleccionadaCalendario;
     private int userId = 0;
 
@@ -63,16 +61,11 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         // Vincular elementos del layout con el código
-        tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
-        tvObjetivoKcal = findViewById(R.id.tvObjetivoKcal);
-        etPesoDiario = findViewById(R.id.etPesoDiario);
-        btnGuardarPeso = findViewById(R.id.btnGuardarPeso);
         btnIrComida = findViewById(R.id.btnIrComida);
         btnIrPerfil = findViewById(R.id.btnIrPerfil);
-        tvIMC = findViewById(R.id.tvIMC);
         materialCalendarView = findViewById(R.id.calendarView);
         userId = getUserId();
-        Button btnLogOut = findViewById(R.id.btnLogout);
+        ImageButton btnLogOut = findViewById(R.id.btnLogout);
 
         btnLogOut.setOnClickListener(v -> {
             SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
@@ -90,9 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Marcar los días completados en el calendario
         marcarDiasEnCalendario();
-
-        // Guardar peso diario
-        btnGuardarPeso.setOnClickListener(v -> guardarPesoDiario());
 
         // Configurar alarma de reinicio de peso diario
         configurarAlarmaDiaria();
@@ -158,51 +148,9 @@ public class MainActivity extends AppCompatActivity {
             if(indexAltura > 0 || indexAltura == 0) {
                 altura = cursor.getDouble(indexAltura);
             }
-
-            if (peso > 0 && altura > 0) {
-                imc = peso / (altura * altura);
-                calcularObjetivoKcal();
-                tvIMC.setText("IMC: " + String.format("%.2f", imc));
-            } else {
-                tvIMC.setText("IMC: No disponible");
-            }
-
-            tvNombreUsuario.setText("¡Bienvenido, " + nombre + "!");
-            tvObjetivoKcal.setText("Objetivo: " + objetivoKcal + " kcal");
-        } else {
-            tvNombreUsuario.setText("¡Bienvenido!");
-            tvIMC.setText("IMC: No disponible");
-            tvObjetivoKcal.setText("Objetivo: No definido");
         }
 
         cursor.close();
-        db.close();
-    }
-
-    private void calcularObjetivoKcal() {
-        if (imc < 18.5) {
-            objetivoKcal = 2600; // Subir de peso
-        } else if (imc < 25) {
-            objetivoKcal = 2200; // Mantener
-        } else {
-            objetivoKcal = 1800; // Bajar de peso
-        }
-    }
-
-    private void guardarPesoDiario() {
-        String pesoStr = etPesoDiario.getText().toString().trim();
-        if (pesoStr.isEmpty()) return;
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_PESO, Double.parseDouble(pesoStr));
-
-        int filasAfectadas = db.update(DatabaseHelper.TABLE_PERSONA, values, "id = (SELECT id FROM persona LIMIT 1)", null);
-
-        if (filasAfectadas > 0) {
-            cargarDatosUsuario();
-        } else {
-        }
         db.close();
     }
 
