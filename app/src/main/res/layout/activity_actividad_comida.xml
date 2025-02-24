@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Botón de ir atrás con icono (esquina superior izquierda) -->
+        <!-- Botón de ir atrás con icono -->
         <ImageButton
             android:id="@+id/btnIrAtras"
             android:layout_width="50dp"
@@ -38,27 +38,41 @@
         android:textStyle="bold" />
 
     <!-- Desayuno -->
+    <TextView
+        android:id="@+id/tvDesayuno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Desayuno: "
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-
-        <TextView
-            android:id="@+id/tvDesayuno"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Desayuno: "
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tvDesayunoSeleccionado"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Ninguno"
             android:textSize="18sp"
             android:textColor="@android:color/black"/>
+
+        <ImageButton
+            android:id="@+id/btnBorrarDesayuno"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Borrar desayuno"
+            android:src="@drawable/ic_borrar"
+            app:tint="@color/red" />
     </LinearLayout>
 
     <TextView
@@ -84,27 +98,40 @@
         android:text="Marcar como hecho"/>
 
     <!-- Comida -->
+    <TextView
+        android:id="@+id/tvComida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comida: "
+        android:textSize="18sp"
+        android:textStyle="bold" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-
-        <TextView
-            android:id="@+id/tvComida"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Comida: "
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tvComidaSeleccionada"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Ninguna"
             android:textSize="18sp"
             android:textColor="@android:color/black"/>
+
+        <ImageButton
+            android:id="@+id/btnBorrarComida"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Borrar comida"
+            android:src="@drawable/ic_borrar"
+            app:tint="@color/red" />
     </LinearLayout>
 
     <TextView
@@ -130,27 +157,40 @@
         android:text="Marcar como hecho"/>
 
     <!-- Cena -->
+    <TextView
+        android:id="@+id/tvCena"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cena: "
+        android:textSize="18sp"
+        android:textStyle="bold" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-
-        <TextView
-            android:id="@+id/tvCena"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cena: "
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tvCenaSeleccionada"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Ninguna"
             android:textSize="18sp"
             android:textColor="@android:color/black"/>
+
+        <ImageButton
+            android:id="@+id/btnBorrarCena"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Borrar cena"
+            android:src="@drawable/ic_borrar"
+            app:tint="@color/red" />
     </LinearLayout>
 
     <TextView
@@ -193,8 +233,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/verde"
-        android:contentDescription="Botón para guardar las comidas del día"
-        android:importantForAccessibility="yes"
         android:text="Guardar Comidas"
         android:textColor="@android:color/white" />
 </LinearLayout>

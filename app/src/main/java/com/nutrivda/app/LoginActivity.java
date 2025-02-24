@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText etUsername = findViewById(R.id.etUsername);
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
+        Button btnRegistro = findViewById(R.id.btnRegistro);
 
         btnLogin.setOnClickListener(v -> {
             String username = etUsername.getText().toString().trim();
@@ -55,6 +56,11 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             autenticarUsuario(username, password);
+        });
+
+        btnRegistro.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegistroUsuario.class);
+            startActivity(intent);
         });
     }
 

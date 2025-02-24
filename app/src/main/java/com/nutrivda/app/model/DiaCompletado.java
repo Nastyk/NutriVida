@@ -11,6 +11,10 @@ public class DiaCompletado {
     private boolean sw_comida;
     private String cena;
     private boolean sw_cena;
+    private int caloria_desayuno;
+    private int caloria_comida;
+    private int caloria_cena;
+
 
     // Getters
     public int getId() { return id; }
@@ -23,5 +27,29 @@ public class DiaCompletado {
     public boolean isSwComida() { return sw_comida; }
     public String getCena() { return cena; }
     public boolean isSwCena() { return sw_cena; }
+
+    public int getCaloria_desayuno() {
+        return caloria_desayuno;
+    }
+
+    public void setCaloria_desayuno(int caloria_desayuno) {
+        this.caloria_desayuno = caloria_desayuno;
+    }
+
+    public int getCaloria_comida() {
+        return caloria_comida;
+    }
+
+    public void setCaloria_comida(int caloria_comida) {
+        this.caloria_comida = caloria_comida;
+    }
+
+    public int getCaloria_cena() {
+        return caloria_cena;
+    }
+
+    public void setCaloria_cena(int caloria_cena) {
+        this.caloria_cena = caloria_cena;
+    }
 }
 

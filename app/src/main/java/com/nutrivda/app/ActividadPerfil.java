@@ -1,59 +1,83 @@
 package com.nutrivda.app;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.nutrivda.app.database.DatabaseHelper;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.nutrivda.app.conf.SupabaseClient;
+import com.nutrivda.app.data.SupabaseApi;
+import com.nutrivda.app.model.DatosUsuario;
+import com.nutrivda.app.model.Usuario;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ActividadPerfil extends AppCompatActivity {
 
-    private EditText etNombre, etPeso, etAltura;
-    private TextView tvIMC, tvRacha;
+    private EditText etNombre, etApellido1, etApellido2, etPeso, etAltura, etEdad, etActividad;
+    Spinner spinnerActividad;
+    private TextView tvIMC;
     private ImageButton btnEditarPerfil, btnIrMain;
-    private View btnGuardar;
-    private DatabaseHelper dbHelper;
-    private int diasCumplidos = 0;
-
-    private static final int USUARIO_ID = 1;
+    private Button btnGuardar;
+    private int userId;
+    private SupabaseApi supabaseApi;
+    private LineChart chartPeso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_actividad_perfil);
 
-        // Inicializar base de datos
-        dbHelper = new DatabaseHelper(this);
+        // Obtener el userId del Intent
+        userId = getIntent().getIntExtra("userId", -1);
+        if (userId == -1) {
+            Toast.makeText(this, "Error: ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-        // Vincular elementos
-        etNombre = findViewById(R.id.etNombrePerfil);
-        etPeso = findViewById(R.id.etPesoPerfil);
-        etAltura = findViewById(R.id.etAlturaPerfil);
+        // Inicializar API de Supabase
+        supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
+
+        // Vincular elementos del layout
+        etNombre = findViewById(R.id.etNombre);
+        etApellido1 = findViewById(R.id.etApellido1);
+        etApellido2 = findViewById(R.id.etApellido2);
+        etPeso = findViewById(R.id.etPeso);
+        etAltura = findViewById(R.id.etAltura);
+        etEdad = findViewById(R.id.etEdad);
+//        etActividad = findViewById(R.id.etActividad);
         tvIMC = findViewById(R.id.tvIMCPerfil);
-        tvRacha = findViewById(R.id.tvRacha);
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnGuardar = findViewById(R.id.btnGuardarPerfil);
         btnIrMain = findViewById(R.id.btnIrAmain);
+        chartPeso = findViewById(R.id.chartPeso);
 
-        // Cargar datos actuales del usuario
-        cargarDatosUsuario();
+        /*spinnerActividad = findViewById(R.id.spinnerActividad);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.actividad_fisica_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerActividad.setAdapter(adapter);*/
+
 
         btnEditarPerfil.setOnClickListener(v -> activarEdicion(true));
         btnGuardar.setOnClickListener(v -> guardarDatos());
@@ -63,20 +87,21 @@ public class ActividadPerfil extends AppCompatActivity {
         });
 
         btnGuardar.setVisibility(View.GONE);
+
+        // Cargar datos del usuario
+        cargarDatosUsuario();
+        configurarGraficoPeso();
     }
 
     private void activarEdicion(boolean activar) {
         etNombre.setEnabled(activar);
-        etNombre.setFocusable(activar);
-        etNombre.setFocusableInTouchMode(activar);
-
+        etApellido1.setEnabled(activar);
+        etApellido2.setEnabled(activar);
         etPeso.setEnabled(activar);
-        etPeso.setFocusable(activar);
-        etPeso.setFocusableInTouchMode(activar);
-
         etAltura.setEnabled(activar);
-        etAltura.setFocusable(activar);
-        etAltura.setFocusableInTouchMode(activar);
+        etEdad.setEnabled(activar);
+        //etActividad.setEnabled(activar);
+        //spinnerActividad.setVisibility(View.VISIBLE);
 
         if (activar) {
             btnGuardar.setVisibility(View.VISIBLE);
@@ -87,114 +112,116 @@ public class ActividadPerfil extends AppCompatActivity {
         }
     }
 
+    private void configurarGraficoPeso() {
+        List<Entry> entradas = new ArrayList<>();
+        entradas.add(new Entry(1, 85)); // Día 1 - Peso 85kg
+        entradas.add(new Entry(2, 83)); // Día 2 - Peso 83kg
+        entradas.add(new Entry(3, 82));
+        entradas.add(new Entry(4, 81));
+        entradas.add(new Entry(5, 80));
+
+        LineDataSet dataSet = new LineDataSet(entradas, "Evolución del Peso");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextSize(12f);
+
+        LineData data = new LineData(dataSet);
+        chartPeso.setData(data);
+
+        XAxis xAxis = chartPeso.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        chartPeso.invalidate(); // Refrescar la gráfica
+    }
 
     private void cargarDatosUsuario() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PERSONA + " WHERE id = ?", new String[]{String.valueOf(USUARIO_ID)});
+        // Obtener datos desde la tabla usuario
+        supabaseApi.obtenerUsuario("eq." + userId).enqueue(new Callback<List<Usuario>>() {
+            @Override
+            public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    Usuario usuario = response.body().get(0);
+                } else {
+                    Toast.makeText(ActividadPerfil.this, "No se encontraron datos del usuario", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        if (cursor.moveToFirst()) {
-            etNombre.setText(cursor.getString(0));
-            etPeso.setText(String.valueOf(cursor.getDouble(1)));
-            etAltura.setText(String.valueOf(cursor.getDouble(2)));
+            @Override
+            public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                Toast.makeText(ActividadPerfil.this, "Error al obtener usuario: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
-            calcularIMC(cursor.getDouble(1), cursor.getDouble(2));
-        } else {
-            tvIMC.setText("IMC: No disponible");
-        }
+        // Obtener datos desde la tabla datos_usuario
+        supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new Callback<List<DatosUsuario>>() {
+            @Override
+            public void onResponse(Call<List<DatosUsuario>> call, Response<List<DatosUsuario>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    DatosUsuario datos = response.body().get(0);
+                    etNombre.setText(datos.getNombre());
+                    etApellido1.setText(datos.getApellido1());
+                    etApellido2.setText(datos.getApellido2());
+                    etPeso.setText(String.valueOf(datos.getPeso()));
+                    etAltura.setText(String.valueOf(datos.getAltura()));
+                    etEdad.setText(String.valueOf(datos.getEdad()));
+//                    etActividad.setText(datos.getActividad_fisica());
+                    calcularIMC(datos.getPeso(), datos.getAltura());
+                } else {
+                    Toast.makeText(ActividadPerfil.this, "No se encontraron datos adicionales del usuario", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        cursor.close();
-        db.close();
-
-        calcularDiasCumplidos();
+            @Override
+            public void onFailure(Call<List<DatosUsuario>> call, Throwable t) {
+                Toast.makeText(ActividadPerfil.this, "Error al obtener datos del usuario: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void calcularIMC(double peso, double altura) {
         if (peso > 0 && altura > 0) {
-            double imc = peso / (altura * altura);
+            double imc = peso / ((altura / 100) * (altura / 100));
             tvIMC.setText("IMC: " + String.format("%.2f", imc));
         } else {
             tvIMC.setText("IMC: No disponible");
         }
     }
 
-    private void calcularDiasCumplidos() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Calendar calendar = Calendar.getInstance();
-        int añoActual = calendar.get(Calendar.YEAR);
-        int mesActual = calendar.get(Calendar.MONTH) + 1;
-
-        Cursor cursor = db.rawQuery(
-                "SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_DIAS_COMPLETADOS +
-                        " WHERE strftime('%Y', fecha) = ? AND strftime('%m', fecha) = ?",
-                new String[]{String.valueOf(añoActual), String.format("%02d", mesActual)}
-        );
-
-        if (cursor.moveToFirst()) {
-            diasCumplidos = cursor.getInt(0);
-            tvRacha.setText("Días cumplidos este mes: " + diasCumplidos);
-        } else {
-            tvRacha.setText("Días cumplidos este mes: 0");
-        }
-
-        cursor.close();
-        db.close();
-    }
-
     private void guardarDatos() {
         String nombre = etNombre.getText().toString().trim();
+        String apellido1 = etApellido1.getText().toString().trim();
+        String apellido2 = etApellido2.getText().toString().trim();
         String pesoStr = etPeso.getText().toString().trim();
         String alturaStr = etAltura.getText().toString().trim();
+        String edadStr = etEdad.getText().toString().trim();
+        String actividad = "ACTIVO";
 
-        if (nombre.isEmpty() || pesoStr.isEmpty() || alturaStr.isEmpty()) {
+        if (nombre.isEmpty() || pesoStr.isEmpty() || alturaStr.isEmpty() || edadStr.isEmpty() || actividad.isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
         double peso = Double.parseDouble(pesoStr);
         double altura = Double.parseDouble(alturaStr);
+        int edad = Integer.parseInt(edadStr);
 
-        // Validación de valores lógicos
-        if (peso <= 0 || peso > 300) {
-            Toast.makeText(this, "Peso inválido (1 - 300 kg)", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (altura <= 0.5 || altura > 2.5) {
-            Toast.makeText(this, "Altura inválida (0.5 - 2.5 m)", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Actualizar tabla datos_usuario
+        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad);
+        supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
+            @Override
+            public void onResponse(Call<Response<Void>> call, Response<Response<Void>> response) {
+                if (response.code() == 204) {
+                    Toast.makeText(ActividadPerfil.this, "✅ Datos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                    calcularIMC(peso, altura);
+                    activarEdicion(false);
+                } else {
+                    Toast.makeText(ActividadPerfil.this, "⚠️ Error al actualizar datos: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_NOMBRE, nombre);
-        values.put(DatabaseHelper.COLUMN_PESO, peso);
-        values.put(DatabaseHelper.COLUMN_ALTURA, altura);
-
-        boolean existe = usuarioExistePorID(db, USUARIO_ID);
-
-        long resultado;
-        if (existe) {
-            resultado = db.update(DatabaseHelper.TABLE_PERSONA, values, "id = ?", new String[]{String.valueOf(USUARIO_ID)});
-        } else {
-            values.put(DatabaseHelper.COLUMN_ID, USUARIO_ID);
-            resultado = db.insert(DatabaseHelper.TABLE_PERSONA, null, values);
-        }
-
-        db.close();
-
-        if (resultado < 0) {
-            Toast.makeText(this, "❌ Error al guardar", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "✅ Datos guardados", Toast.LENGTH_SHORT).show();
-        }
-
-        calcularIMC(peso, altura);
-        activarEdicion(false);
-    }
-
-    private boolean usuarioExistePorID(SQLiteDatabase db, int userId) {
-        Cursor cursor = db.rawQuery("SELECT 1 FROM " + DatabaseHelper.TABLE_PERSONA + " WHERE id = ?", new String[]{String.valueOf(userId)});
-        boolean existe = cursor.moveToFirst();
-        cursor.close();
-        return existe;
+            @Override
+            public void onFailure(Call<Response<Void>> call, Throwable t) {
+                Toast.makeText(ActividadPerfil.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -42,4 +42,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string-array name="actividad_fisica_array">
+        <item>Activo</item>
+        <item>Moderado</item>
+        <item>Sedentario</item>
+    </string-array>
 </resources>

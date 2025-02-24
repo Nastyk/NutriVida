@@ -78,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Cargar datos del usuario
-        cargarDatosUsuario();
-
         // Marcar los días completados en el calendario
         marcarDiasEnCalendario();
 
@@ -97,12 +94,14 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(MainActivity.this, ActividadComida.class);
             intent.putExtra("fechaSeleccionada", fechaSeleccionadaCalendario);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
         // Ir a la actividad de perfil
         btnIrPerfil.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ActividadPerfil.class);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
@@ -123,35 +122,7 @@ public class MainActivity extends AppCompatActivity {
     // Recargar datos cada que la actividad se reinicie
     protected void onResume() {
         super.onResume();
-        cargarDatosUsuario(); // Recarga los datos del usuario
         marcarDiasEnCalendario(); // Actualiza el calendario
-    }
-
-    private void cargarDatosUsuario() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PERSONA, null);
-
-        if (cursor.moveToFirst()) {
-            int indexNombre = cursor.getColumnIndex(DatabaseHelper.COLUMN_NOMBRE);
-            int indexPeso = cursor.getColumnIndex(DatabaseHelper.COLUMN_PESO);
-            int indexAltura = cursor.getColumnIndex(DatabaseHelper.COLUMN_ALTURA);
-
-            String nombre = "";
-            if (indexNombre > 0 || indexNombre == 0) {
-                nombre = cursor.getString(indexNombre);
-            }
-            double peso = 0;
-            if(indexPeso > 0 || indexPeso == 0) {
-                peso = cursor.getDouble(indexPeso);
-            }
-            double altura = 0;
-            if(indexAltura > 0 || indexAltura == 0) {
-                altura = cursor.getDouble(indexAltura);
-            }
-        }
-
-        cursor.close();
-        db.close();
     }
 
     private void marcarDiasEnCalendario() {
@@ -273,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ActividadComida.class);
             intent.putExtra("fechaSeleccionada", fecha);
             intent.putExtra("isEditar", true);
+            intent.putExtra("userId", userId);
             startActivity(intent);
             dialog.dismiss();
         });

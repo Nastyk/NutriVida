@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,9 +22,13 @@ import android.widget.Spinner;
 import android.app.DatePickerDialog;
 import android.widget.Toast;
 
+import com.nutrivda.app.callback.CaloriasCallback;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.database.DatabaseHelper;
+import com.nutrivda.app.model.Comida;
+import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.utils.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,8 +53,10 @@ public class ActividadComida extends AppCompatActivity {
     private Button btnGuardarComida, btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
     private String fechaDeComida;
     private double totalKcal = 0;
-    private int caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
+    private int userId = 0, caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
+    private ImageButton btnBorrarDesayuno, btnBorrarComida, btnBorrarCena, btnIrAtras;
     private boolean isEditar = false;
+    private SupabaseApi supabaseApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +79,17 @@ public class ActividadComida extends AppCompatActivity {
         cbComida = findViewById(R.id.cbComida);
         cbCena = findViewById(R.id.cbCena);
         btnGuardarComida = findViewById(R.id.btnGuardarComida);
-        ImageButton btnIrAtras = findViewById(R.id.btnIrAtras);
+
+        btnIrAtras = findViewById(R.id.btnIrAtras);
+        btnBorrarDesayuno = findViewById(R.id.btnBorrarDesayuno);
+        btnBorrarComida = findViewById(R.id.btnBorrarComida);
+        btnBorrarCena = findViewById(R.id.btnBorrarCena);
+
+        supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
         // Obtener la fecha enviada desde MainActivity
         Intent intent = getIntent();
+        userId = intent.getIntExtra("userId", 0);
         if (intent.hasExtra("fechaSeleccionada")) {
             fechaDeComida = intent.getStringExtra("fechaSeleccionada");
             tvFechaComida.setText("Comidas del día: " + fechaDeComida);
@@ -87,12 +101,17 @@ public class ActividadComida extends AppCompatActivity {
         }
 
         if (isEditar) {
+            cargarDatosDelDia();
             btnGuardarComida.setText("Guardar cambios");
         }
 
         btnAnadirDesayuno.setOnClickListener(v -> abrirAniadirComida("Desayuno"));
         btnAnadirComida.setOnClickListener(v -> abrirAniadirComida("Comida"));
         btnAnadirCena.setOnClickListener(v -> abrirAniadirComida("Cena"));
+
+        configurarBotonBorrar(btnBorrarDesayuno, tvDesayunoSeleccionado, tvCaloriasDesayuno, btnAnadirDesayuno,"Desayuno");
+        configurarBotonBorrar(btnBorrarComida, tvComidaSeleccionada, tvCaloriasComida, btnAnadirComida,"Comida");
+        configurarBotonBorrar(btnBorrarCena, tvCenaSeleccionada, tvCaloriasCena, btnAnadirCena,"Cena");
 
         // Guardar selección de comidas
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
@@ -101,6 +120,35 @@ public class ActividadComida extends AppCompatActivity {
         btnIrAtras.setOnClickListener(v -> {
             Intent intentVolver = new Intent(ActividadComida.this, MainActivity.class);
             startActivity(intentVolver);
+        });
+    }
+
+    private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, String tipoComida) {
+        botonBorrar.setOnClickListener(v -> {
+            // Borrar la comida seleccionada
+            textViewComida.setText("Ninguno");
+            textViewCalorias.setText("Calorías: 0");
+
+            switch (tipoComida) {
+                case "Desayuno":
+                    caloriasDesayuno = 0;
+                    break;
+                case "Comida":
+                    caloriasComida = 0;
+                    break;
+                case "Cena":
+                    caloriasCena = 0;
+                    break;
+                default:
+                    Log.e("NutriVida","ERROR en configurarBotonBorrar -> tipoComida en switch erroneo");
+            }
+
+            // Ocultar el botón de borrar
+            botonBorrar.setVisibility(View.GONE);
+            botonAnadir.setVisibility(View.VISIBLE);
+
+            // Actualizar total de calorías
+            actualizarTotalKcal();
         });
     }
 
@@ -122,27 +170,69 @@ public class ActividadComida extends AppCompatActivity {
             if (tipoComida != null && comidaSeleccionada != null) {
                 switch (tipoComida.toLowerCase()) {
                     case "desayuno":
-                        tvDesayunoSeleccionado.setText(comidaSeleccionada);
-                        caloriasDesayuno = caloriasComidaSeleccionada;
-                        tvCaloriasDesayuno.setText("Calorías: " + caloriasDesayuno);
-                        btnAnadirDesayuno.setText("Editar Desayuno");
+                        actualizarVistaComida(tvDesayunoSeleccionado, btnBorrarDesayuno, tvCaloriasDesayuno, btnAnadirDesayuno, comidaSeleccionada, caloriasComidaSeleccionada, "Desayuno");
                         break;
                     case "comida":
-                        tvComidaSeleccionada.setText(comidaSeleccionada);
-                        caloriasComida = caloriasComidaSeleccionada;
-                        tvCaloriasComida.setText("Calorías: " + caloriasComida);
-                        btnAnadirComida.setText("Editar Comida");
+                        actualizarVistaComida(tvComidaSeleccionada, btnBorrarComida, tvCaloriasComida, btnAnadirComida, comidaSeleccionada, caloriasComidaSeleccionada, "Comida");
                         break;
                     case "cena":
-                        tvCenaSeleccionada.setText(comidaSeleccionada);
-                        caloriasCena = caloriasComidaSeleccionada;
-                        tvCaloriasCena.setText("Calorías: " + caloriasCena);
-                        btnAnadirCena.setText("Editar Cena");
+                        actualizarVistaComida(tvCenaSeleccionada, btnBorrarCena, tvCaloriasCena, btnAnadirCena, comidaSeleccionada, caloriasComidaSeleccionada, "Cena");
                         break;
                 }
                 actualizarTotalKcal();
             }
         }
+    }
+
+    private void actualizarVistaComida(TextView textViewComida, ImageButton botonBorrar, TextView textViewCalorias, Button botonAnadir, String comida, int calorias, String tipoComida) {
+        textViewComida.setText(comida);
+        textViewCalorias.setText("Calorías: " + calorias);
+
+        switch (tipoComida) {
+            case "Desayuno":
+                caloriasDesayuno = calorias;
+                break;
+            case "Comida":
+                caloriasComida = calorias;
+                break;
+            case "Cena":
+                caloriasCena = calorias;
+                break;
+            default:
+                Log.e("NutriVida","ERROR en actualizarVistaComida -> tipoComida en switch erroneo");
+        }
+
+        // Mostrar botón de borrar y ocultar el de añadir
+        botonBorrar.setVisibility(View.VISIBLE);
+        botonAnadir.setVisibility(View.GONE);
+    }
+
+    private void actualizarVistaComidaEnEdicion(TextView textViewComida, ImageButton botonBorrar, TextView textViewCalorias, Button botonAnadir, String comida, int calorias, String tipoComida) {
+        textViewComida.setText(comida);
+        textViewCalorias.setText("Calorías: " + calorias);
+
+        switch (tipoComida) {
+            case "Desayuno":
+                caloriasDesayuno = calorias;
+                break;
+            case "Comida":
+                caloriasComida = calorias;
+                break;
+            case "Cena":
+                caloriasCena = calorias;
+                break;
+            default:
+                Log.e("NutriVida","ERROR en actualizarVistaComida -> tipoComida en switch erroneo");
+        }
+
+        if(comida.equals("Ninguno")) {
+            // Ocultar el botón de borrar
+            botonBorrar.setVisibility(View.GONE);
+            botonAnadir.setVisibility(View.VISIBLE);
+        }
+        // Mostrar botón de borrar y ocultar el de añadir
+        botonBorrar.setVisibility(View.VISIBLE);
+        botonAnadir.setVisibility(View.GONE);
     }
 
     private void actualizarTotalKcal() {
@@ -155,9 +245,13 @@ public class ActividadComida extends AppCompatActivity {
         boolean comidaHecha = cbComida.isChecked();
         boolean cenaHecha = cbCena.isChecked();
 
-        String desayunoSeleccionado = desayunoHecho ? tvDesayunoSeleccionado.getText().toString() : null;
-        String comidaSeleccionada = comidaHecha ? tvComidaSeleccionada.getText().toString() : null;
-        String cenaSeleccionada = cenaHecha ? tvCenaSeleccionada.getText().toString() : null;
+        String desayunoSeleccionado = StringUtil.isCadenaVacia(tvDesayunoSeleccionado.getText().toString()) ? null : tvDesayunoSeleccionado.getText().toString();
+        String comidaSeleccionada = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? null : tvComidaSeleccionada.getText().toString();
+        String cenaSeleccionada = StringUtil.isCadenaVacia(tvCenaSeleccionada.getText().toString()) ? null : tvCenaSeleccionada.getText().toString();
+
+        caloriasDesayuno = StringUtil.isCadenaVacia(tvDesayunoSeleccionado.getText().toString()) ? 0 : caloriasDesayuno;
+        caloriasComida = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? 0 : caloriasComida;
+        caloriasCena = StringUtil.isCadenaVacia(tvCenaSeleccionada.getText().toString()) ? 0 : caloriasCena;
 
         boolean diaIncompleto = !desayunoHecho || !comidaHecha || !cenaHecha;
 
@@ -165,45 +259,104 @@ public class ActividadComida extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("⚠️ Día Incompleto")
                     .setMessage("Has registrado comidas, pero el día no será marcado como completo en el calendario. ¿Quieres continuar?")
-                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, false))
+                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, false, caloriasDesayuno, caloriasComida, caloriasCena))
                     .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
                     .show();
             return;
         }
 
-        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, true);
+        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, true, caloriasDesayuno, caloriasComida, caloriasCena);
     }
 
-    private void guardarDatosComida(String desayuno, String comida, String cena, boolean swDesayuno, boolean swComida, boolean swCena, boolean marcarComoCompleto) {
+    private void guardarDatosComida(String desayuno, String comida, String cena, boolean swDesayuno, boolean swComida, boolean swCena, boolean marcarComoCompleto, int caloriasDesayuno, int caloriasComida, int caloriasCena) {
         // Crear objeto JSON con los datos correctos para la tabla dias_completados
         Map<String, Object> comidaData = new HashMap<>();
-        comidaData.put("fecha", fechaDeComida);
-        comidaData.put("id_usuario_fk", 1); // TODO: Cambia este ID por el real del usuario mas adelante
         comidaData.put("completado", marcarComoCompleto);
-        comidaData.put("desayuno", desayuno);
+        comidaData.put("desayuno", comprobarCampo(desayuno));
         comidaData.put("sw_desayuno", swDesayuno);
-        comidaData.put("comida", comida);
+        comidaData.put("comida", comprobarCampo(comida));
         comidaData.put("sw_comida", swComida);
-        comidaData.put("cena", cena);
+        comidaData.put("cena", comprobarCampo(cena));
         comidaData.put("sw_cena", swCena);
+        comidaData.put("caloria_desayuno", caloriasDesayuno);
+        comidaData.put("caloria_comida", caloriasComida);
+        comidaData.put("caloria_cena", caloriasCena);
 
-        // Hacer petición POST a Supabase
-        SupabaseClient.getClient().create(SupabaseApi.class).insertarComida(comidaData).enqueue(new Callback<Void>() {
+        if (isEditar) {
+            // Si está en modo edición, hacemos un PATCH en lugar de POST
+            supabaseApi.actualizarComida("eq." + userId, "eq." + fechaDeComida, comidaData).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(ActividadComida.this, "✅ Comida actualizada correctamente en Supabase", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(ActividadComida.this, "❌ Error al actualizar en Supabase: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(ActividadComida.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("NutriVida","ERROR en actualizarComida -> " + t.getMessage());
+                }
+            });
+        } else {
+            supabaseApi.insertarComida(comidaData).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(ActividadComida.this, "✅ Comida guardada correctamente en Supabase", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(ActividadComida.this, "❌ Error al guardar en Supabase", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(ActividadComida.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("NutriVida","ERROR en actualizarComida -> " + t.getMessage());
+                }
+            });
+        }
+
+    }
+
+    private void cargarDatosDelDia() {
+        supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(ActividadComida.this, "✅ Comida guardada correctamente en Supabase", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(ActividadComida.this, "❌ Error al guardar en Supabase", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    // Tomar el primer resultado, ya que la fecha debería ser única
+                    DiaCompletado dia = response.body().get(0);
+
+                    String desayunoSeleciconado = dia.getDesayuno() != null ? dia.getDesayuno() : "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvDesayunoSeleccionado, btnBorrarDesayuno, tvCaloriasDesayuno, btnAnadirDesayuno, desayunoSeleciconado, dia.getCaloria_desayuno(), "Desayuno");
+                    cbDesayuno.setChecked(dia.isSwDesayuno());
+
+                    String comidaSeleccionada = dia.getComida() != null ? dia.getComida() : "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvComidaSeleccionada, btnBorrarComida, tvCaloriasComida, btnAnadirComida, comidaSeleccionada, dia.getCaloria_comida(), "Comida");
+                    cbComida.setChecked(dia.isSwComida());
+
+                    String cenaSeleccionada = dia.getCena() != null ? dia.getCena() : "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvCenaSeleccionada, btnBorrarCena, tvCaloriasCena, btnAnadirCena, cenaSeleccionada, dia.getCaloria_cena(), "Cena");
+                    cbCena.setChecked(dia.isSwCena());
+
+                    actualizarTotalKcal();
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(ActividadComida.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
+                Toast.makeText(ActividadComida.this, "Error al conectar con Supabase: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    private String comprobarCampo(String campo) {
+        return campo == null ? "Sin datos" : campo;
     }
 
 }
