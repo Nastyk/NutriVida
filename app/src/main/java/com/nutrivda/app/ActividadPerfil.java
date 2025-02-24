@@ -70,7 +70,7 @@ public class ActividadPerfil extends AppCompatActivity {
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnGuardar = findViewById(R.id.btnGuardarPerfil);
         btnIrMain = findViewById(R.id.btnIrAmain);
-        chartPeso = findViewById(R.id.chartPeso);
+        //chartPeso = findViewById(R.id.chartPeso);
 
         /*spinnerActividad = findViewById(R.id.spinnerActividad);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -90,7 +90,7 @@ public class ActividadPerfil extends AppCompatActivity {
 
         // Cargar datos del usuario
         cargarDatosUsuario();
-        configurarGraficoPeso();
+       // configurarGraficoPeso();
     }
 
     private void activarEdicion(boolean activar) {
@@ -112,7 +112,7 @@ public class ActividadPerfil extends AppCompatActivity {
         }
     }
 
-    private void configurarGraficoPeso() {
+    /*private void configurarGraficoPeso() {
         List<Entry> entradas = new ArrayList<>();
         entradas.add(new Entry(1, 85)); // Día 1 - Peso 85kg
         entradas.add(new Entry(2, 83)); // Día 2 - Peso 83kg
@@ -131,7 +131,7 @@ public class ActividadPerfil extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
         chartPeso.invalidate(); // Refrescar la gráfica
-    }
+    }*/
 
     private void cargarDatosUsuario() {
         // Obtener datos desde la tabla usuario

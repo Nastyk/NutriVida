@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="20dp"
     android:gravity="center"
-    android:background="@drawable/fondoparamain">
+    android:background="@drawable/fondomain">
 
     <!-- Barra de botones -->
     <RelativeLayout
@@ -162,11 +162,11 @@
 
     <!-- Botón Guardar Cambios -->
 
-    <com.github.mikephil.charting.charts.LineChart
+   <!-- <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chartPeso"
-        android:layout_width="354dp"
-        android:layout_height="261dp"
-        android:layout_marginTop="20dp" />
+        android:layout_width="264dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="20dp" /> -->
 
     <Button
         android:id="@+id/btnGuardarPerfil"

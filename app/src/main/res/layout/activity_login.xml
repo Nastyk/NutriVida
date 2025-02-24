@@ -5,7 +5,18 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="20dp"
-    android:background="@drawable/fondoparamain">
+    android:background="@drawable/fondomain">
+
+    <TextView
+        android:id="@+id/tvNombreUsuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="casual"
+        android:text="NutriVida"
+        android:textColor="@color/orange"
+        android:textSize="50sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etUsername"
