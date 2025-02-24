@@ -123,6 +123,17 @@ public class ActividadComida extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param botonBorrar
+     * @param textViewComida
+     * @param textViewCalorias
+     * @param botonAnadir
+     * @param checkBox
+     * @param tipoComida
+     *
+     * Configuracion del boton borrar una vez añadida la comida
+     */
     private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, CheckBox checkBox, String tipoComida) {
         botonBorrar.setOnClickListener(v -> {
             // Borrar la comida seleccionada
@@ -153,12 +164,31 @@ public class ActividadComida extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param tipoComida
+     *
+     * Metodo que inicia la actividad AniadirComida donde se pasa el dato REQUEST_CODE
+     * que permite identificar la actividad origen en el onActivityResult
+     */
     private void abrirAniadirComida(String tipoComida) {
         Intent intent = new Intent(this, AniadirComidaActivity.class);
         intent.putExtra("tipo_comida", tipoComida);
         startActivityForResult(intent, REQUEST_CODE);
     }
 
+    /**
+     *
+     * @param requestCode El código de solicitud entero proporcionado originalmente a
+     *                    startActivityForResult(), lo que permite identificar de dónde
+     *                    proviene este resultado.
+     * @param resultCode El código de resultado entero devuelto por la actividad secundaria
+     *                   a través de su setResult().
+     * @param data Un Intent, que puede devolver datos de resultado al llamador
+     *             (se pueden adjuntar varios datos a los "extras" del Intent).
+     *
+     * Este metodo se ejecuta tras la finalizacion de la actividad AniadorComida
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -185,6 +215,18 @@ public class ActividadComida extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @param textViewComida
+     * @param botonBorrar
+     * @param textViewCalorias
+     * @param botonAnadir
+     * @param comida
+     * @param calorias
+     * @param tipoComida
+     *
+     * actualiza la vista de las comidas conforme a los argumentos pasados en el alta
+     */
     private void actualizarVistaComida(TextView textViewComida, ImageButton botonBorrar, TextView textViewCalorias, Button botonAnadir, String comida, int calorias, String tipoComida) {
         textViewComida.setText(comida);
         textViewCalorias.setText("Calorías: " + calorias);
@@ -208,6 +250,18 @@ public class ActividadComida extends AppCompatActivity {
         botonAnadir.setVisibility(View.GONE);
     }
 
+    /**
+     *
+     * @param textViewComida
+     * @param botonBorrar
+     * @param textViewCalorias
+     * @param botonAnadir
+     * @param comida
+     * @param calorias
+     * @param tipoComida
+     *
+     * Actualiza la vista de las comidas conforme los argumentos pasados en el modo de edicion
+     */
     private void actualizarVistaComidaEnEdicion(TextView textViewComida, ImageButton botonBorrar, TextView textViewCalorias, Button botonAnadir, String comida, int calorias, String tipoComida) {
         textViewComida.setText(comida);
         textViewCalorias.setText("Calorías: " + calorias);

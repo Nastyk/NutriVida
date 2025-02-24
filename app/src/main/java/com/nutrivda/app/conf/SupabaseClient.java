@@ -9,6 +9,11 @@ public class SupabaseClient {
 
     private static Retrofit retrofit = null;
 
+    /**
+     * Crea el cliente Retrofit usando la URL proporiconada por Supabase
+     *
+     * @return
+     */
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
