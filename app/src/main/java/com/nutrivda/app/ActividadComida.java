@@ -109,9 +109,9 @@ public class ActividadComida extends AppCompatActivity {
         btnAnadirComida.setOnClickListener(v -> abrirAniadirComida("Comida"));
         btnAnadirCena.setOnClickListener(v -> abrirAniadirComida("Cena"));
 
-        configurarBotonBorrar(btnBorrarDesayuno, tvDesayunoSeleccionado, tvCaloriasDesayuno, btnAnadirDesayuno,"Desayuno");
-        configurarBotonBorrar(btnBorrarComida, tvComidaSeleccionada, tvCaloriasComida, btnAnadirComida,"Comida");
-        configurarBotonBorrar(btnBorrarCena, tvCenaSeleccionada, tvCaloriasCena, btnAnadirCena,"Cena");
+        configurarBotonBorrar(btnBorrarDesayuno, tvDesayunoSeleccionado, tvCaloriasDesayuno, btnAnadirDesayuno, cbDesayuno, "Desayuno");
+        configurarBotonBorrar(btnBorrarComida, tvComidaSeleccionada, tvCaloriasComida, btnAnadirComida, cbComida, "Comida");
+        configurarBotonBorrar(btnBorrarCena, tvCenaSeleccionada, tvCaloriasCena, btnAnadirCena, cbCena, "Cena");
 
         // Guardar selección de comidas
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
@@ -123,11 +123,12 @@ public class ActividadComida extends AppCompatActivity {
         });
     }
 
-    private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, String tipoComida) {
+    private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, CheckBox checkBox, String tipoComida) {
         botonBorrar.setOnClickListener(v -> {
             // Borrar la comida seleccionada
             textViewComida.setText("Ninguno");
             textViewCalorias.setText("Calorías: 0");
+            checkBox.setChecked(false);
 
             switch (tipoComida) {
                 case "Desayuno":
@@ -227,12 +228,14 @@ public class ActividadComida extends AppCompatActivity {
 
         if(comida.equals("Ninguno")) {
             // Ocultar el botón de borrar
+            Log.i("NutriVida", "INFO: ENTRA EN IF********************** CON COMIDA VALOR  :" + comida);
             botonBorrar.setVisibility(View.GONE);
             botonAnadir.setVisibility(View.VISIBLE);
+        } else {
+            // Mostrar botón de borrar y ocultar el de añadir
+            botonBorrar.setVisibility(View.VISIBLE);
+            botonAnadir.setVisibility(View.GONE);
         }
-        // Mostrar botón de borrar y ocultar el de añadir
-        botonBorrar.setVisibility(View.VISIBLE);
-        botonAnadir.setVisibility(View.GONE);
     }
 
     private void actualizarTotalKcal() {
@@ -302,6 +305,8 @@ public class ActividadComida extends AppCompatActivity {
                 }
             });
         } else {
+            comidaData.put("id_usuario_fk", userId);
+            comidaData.put("fecha", fechaDeComida);
             supabaseApi.insertarComida(comidaData).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
