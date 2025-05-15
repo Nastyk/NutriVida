@@ -15,29 +15,63 @@
 
         <!-- Botón de ir atrás con icono -->
         <ImageButton
-            android:id="@+id/btnIrAtras"
+            android:id="@+id/btnCalendar"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_atras"
-            android:contentDescription="Ir Atrás"
+            android:src="@drawable/ic_calendar"
+            android:contentDescription="Ir Calendario"
             android:scaleType="fitCenter"
             app:tint="@color/verde" />
     </RelativeLayout>
 
-    <!-- Fecha -->
-    <TextView
-        android:id="@+id/tvFechaComida"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:text="Comidas del día: --"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
 
-    <!-- Desayuno -->
+        <!-- Botón de ir atrás -->
+        <ImageButton
+            android:id="@+id/btnIrAtras"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_atras"
+            android:contentDescription="Día anterior"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/verde" />
+
+        <!-- Texto con la fecha -->
+        <TextView
+            android:id="@+id/tvFechaComida"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Hoy"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center_vertical" />
+
+        <!-- Botón de ir adelante -->
+        <ImageButton
+            android:id="@+id/btnIrAdelante"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_adelante"
+            android:contentDescription="Día siguiente"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/verde" />
+    </LinearLayout>
+
+    <!--desayuno-->
     <TextView
         android:id="@+id/tvDesayuno"
         android:layout_width="wrap_content"

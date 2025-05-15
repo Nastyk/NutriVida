@@ -15,6 +15,9 @@
         android:theme="@style/Theme.NutriVida"
         tools:targetApi="31">
         <activity
+            android:name=".DiaryActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegistroUsuario"
             android:exported="false" />
         <activity

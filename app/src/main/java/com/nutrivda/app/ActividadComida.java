@@ -30,9 +30,11 @@ import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.StringUtil;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,9 +56,10 @@ public class ActividadComida extends AppCompatActivity {
     private String fechaDeComida;
     private double totalKcal = 0;
     private int userId = 0, caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
-    private ImageButton btnBorrarDesayuno, btnBorrarComida, btnBorrarCena, btnIrAtras;
+    private ImageButton btnBorrarDesayuno, btnBorrarComida, btnBorrarCena, btnIrAtras, btnIrAdelante, btnCalendar;
     private boolean isEditar = false;
     private SupabaseApi supabaseApi;
+    private Calendar currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,24 +84,50 @@ public class ActividadComida extends AppCompatActivity {
         btnGuardarComida = findViewById(R.id.btnGuardarComida);
 
         btnIrAtras = findViewById(R.id.btnIrAtras);
+        btnIrAdelante = findViewById(R.id.btnIrAdelante);
         btnBorrarDesayuno = findViewById(R.id.btnBorrarDesayuno);
         btnBorrarComida = findViewById(R.id.btnBorrarComida);
         btnBorrarCena = findViewById(R.id.btnBorrarCena);
+        btnCalendar = findViewById(R.id.btnCalendar);
 
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
         // Obtener la fecha enviada desde MainActivity
         Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", 0);
         if (intent.hasExtra("fechaSeleccionada")) {
             fechaDeComida = intent.getStringExtra("fechaSeleccionada");
-            tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+            currentDate = parseFechaString(fechaDeComida);
+            //tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+            updateDateText(fechaDeComida);
             isEditar = intent.getBooleanExtra("isEditar", false);
         } else {
+            currentDate = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            fechaDeComida = sdf.format(Calendar.getInstance().getTime());
-            tvFechaComida.setText("Comidas del día: " + fechaDeComida);
+            fechaDeComida = sdf.format(currentDate.getTime());
         }
+
+        cargarDatosDelDia();
+        updateDateText("");
+
+        // Botón para ir al día anterior
+        btnIrAtras.setOnClickListener(v -> {
+            currentDate.add(Calendar.DAY_OF_MONTH, -1); // Resta un día
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            fechaDeComida = sdf.format(currentDate.getTime());
+            cargarDatosDelDia();
+            updateDateText("");
+        });
+
+        // Botón para ir al día siguiente
+        btnIrAdelante.setOnClickListener(v -> {
+            currentDate.add(Calendar.DAY_OF_MONTH, 1); // Suma un día
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            fechaDeComida = sdf.format(currentDate.getTime());
+            cargarDatosDelDia();
+            updateDateText("");
+        });
+
+        userId = intent.getIntExtra("userId", 0);
 
         if (isEditar) {
             cargarDatosDelDia();
@@ -117,7 +146,7 @@ public class ActividadComida extends AppCompatActivity {
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
 
         // Ir atrás
-        btnIrAtras.setOnClickListener(v -> {
+        btnCalendar.setOnClickListener(v -> {
             Intent intentVolver = new Intent(ActividadComida.this, MainActivity.class);
             startActivity(intentVolver);
         });
@@ -403,6 +432,20 @@ public class ActividadComida extends AppCompatActivity {
                     cbCena.setChecked(dia.isSwCena());
 
                     actualizarTotalKcal();
+                } else {
+                    String desayunoSeleciconado = "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvDesayunoSeleccionado, btnBorrarDesayuno, tvCaloriasDesayuno, btnAnadirDesayuno, desayunoSeleciconado, 0, "Desayuno");
+                    cbDesayuno.setChecked(false);
+
+                    String comidaSeleccionada = "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvComidaSeleccionada, btnBorrarComida, tvCaloriasComida, btnAnadirComida, comidaSeleccionada, 0, "Comida");
+                    cbComida.setChecked(false);
+
+                    String cenaSeleccionada = "Ninguno";
+                    actualizarVistaComidaEnEdicion(tvCenaSeleccionada, btnBorrarCena, tvCaloriasCena, btnAnadirCena, cenaSeleccionada, 0, "Cena");
+                    cbCena.setChecked(false);
+
+                    actualizarTotalKcal();
                 }
             }
 
@@ -416,6 +459,56 @@ public class ActividadComida extends AppCompatActivity {
 
     private String comprobarCampo(String campo) {
         return campo == null ? "Sin datos" : campo;
+    }
+
+    private void updateDateText(String fechaStr) {
+        Calendar today = Calendar.getInstance();
+        setToMidnight(today);
+
+        Calendar selected;
+        if (fechaStr == null || fechaStr.equals("")) {
+            selected = (Calendar) currentDate.clone();;
+            setToMidnight(selected);
+        } else {
+            selected = parseFechaString(fechaStr);
+            setToMidnight(selected);
+        }
+
+
+        if (selected.equals(today)) {
+            tvFechaComida.setText("Hoy");
+        } else {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d 'de' MMMM", new Locale("es", "ES"));
+            String formattedDate = dateFormat.format(selected.getTime());
+            tvFechaComida.setText(capitalizeFirst(formattedDate));
+        }
+
+    }
+
+    private void setToMidnight(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private String capitalizeFirst(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+    }
+
+    private Calendar parseFechaString(String fechaStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        try {
+            Date date = sdf.parse(fechaStr);
+            if (date != null) {
+                calendar.setTime(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return calendar;
     }
 
 }
