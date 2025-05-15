@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="24dp" android:background="#F9FFF4">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Título de esta parte del test -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Evaluación Profesional"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Pregunta 1 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Cuántas horas trabajas o estudias al día?" />
+
+    <RadioGroup
+        android:id="@+id/rgJornada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rbJor04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0-4h" />
+
+        <RadioButton
+            android:id="@+id/rbJor58"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5-8h" />
+
+        <RadioButton
+            android:id="@+id/rbJor9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9h o más" />
+    </RadioGroup>
+
+    <!-- Pregunta 2 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="¿Tu trabajo o estudios afectan tu alimentación?" />
+
+    <RadioGroup
+        android:id="@+id/rgImpactoAlimentacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rbImpactoNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+
+        <RadioButton
+            android:id="@+id/rbImpactoPoco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Un poco" />
+
+        <RadioButton
+            android:id="@+id/rbImpactoMucho"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mucho" />
+    </RadioGroup>
+
+    <!-- Pregunta 3 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="¿Te cuesta mantener una rutina diaria por tus responsabilidades?" />
+
+    <RadioGroup
+        android:id="@+id/rgDesorganizacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rbDesNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+
+        <RadioButton
+            android:id="@+id/rbDesAveces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A veces" />
+
+        <RadioButton
+            android:id="@+id/rbDesSi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sí" />
+    </RadioGroup>
+
+    <!-- Botón para avanzar -->
+    <Button
+        android:id="@+id/btnEvaluarProfesional"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Siguiente"
+        android:layout_marginTop="32dp" />
+</LinearLayout>
+    </ScrollView>

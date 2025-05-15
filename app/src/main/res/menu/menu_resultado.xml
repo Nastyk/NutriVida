@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Opción de resumen gráfico -->
+    <item
+        android:id="@+id/menu_resumen_grafico"
+        android:title="Resumen gráfico"
+        android:icon="@android:drawable/ic_menu_view"
+        app:showAsAction="ifRoom" />
+</menu>

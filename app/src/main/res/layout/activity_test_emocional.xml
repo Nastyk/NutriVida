@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="24dp" android:background="#F5FFF8">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Título de la pantalla -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Evaluación Emocional"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Pregunta 1 -->
+        <TextView
+            android:text="¿Te has sentido motivado esta semana?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <RadioGroup
+            android:id="@+id/rgMotivacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rbMotivadoSi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sí"/>
+            <RadioButton
+                android:id="@+id/rbMotivadoAveces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A veces"/>
+            <RadioButton
+                android:id="@+id/rbMotivadoNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No"/>
+        </RadioGroup>
+
+        <!-- Pregunta 2 -->
+        <TextView
+            android:text="¿Has tenido cambios de humor frecuentes?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+        <RadioGroup
+            android:id="@+id/rgHumor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rbHumorNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No"/>
+            <RadioButton
+                android:id="@+id/rbHumorAveces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A veces"/>
+            <RadioButton
+                android:id="@+id/rbHumorSi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sí"/>
+        </RadioGroup>
+
+        <!-- Pregunta 3 -->
+        <TextView
+            android:text="¿Duermes bien?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+        <RadioGroup
+            android:id="@+id/rgSueno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rbSuenoSi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sí"/>
+            <RadioButton
+                android:id="@+id/rbSuenoAveces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A veces"/>
+            <RadioButton
+                android:id="@+id/rbSuenoNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No"/>
+        </RadioGroup>
+
+        <!-- Botón Siguiente -->
+        <Button
+            android:id="@+id/btnSiguiente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Siguiente"
+            android:layout_marginTop="32dp"/>
+    </LinearLayout>
+</ScrollView>

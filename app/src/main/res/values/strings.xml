@@ -47,4 +47,10 @@
         <item>Moderado</item>
         <item>Sedentario</item>
     </string-array>
+
+    <string name="pregunta_motivacion">¿Te has sentido motivado esta semana?</string>
+    <string name="opcion_si">Sí</string>
+    <string name="opcion_aveces">A veces</string>
+    <string name="opcion_no">No</string>
+
 </resources>
