@@ -59,5 +59,9 @@ public class BaseActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
+
+    public void setSelectedNavItem(int itemId) {
+        bottomNavigationView.setSelectedItemId(itemId);
+    }
 }
 

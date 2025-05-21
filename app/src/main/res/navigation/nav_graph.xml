@@ -18,6 +18,17 @@
         tools:layout="@layout/fragment_calendario">
 
         <action
+            android:id="@+id/action_calendario_to_dia"
+            app:destination="@id/FragmentDia" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FragmentDia"
+        android:name="com.nutrivda.app.FragmentDia"
+        android:label="@string/fragment_dia"
+        tools:layout="@layout/fragment_dia">
+
+        <action
             android:id="@+id/action_calendario_to_comida"
             app:destination="@id/FragmentComida" />
     </fragment>

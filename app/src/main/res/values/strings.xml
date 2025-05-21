@@ -3,6 +3,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="fragment_comida">Fragmento Comida</string>
     <string name="fragment_calendario">Fragmento Calendario</string>
+    <string name="fragment_dia">Fragmento Dia</string>
     <string name="fragment_perfil">Fragmento Perfil</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>

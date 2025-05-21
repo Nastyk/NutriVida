@@ -104,6 +104,9 @@ public class FragmentCalendario extends Fragment {
                     .replace(R.id.fragment_container, fragmentComida)
                     .addToBackStack(null)
                     .commit();
+
+            // Actualizar visualmente el item de menú inferior
+            ((BaseActivity) requireActivity()).setSelectedNavItem(R.id.nav_dia);
         });
 
         // Manejo del calendario cuando selecciono un día
