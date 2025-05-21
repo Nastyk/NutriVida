@@ -27,7 +27,7 @@ public class BaseActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Cargo el fragment por defecto (puedes cambiarlo si quieres empezar con otro)
-        loadFragment(new FragmentCalendario());
+        loadFragment(new FragmentPerfil());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
