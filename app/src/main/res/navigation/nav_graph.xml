@@ -3,26 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/FragmentPerfil">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.nutrivda.app.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+        android:id="@+id/FragmentPerfil"
+        android:name="com.nutrivda.app.FragmentPerfil"
+        android:label="@string/fragment_perfil"
+        tools:layout="@layout/fragment_perfil">
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.nutrivda.app.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/FragmentCalendario"
+        android:name="com.nutrivda.app.FragmentCalendario"
+        android:label="@string/fragment_calendario"
+        tools:layout="@layout/fragment_calendario">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_calendario_to_dia"
+            app:destination="@id/FragmentDia" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FragmentDia"
+        android:name="com.nutrivda.app.FragmentDia"
+        android:label="@string/fragment_dia"
+        tools:layout="@layout/fragment_dia">
+
+        <action
+            android:id="@+id/action_calendario_to_comida"
+            app:destination="@id/FragmentComida" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FragmentComida"
+        android:name="com.nutrivda.app.FragmentComida"
+        android:label="@string/fragment_comida"
+        tools:layout="@layout/fragment_comida">
+
+        <action
+            android:id="@+id/action_calendario_to_comida"
+            app:destination="@id/FragmentCalendario" />
     </fragment>
 </navigation>

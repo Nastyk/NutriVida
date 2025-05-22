@@ -15,12 +15,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.database.DatabaseHelper;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.EventDecorator;
+import com.nutrivda.app.viewmodel.CompartidoViewModel;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -87,10 +91,22 @@ public class FragmentCalendario extends Fragment {
                 fechaSeleccionadaCalendario = sdf.format(Calendar.getInstance().getTime());
             }
 
-            Intent intent = new Intent(requireContext(), ActividadComida.class);
-            intent.putExtra("fechaSeleccionada", fechaSeleccionadaCalendario);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            CompartidoViewModel viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
+
+            // Enviar la fecha seleccionada
+            viewModel.setFechaSeleccionadaString(fechaSeleccionadaCalendario);
+            viewModel.setUserId(userId);
+
+            FragmentComida fragmentComida = new FragmentComida();
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragmentComida)
+                    .addToBackStack(null)
+                    .commit();
+
+            // Actualizar visualmente el item de menú inferior
+            ((BaseActivity) requireActivity()).setSelectedNavItem(R.id.nav_dia);
         });
 
         // Manejo del calendario cuando selecciono un día
@@ -210,11 +226,20 @@ public class FragmentCalendario extends Fragment {
                 .create();
 
         btnEditar.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), ActividadComida.class);
-            intent.putExtra("fechaSeleccionada", fecha);
-            intent.putExtra("isEditar", true);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            CompartidoViewModel viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
+
+            // Enviar la fecha seleccionada
+            viewModel.setFechaSeleccionadaString(fechaSeleccionadaCalendario);
+            viewModel.setUserId(userId);
+
+            FragmentComida fragmentComida = new FragmentComida();
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragmentComida)
+                    .addToBackStack(null)
+                    .commit();
+
             dialog.dismiss();
         });
 
