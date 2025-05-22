@@ -1,6 +1,7 @@
 package com.nutrivda.app.test;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +44,7 @@ public class TestProfesionalActivity extends AppCompatActivity {
     }
 
     // Esta función procesa las respuestas y calcula el nivel de riesgo profesional
+    // Esta función procesa las respuestas y calcula el nivel de riesgo profesional
     private void evaluarProfesional() {
         int jornada = obtenerValorDesdeRadioGroup(rgJornada);
         int impacto = obtenerValorDesdeRadioGroup(rgImpactoAlimentacion);
@@ -50,6 +52,12 @@ public class TestProfesionalActivity extends AppCompatActivity {
 
         int totalProfesional = jornada + impacto + desorganizacion;
         String resultado = clasificarRiesgo(totalProfesional);
+
+        // Marco que ya completó los tests para que no vuelvan a aparecer automáticamente
+        SharedPreferences prefs = getSharedPreferences("NutriVidaPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("yaCompletoTest", true);
+        editor.apply();
 
         // Paso los tres resultados acumulados a la pantalla de resultados finales
         Intent intent = new Intent(TestProfesionalActivity.this, ResultadoActivity.class);
@@ -59,6 +67,7 @@ public class TestProfesionalActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
     // Esta función traduce cada selección de un RadioGroup a un valor de riesgo: 0, 1 o 2
     private int obtenerValorDesdeRadioGroup(RadioGroup grupo) {

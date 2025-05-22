@@ -1,5 +1,7 @@
 package com.nutrivda.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import com.nutrivda.app.FragmentDia;
 import com.nutrivda.app.FragmentPerfil;
 import com.nutrivda.app.FragmentCalendario;
 import com.nutrivda.app.R;
+import com.nutrivda.app.test.TestEmocionalActivity;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -20,14 +23,24 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences prefs = getSharedPreferences("NutriVidaPrefs", MODE_PRIVATE);
+        boolean yaCompletoTest = prefs.getBoolean("yaCompletoTest", false);
+
+        if (!yaCompletoTest) {
+            // Redirigir a los tests si no los hizo
+            startActivity(new Intent(this, TestEmocionalActivity.class));
+            finish();
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base); // Enlazo con el layout que hicimos antes
 
         // Enlazo el BottomNavigationView con su ID del layout
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Cargo el fragment por defecto (puedes cambiarlo si quieres empezar con otro)
-        loadFragment(new FragmentCalendario());
+        // Cargo el fragment por defecto
+        loadFragment(new FragmentPerfil());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
