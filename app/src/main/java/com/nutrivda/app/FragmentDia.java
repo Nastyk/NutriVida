@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
+import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.StringUtil;
 import com.nutrivda.app.viewmodel.CompartidoViewModel;
@@ -47,7 +49,6 @@ public class FragmentDia extends Fragment {
     private TextView tvFechaComida, tvTotalKcal;
     private TextView tvDesayunoSeleccionado, tvComidaSeleccionada, tvCenaSeleccionada;
     private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena; // Campos de calorías
-    private CheckBox cbDesayuno, cbComida, cbCena;
     private Button btnGuardarComida, btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
     private String fechaDeComida;
     private double totalKcal = 0;
@@ -58,6 +59,7 @@ public class FragmentDia extends Fragment {
     private CompartidoViewModel viewModel;
     private ActivityResultLauncher<Intent> aniadirComidaLauncher;
     private Calendar currentDate;
+    private FragmentDiaBinding binding;
 
     public FragmentDia() {}
 
@@ -76,7 +78,7 @@ public class FragmentDia extends Fragment {
                             int caloriasComidaSeleccionada = data.getIntExtra("calorias", 0);
                             String tipoComida = data.getStringExtra("tipoComida");
 
-                            tratarRespuestaDeActividad(comidaSeleccionada, tipoComida, caloriasComidaSeleccionada);
+                            añadirComida(tipoComida, comidaSeleccionada, caloriasComidaSeleccionada);
                         }
                     }
                 });
@@ -84,7 +86,8 @@ public class FragmentDia extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dia, container, false);
+        binding = FragmentDiaBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -111,10 +114,6 @@ public class FragmentDia extends Fragment {
         btnBorrarDesayuno = view.findViewById(R.id.btnBorrarDesayuno);
         btnBorrarComida = view.findViewById(R.id.btnBorrarComida);
         btnBorrarCena = view.findViewById(R.id.btnBorrarCena);
-
-        cbDesayuno = view.findViewById(R.id.cbDesayuno);
-        cbComida = view.findViewById(R.id.cbComida);
-        cbCena = view.findViewById(R.id.cbCena);
 
         btnGuardarComida = view.findViewById(R.id.btnGuardarComida);
 
@@ -166,12 +165,58 @@ public class FragmentDia extends Fragment {
         btnAnadirComida.setOnClickListener(v -> abrirAniadirComida("Comida"));
         btnAnadirCena.setOnClickListener(v -> abrirAniadirComida("Cena"));
 
-        configurarBotonBorrar(btnBorrarDesayuno, tvDesayunoSeleccionado, tvCaloriasDesayuno, btnAnadirDesayuno, cbDesayuno, "Desayuno");
-        configurarBotonBorrar(btnBorrarComida, tvComidaSeleccionada, tvCaloriasComida, btnAnadirComida, cbComida, "Comida");
-        configurarBotonBorrar(btnBorrarCena, tvCenaSeleccionada, tvCaloriasCena, btnAnadirCena, cbCena, "Cena");
+        configurarBotonBorrar(btnBorrarDesayuno, tvDesayunoSeleccionado, tvCaloriasDesayuno, btnAnadirDesayuno, "Desayuno");
+        configurarBotonBorrar(btnBorrarComida, tvComidaSeleccionada, tvCaloriasComida, btnAnadirComida, "Comida");
+        configurarBotonBorrar(btnBorrarCena, tvCenaSeleccionada, tvCaloriasCena, btnAnadirCena, "Cena");
 
         // Guardar selección de comidas
         btnGuardarComida.setOnClickListener(v -> guardarComidas());
+    }
+
+    private void añadirComida(String tipoComida, String nombre, int kcal) {
+        if (binding == null || getContext() == null) return;
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View alimentoView = null;
+
+        if (tipoComida.equals("Desayuno")) {
+            alimentoView = inflater.inflate(R.layout.item_alimento, binding.layoutAlimentosDesayuno, false);
+        } else if (tipoComida.equals("Comida")) {
+            alimentoView = inflater.inflate(R.layout.item_alimento, binding.layoutAlimentosComida, false);
+        } else if (tipoComida.equals("Cena")) {
+            alimentoView = inflater.inflate(R.layout.item_alimento, binding.layoutAlimentosCena, false);
+        }
+
+        TextView tvNombre = alimentoView.findViewById(R.id.tvNombreAlimento);
+        TextView tvKcal = alimentoView.findViewById(R.id.tvKcalAlimento);
+
+        tvNombre.setText(nombre);
+        tvKcal.setText(kcal + " kcal");
+
+        alimentoView.setOnLongClickListener(view -> {
+            PopupMenu popup = new PopupMenu(getContext(), view);
+            popup.getMenu().add("Eliminar");
+            popup.setOnMenuItemClickListener(item -> {
+                if ("Eliminar".contentEquals(item.getTitle())) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    if (parent != null) {
+                        parent.removeView(view);
+                    }
+                }
+                return false;
+            });
+            popup.show();
+            return true;
+        });
+
+
+        if (tipoComida.equals("Desayuno")) {
+            binding.layoutAlimentosDesayuno.addView(alimentoView);;
+        } else if (tipoComida.equals("Comida")) {
+            binding.layoutAlimentosComida.addView(alimentoView);
+        } else if (tipoComida.equals("Cena")) {
+            binding.layoutAlimentosCena.addView(alimentoView);
+        }
     }
 
     /**
@@ -188,9 +233,6 @@ public class FragmentDia extends Fragment {
     }
 
     private void guardarComidas() {
-        boolean desayunoHecho = cbDesayuno.isChecked();
-        boolean comidaHecha = cbComida.isChecked();
-        boolean cenaHecha = cbCena.isChecked();
 
         String desayunoSeleccionado = StringUtil.isCadenaVacia(tvDesayunoSeleccionado.getText().toString()) ? null : tvDesayunoSeleccionado.getText().toString();
         String comidaSeleccionada = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? null : tvComidaSeleccionada.getText().toString();
@@ -200,31 +242,28 @@ public class FragmentDia extends Fragment {
         caloriasComida = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? 0 : caloriasComida;
         caloriasCena = StringUtil.isCadenaVacia(tvCenaSeleccionada.getText().toString()) ? 0 : caloriasCena;
 
-        boolean diaIncompleto = !desayunoHecho || !comidaHecha || !cenaHecha;
+        boolean diaIncompleto = false;
 
         if (diaIncompleto) {
             new AlertDialog.Builder(getActivity())
                     .setTitle("⚠️ Día Incompleto")
                     .setMessage("Has registrado comidas, pero el día no será marcado como completo en el calendario. ¿Quieres continuar?")
-                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, false, caloriasDesayuno, caloriasComida, caloriasCena))
+                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, false, caloriasDesayuno, caloriasComida, caloriasCena))
                     .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
                     .show();
             return;
         }
 
-        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, desayunoHecho, comidaHecha, cenaHecha, true, caloriasDesayuno, caloriasComida, caloriasCena);
+        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, true, caloriasDesayuno, caloriasComida, caloriasCena);
     }
 
-    private void guardarDatosComida(String desayuno, String comida, String cena, boolean swDesayuno, boolean swComida, boolean swCena, boolean marcarComoCompleto, int caloriasDesayuno, int caloriasComida, int caloriasCena) {
+    private void guardarDatosComida(String desayuno, String comida, String cena, boolean marcarComoCompleto, int caloriasDesayuno, int caloriasComida, int caloriasCena) {
         // Crear objeto JSON con los datos correctos para la tabla dias_completados
         Map<String, Object> comidaData = new HashMap<>();
         comidaData.put("completado", marcarComoCompleto);
         comidaData.put("desayuno", comprobarCampo(desayuno));
-        comidaData.put("sw_desayuno", swDesayuno);
         comidaData.put("comida", comprobarCampo(comida));
-        comidaData.put("sw_comida", swComida);
         comidaData.put("cena", comprobarCampo(cena));
-        comidaData.put("sw_cena", swCena);
         comidaData.put("caloria_desayuno", caloriasDesayuno);
         comidaData.put("caloria_comida", caloriasComida);
         comidaData.put("caloria_cena", caloriasCena);
@@ -292,29 +331,23 @@ public class FragmentDia extends Fragment {
 
                     String desayunoSeleciconado = dia.getDesayuno() != null ? dia.getDesayuno() : "Ninguno";
                     actualizarVistaComidaEnEdicion(tvDesayunoSeleccionado, btnBorrarDesayuno, tvCaloriasDesayuno, btnAnadirDesayuno, desayunoSeleciconado, dia.getCaloria_desayuno(), "Desayuno");
-                    cbDesayuno.setChecked(dia.isSwDesayuno());
 
                     String comidaSeleccionada = dia.getComida() != null ? dia.getComida() : "Ninguno";
                     actualizarVistaComidaEnEdicion(tvComidaSeleccionada, btnBorrarComida, tvCaloriasComida, btnAnadirComida, comidaSeleccionada, dia.getCaloria_comida(), "Comida");
-                    cbComida.setChecked(dia.isSwComida());
 
                     String cenaSeleccionada = dia.getCena() != null ? dia.getCena() : "Ninguno";
                     actualizarVistaComidaEnEdicion(tvCenaSeleccionada, btnBorrarCena, tvCaloriasCena, btnAnadirCena, cenaSeleccionada, dia.getCaloria_cena(), "Cena");
-                    cbCena.setChecked(dia.isSwCena());
 
                     actualizarTotalKcal();
                 } else {
                     String desayunoSeleciconado = "Ninguno";
                     actualizarVistaComidaEnEdicion(tvDesayunoSeleccionado, btnBorrarDesayuno, tvCaloriasDesayuno, btnAnadirDesayuno, desayunoSeleciconado, 0, "Desayuno");
-                    cbDesayuno.setChecked(false);
 
                     String comidaSeleccionada = "Ninguno";
                     actualizarVistaComidaEnEdicion(tvComidaSeleccionada, btnBorrarComida, tvCaloriasComida, btnAnadirComida, comidaSeleccionada, 0, "Comida");
-                    cbComida.setChecked(false);
 
                     String cenaSeleccionada = "Ninguno";
                     actualizarVistaComidaEnEdicion(tvCenaSeleccionada, btnBorrarCena, tvCaloriasCena, btnAnadirCena, cenaSeleccionada, 0, "Cena");
-                    cbCena.setChecked(false);
 
                     actualizarTotalKcal();
                 }
@@ -340,7 +373,7 @@ public class FragmentDia extends Fragment {
      * Actualiza la vista de las comidas conforme los argumentos pasados en el modo de edicion
      */
     private void actualizarVistaComidaEnEdicion(TextView textViewComida, ImageButton botonBorrar, TextView textViewCalorias, Button botonAnadir, String comida, int calorias, String tipoComida) {
-        textViewComida.setText(comida);
+        /*textViewComida.setText(comida);
         textViewCalorias.setText("Calorías: " + calorias);
 
         switch (tipoComida) {
@@ -366,7 +399,7 @@ public class FragmentDia extends Fragment {
             // Mostrar botón de borrar y ocultar el de añadir
             botonBorrar.setVisibility(View.VISIBLE);
             botonAnadir.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     /**
@@ -375,17 +408,15 @@ public class FragmentDia extends Fragment {
      * @param textViewComida
      * @param textViewCalorias
      * @param botonAnadir
-     * @param checkBox
      * @param tipoComida
      *
      * Configuracion del boton borrar una vez añadida la comida
      */
-    private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, CheckBox checkBox, String tipoComida) {
-        botonBorrar.setOnClickListener(v -> {
+    private void configurarBotonBorrar(ImageButton botonBorrar, TextView textViewComida, TextView textViewCalorias, Button botonAnadir, String tipoComida) {
+        /*botonBorrar.setOnClickListener(v -> {
             // Borrar la comida seleccionada
             textViewComida.setText("Ninguno");
             textViewCalorias.setText("Calorías: 0");
-            checkBox.setChecked(false);
 
             switch (tipoComida) {
                 case "Desayuno":
@@ -407,7 +438,7 @@ public class FragmentDia extends Fragment {
 
             // Actualizar total de calorías
             actualizarTotalKcal();
-        });
+        });*/
     }
 
     private void tratarRespuestaDeActividad(String comidaSeleccionada, String tipoComida, int caloriasComidaSeleccionada) {
