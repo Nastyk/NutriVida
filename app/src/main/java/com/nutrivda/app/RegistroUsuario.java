@@ -117,6 +117,10 @@ public class RegistroUsuario extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<List<Usuario>> call, Throwable t) {
                     Toast.makeText(RegistroUsuario.this, "Fallo de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    Log.e("RegistroUsuario", "ERROR de conexión al registrar usuario", t);
+
+                    Log.e("RegistroUsuario", "Mensaje: " + t.getMessage());
                 }
             });
 

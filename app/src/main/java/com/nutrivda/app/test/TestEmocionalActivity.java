@@ -29,11 +29,33 @@ public class TestEmocionalActivity extends AppCompatActivity {
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
         // Ahora defino qué pasa cuando el usuario pulsa el botón "Siguiente"
-        btnSiguiente.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                evaluarEmocional(); // Llamo a mi función personalizada
-            }
+        btnSiguiente.setOnClickListener(v -> {
+        // Yo obtengo las respuestas seleccionadas de cada RadioGroup
+            String r1 = obtenerTextoSeleccionado(findViewById(R.id.rgMotivacion));
+            String r2 = obtenerTextoSeleccionado(findViewById(R.id.rgHumor));
+            String r3 = obtenerTextoSeleccionado(findViewById(R.id.rgSueno));
+
+            // Yo calculo la puntuación
+            int score = puntuacionEmocional(r1) + puntuacionEmocional(r2) + puntuacionEmocional(r3);
+
+            // Yo interpreto el resultado
+            String resultado;
+            if (score >= 5) resultado = "Saludable 🟢";
+            else if (score >= 3) resultado = "Inestable 🟡";
+            else resultado = "Riesgo emocional 🟥";
+
+            // Yo genero el resumen visual
+            String resumen = "• Motivación: " + r1 +
+                    "\n• Humor: " + r2 +
+                    "\n• Sueño: " + r3;
+
+            // Yo paso los datos a la pantalla de resultado
+            Intent intent = new Intent(TestEmocionalActivity.this, ResultadoActivity.class);
+            intent.putExtra("tipoTest", "emocional");
+            intent.putExtra("resultado", resultado);
+            intent.putExtra("resumen", resumen);
+            startActivity(intent);
+            finish();
         });
     }
 
@@ -78,5 +100,21 @@ public class TestEmocionalActivity extends AppCompatActivity {
         if (valor <= 1) return "Bajo";
         if (valor <= 3) return "Medio";
         return "Alto";
+    }
+    private String obtenerTextoSeleccionado(RadioGroup group) {
+        int id = group.getCheckedRadioButtonId();
+        if (id != -1) {
+            RadioButton rb = findViewById(id);
+            return rb.getText().toString();
+        }
+        return "";
+    }
+    private int puntuacionEmocional(String respuesta) {
+        switch (respuesta) {
+            case "Sí": return 2;
+            case "A veces": return 1;
+            case "No": return 0;
+            default: return 0;
+        }
     }
 }

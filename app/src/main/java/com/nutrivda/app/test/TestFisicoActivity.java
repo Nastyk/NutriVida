@@ -3,6 +3,7 @@ package com.nutrivda.app.test;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,11 +34,33 @@ public class TestFisicoActivity extends AppCompatActivity {
         riesgoEmocional = getIntent().getStringExtra("riesgoEmocional");
 
         // Configuro qué pasa cuando el usuario pulsa el botón "Siguiente"
-        btnEvaluarFisico.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                evaluarFisico(); // Llamo a mi función que calcula el nivel de riesgo físico
-            }
+        btnEvaluarFisico.setOnClickListener(v -> {
+            // Leer respuestas
+            String r1 = obtenerTextoSeleccionado(findViewById(R.id.rgEjercicio));
+            String r2 = obtenerTextoSeleccionado(findViewById(R.id.rgSedentarismo));
+            String r3 = obtenerTextoSeleccionado(findViewById(R.id.rgLimitacion));
+
+            // Calcular puntuación
+            int score = puntuacionFisica(r1) + puntuacionFisica(r2) + puntuacionFisica(r3);
+
+            // Determinar resultado
+            String resultado;
+                if (score >= 5) resultado = "Estable 🟢";
+                else if (score >= 3) resultado = "Inestable 🟡";
+                else resultado = "En riesgo 🟥";
+
+            // Crear resumen
+            String resumen = "• Ejercicio: " + r1 +
+                    "\n• Sedentarismo: " + r2 +
+                    "\n• Limitación física: " + r3;
+
+            // Enviar al ResultadoActivity
+            Intent intent = new Intent(TestFisicoActivity.this, ResultadoActivity.class);
+                intent.putExtra("tipoTest", "física");
+                intent.putExtra("resultado", resultado);
+                intent.putExtra("resumen", resumen);
+            startActivity(intent);
+            finish();
         });
     }
 
@@ -89,5 +112,29 @@ public class TestFisicoActivity extends AppCompatActivity {
         if (valor <= 3) return "Medio";
         return "Alto";
     }
+    private String obtenerTextoSeleccionado(RadioGroup group) {
+        int id = group.getCheckedRadioButtonId();
+        if (id != -1) {
+            RadioButton rb = findViewById(id);
+            return rb.getText().toString();
+        }
+        return "";
+    }
+
+    private int puntuacionFisica(String respuesta) {
+        switch (respuesta) {
+            case "6 o más días":
+            case "0-4h":
+            case "No":
+                return 2;
+            case "3-5 días":
+            case "5-8h":
+            case "Leve":
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
 }
 

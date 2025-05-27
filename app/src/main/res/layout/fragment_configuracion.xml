@@ -1,16 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="#F3F3F3">
+    android:padding="16dp">
 
-    <!-- Texto central que identifica esta sección -->
-    <TextView
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pantalla de Configuración"
-        android:textSize="20sp"
-        android:layout_gravity="center" />
+        android:gravity="center_horizontal">
 
-</FrameLayout>
+        <!-- Título -->
+        <TextView
+            android:text="Configuración"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Opción: Editar perfil -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:id="@+id/itemPerfil"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground"> <!-- BONUS efecto ripple -->
+
+                <ImageView
+                    android:contentDescription="Icono de editar perfil"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_perfilusuario"
+                    app:tint="@color/verde" />
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:text="Editar perfil"
+                    android:textSize="16sp"
+
+                    android:textColor="#333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Opción: Exportar resultados -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:id="@+id/itemExportar"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:contentDescription="Icono de editar perfil"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_exportar"
+                    app:tint="@color/verde" />
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:text="Exportar resultados"
+                    android:textSize="16sp"
+                    android:textColor="#333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Opción: Ver historial de resultados -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:id="@+id/itemHistorial"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_historial"
+                    app:tint="@color/verde"
+                    android:contentDescription="Icono historial" />
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:text="Ver historial"
+                    android:textSize="16sp"
+                    android:textColor="#333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- Modo oscuro -->
+        <Switch
+            android:id="@+id/switchModoOscuro"
+            android:text="🌙 Modo Oscuro"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Notificaciones -->
+        <Switch
+            android:id="@+id/switchNotificaciones"
+            android:text="🔔 Notificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp" />
+
+
+        <!-- Opción: Cerrar sesión -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:id="@+id/itemLogout"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:contentDescription="Icono de editar perfil"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_salir"
+                    app:tint="#D32F2F" />
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:text="Cerrar sesión"
+                    android:textSize="16sp"
+                    android:textColor="#D32F2F"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

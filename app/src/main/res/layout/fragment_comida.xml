@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@drawable/fondomain"
     android:padding="16dp">
 
     <!-- Encabezado con fecha -->
@@ -129,6 +130,7 @@
                 android:background="@drawable/bg_boton_cuadrado"
                 android:text="Añadir Desayuno"
                 android:textColor="@android:color/white" />
+
             </LinearLayout>
 
             <!-- Comida -->
@@ -194,7 +196,7 @@
                         android:id="@+id/btnAnadirComida"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_boton_cuadrado"
+                        android:background="@drawable/bg_boton_selector"
                         android:text="Añadir Comida"
                         android:textColor="@android:color/white" />
                     </LinearLayout>
@@ -269,7 +271,7 @@
                                 android:layout_width="120dp"
                                 android:layout_height="wrap_content"
                                 android:text="Añadir Cena"
-                                android:background="@drawable/bg_boton_cuadrado"
+                                android:background="@drawable/bg_boton_selector"
                                 android:textColor="@android:color/white" />
                     </LinearLayout>
                    <!-- <CheckBox

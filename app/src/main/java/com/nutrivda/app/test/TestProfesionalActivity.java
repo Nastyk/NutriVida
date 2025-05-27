@@ -35,11 +35,28 @@ public class TestProfesionalActivity extends AppCompatActivity {
         riesgoFisico = getIntent().getStringExtra("riesgoFisico");
 
         // Configuro qué sucede al pulsar el botón "Siguiente"
-        btnEvaluarProfesional.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                evaluarProfesional(); // Llamo a mi función para procesar las respuestas
-            }
+        btnEvaluarProfesional.setOnClickListener(v -> {
+            String r1 = obtenerTextoSeleccionado(findViewById(R.id.rgJornada));
+            String r2 = obtenerTextoSeleccionado(findViewById(R.id.rgImpactoAlimentacion));
+            String r3 = obtenerTextoSeleccionado(findViewById(R.id.rgDesorganizacion));
+
+            int score = puntuacionProfesional(r1) + puntuacionProfesional(r2) + puntuacionProfesional(r3);
+
+            String resultado;
+            if (score >= 5) resultado = "Estable 🟢";
+            else if (score >= 3) resultado = "Inestable 🟡";
+            else resultado = "Riesgo 🟥";
+
+            String resumen = "• Jornada: " + r1 +
+                    "\n• Alimentación afectada: " + r2 +
+                    "\n• Rutina diaria: " + r3;
+
+            Intent intent = new Intent(TestProfesionalActivity.this, ResultadoActivity.class);
+            intent.putExtra("tipoTest", "profesional");
+            intent.putExtra("resultado", resultado);
+            intent.putExtra("resumen", resumen);
+            startActivity(intent);
+            finish();
         });
     }
 
@@ -87,6 +104,27 @@ public class TestProfesionalActivity extends AppCompatActivity {
         if (valor <= 1) return "Bajo";
         if (valor <= 3) return "Medio";
         return "Alto";
+    }
+    private int puntuacionProfesional(String respuesta) {
+        switch (respuesta) {
+            case "0-4h":
+            case "No":
+                return 2;
+            case "5-8h":
+            case "Un poco":
+            case "A veces":
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    private String obtenerTextoSeleccionado(RadioGroup group) {
+        int id = group.getCheckedRadioButtonId();
+        if (id != -1) {
+            RadioButton rb = findViewById(id);
+            return rb.getText().toString();
+        }
+        return "";
     }
 }
 

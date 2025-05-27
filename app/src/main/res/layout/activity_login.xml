@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/tvNombreUsuario"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:fontFamily="casual"
@@ -20,33 +20,33 @@
 
     <EditText
         android:id="@+id/etUsername"
-        android:layout_width="match_parent"
+        android:layout_width="335dp"
         android:layout_height="wrap_content"
         android:hint="Usuario" />
 
     <EditText
         android:id="@+id/etPassword"
-        android:layout_width="match_parent"
+        android:layout_width="335dp"
         android:layout_height="wrap_content"
         android:hint="Contraseña"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
+        android:layout_width="152dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/verde"
-        android:textColor="@android:color/white"
-        android:text="Iniciar Sesión" />
+        android:background="@drawable/bg_boton_selector"
+        android:text="Iniciar Sesión"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnRegistro"
-        android:layout_width="match_parent"
+        android:layout_width="153dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/azul"
-        android:textColor="@android:color/white"
-        android:text="Registrarse" />
+        android:background="@drawable/bg_boton_selector"
+        android:text="Registrarse"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

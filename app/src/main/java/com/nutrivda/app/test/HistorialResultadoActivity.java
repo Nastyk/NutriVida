@@ -1,39 +1,44 @@
 package com.nutrivda.app.test;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nutrivda.app.R;
+import com.nutrivda.app.test.ResultadoAdapter;
+import com.nutrivda.app.test.ResultadoTest;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class HistorialResultadoActivity extends AppCompatActivity {
-
-    // Declaro los TextView que mostrarán los resultados guardados
-    private TextView tvHistorialEmocional, tvHistorialFisico, tvHistorialProfesional, tvHistorialRango;
+    private RecyclerView recyclerHistorial;
+    private ResultadoAdapter adapter;
+    private ArrayList<ResultadoTest> listaResultados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_historial_resultado); // Enlazo con el layout que mostraré
+        setContentView(R.layout.activity_historial_resultado);
 
-        // Enlazo cada TextView con su ID desde el layout
-        tvHistorialEmocional = findViewById(R.id.tvHistorialEmocional);
-        tvHistorialFisico = findViewById(R.id.tvHistorialFisico);
-        tvHistorialProfesional = findViewById(R.id.tvHistorialProfesional);
-        tvHistorialRango = findViewById(R.id.tvHistorialRango);
+        recyclerHistorial = findViewById(R.id.recyclerHistorial);
+        recyclerHistorial.setLayoutManager(new LinearLayoutManager(this));
 
-        // Recupero los datos guardados desde SharedPreferences
-        SharedPreferences prefs = getSharedPreferences("NutriVidaPrefs", MODE_PRIVATE);
-        String emocional = prefs.getString("riesgoEmocional", "No disponible");
-        String fisico = prefs.getString("riesgoFisico", "No disponible");
-        String profesional = prefs.getString("riesgoProfesional", "No disponible");
-        String rango = prefs.getString("rangoCalorico", "No disponible");
+        cargarHistorial();
+    }
 
-        // Muestro los datos en los TextView
-        tvHistorialEmocional.setText("Riesgo emocional guardado: " + emocional);
-        tvHistorialFisico.setText("Riesgo físico guardado: " + fisico);
-        tvHistorialProfesional.setText("Riesgo profesional guardado: " + profesional);
-        tvHistorialRango.setText("Rango calórico guardado: " + rango);
+    private void cargarHistorial() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String json = prefs.getString("historial_resultados", "[]");
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<ResultadoTest>>(){}.getType();
+        listaResultados = gson.fromJson(json, type);
+
+        adapter = new ResultadoAdapter(listaResultados);
+        recyclerHistorial.setAdapter(adapter);
     }
 }

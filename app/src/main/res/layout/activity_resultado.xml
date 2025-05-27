@@ -1,73 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="24dp" android:background="#FFFFFF">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="24dp" android:background="#FFFFFF">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <!-- Título de la pantalla -->
+        <!-- Título del resultado -->
         <TextView
-            android:id="@+id/tvTituloResultado"
+            android:id="@+id/tvTipoTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resultados del Test"
-            android:textSize="24sp"
+            android:text="Evaluación: Emocional"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Resultado emocional -->
-        <TextView
-            android:id="@+id/tvResultadoEmocional"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Riesgo Emocional: ..."
-            android:textSize="18sp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Resultado físico -->
-        <TextView
-            android:id="@+id/tvResultadoFisico"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Riesgo Físico: ..."
-            android:textSize="18sp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Resultado profesional -->
-        <TextView
-            android:id="@+id/tvResultadoProfesional"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Riesgo Profesional: ..."
-            android:textSize="18sp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Advertencia o mensaje extra -->
-        <TextView
-            android:id="@+id/tvAdvertencia"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Advertencia: ..."
-            android:textSize="16sp"
-            android:textColor="#FF0000"
+            android:textColor="#333333"
+            android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
 
-        <!-- Rango calórico recomendado -->
+        <!-- Resultado general destacado -->
         <TextView
-            android:id="@+id/tvRangoCalorico"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rango calórico recomendado: ..."
-            android:textSize="16sp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Botón para reiniciar el test -->
-        <Button
-            android:id="@+id/btnReiniciar"
+            android:id="@+id/tvResultado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reiniciar test" />
+            android:text="Saludable 🟢"
+            android:textAlignment="center"
+            android:textColor="#4CAF50"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Resumen de respuestas -->
+        <TextView
+            android:id="@+id/tvResumen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Motivación: Sí\n• Humor: A veces\n• Sueño: No"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:padding="12dp"
+            android:background="#F5F5F5"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Botón de volver -->
+        <Button
+            android:id="@+id/btnVolverResultado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Volver al menú"
+            android:backgroundTint="@color/verde"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
     </LinearLayout>
+
 </ScrollView>
