@@ -1,66 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/fondomain">
+    android:background="@drawable/fondomain"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvTipoComida"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Añadir Comida"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="10dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_atras"
+            android:contentDescription="Volver" />
+
+        <TextView
+            android:id="@+id/tvTipoComida"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Desayuno"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginEnd="40dp" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/etBuscarComida"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Buscar comida..."
-        android:inputType="text"
-        android:padding="8dp"
-        android:background="@android:drawable/edit_text"
-        android:focusable="true"
-        android:focusableInTouchMode="true"/>
-
-    <Button
-        android:id="@+id/btnBuscar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Buscar"
-        android:backgroundTint="@color/verde"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="10dp"/>
-
-    <!-- Indicador de carga -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"/>
+        android:hint="Busca un alimento"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:padding="12dp"
+        android:inputType="text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResultados"
         android:layout_width="match_parent"
-        android:layout_height="461dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="10dp" />
-
-    <Button
-        android:id="@+id/btnConfirmarSeleccion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Añadir Comida"
-        android:backgroundTint="@color/orange"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

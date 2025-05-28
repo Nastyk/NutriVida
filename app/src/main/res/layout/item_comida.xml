@@ -1,24 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:background="@drawable/item_comida_selector"> <!-- Fondo dinámico -->
+    android:layout_marginBottom="8dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/tvNombre"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre de la comida"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:padding="12dp">
 
-    <TextView
-        android:id="@+id/tvCalorias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calorías"
-        android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"/>
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/btnAdd"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/tvNombreComida"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tortilla De Patata Con Chorizo"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#ff000000" />
+
+            <TextView
+                android:id="@+id/tvDetallesComida"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="538 cal, 20g prot, Hacendado, 300g"
+                android:textSize="14sp"
+                android:textColor="#ff000000"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnAdd"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/rounded_button_bg"
+            android:src="@drawable/ic_add"
+            android:contentDescription="Añadir"
+            app:tint="@android:color/black" />
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

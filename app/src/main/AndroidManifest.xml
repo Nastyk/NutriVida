@@ -15,6 +15,9 @@
         android:theme="@style/Theme.NutriVida"
         tools:targetApi="31">
         <activity
+            android:name=".DetalleComidaActivity"
+            android:exported="false" />
+        <activity
             android:name=".test.ResumenGraficoActivity"
             android:exported="false" />
         <activity
@@ -59,11 +62,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
-        <activity android:name=".test.TestEmocionalActivity"
-            android:exported="false"/>
-
-
+        <activity
+            android:name=".test.TestEmocionalActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
