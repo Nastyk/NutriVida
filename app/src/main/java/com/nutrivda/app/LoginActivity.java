@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.inicializacion.OnboardingActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private SupabaseApi supabaseApi;
-    private static final String PREFS_NAME = "NutriVidaPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,19 +96,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean onboardingCompletado = prefs.getBoolean("onboardingCompletado", false);
-
-// Si el onboarding aún no se ha completado, lanzo la actividad de onboarding
-        if (!onboardingCompletado) {
-            Intent intent = new Intent(LoginActivity.this, OnboardingActivity.class);
-            startActivity(intent);
-        } else {
-            // Si ya lo completó, sigo con el flujo normal
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        finish(); // cierro LoginActivity en ambos casos
-
+        Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -1,6 +1,26 @@
 package com.nutrivda.app.conf;
 
-// Este archivo lo uso para guardar configuraciones globales como claves API
+import android.content.Context;
+
+import java.io.IOException;
+import java.util.Properties;
+
 public class Config {
-    public static final String COHERE_API_KEY = "Bearer qcARWWgMriVfOsmOsDxazYFm7l9lhX27TBRxNM7f"; // ⬅️ usa tu clave real aquí
+    private static Properties properties = new Properties();
+
+    public static void loadProperties(Context context) {
+        try {
+            properties.load(context.getAssets().open("config.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getSupabaseUrl() {
+        return properties.getProperty("SUPABASE_URL", "https://default.supabase.co");
+    }
+
+    public static String getSupabaseKey() {
+        return properties.getProperty("SUPABASE_KEY", "default-key");
+    }
 }

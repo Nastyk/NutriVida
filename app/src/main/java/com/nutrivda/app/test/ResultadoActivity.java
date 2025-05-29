@@ -54,11 +54,6 @@ public class ResultadoActivity extends AppCompatActivity {
             startActivity(volver);
             finish();
         });
-
-        String respuestaIA = getIntent().getStringExtra("respuestaIA");
-        TextView tvResultado = findViewById(R.id.tvResultado);
-        tvResultado.setText(respuestaIA); // Puedes formatearlo si lo deseas
-
     }
     private void guardarEnHistorial(String tipo, String resultado, String resumen) {
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
