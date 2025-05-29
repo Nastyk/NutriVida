@@ -1,12 +1,17 @@
 package com.nutrivda.app;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,7 +25,9 @@ import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.data.SupabaseApi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,12 +37,14 @@ public class AniadirComidaActivity extends AppCompatActivity {
 
     private EditText etBuscarComida;
     private RecyclerView rvResultados;
+    private ImageButton btnAtras;
     private ProgressBar progressBar;
     private ComidaAdapter adapter;
     private List<Comida> listaComidas = new ArrayList<>();
     private List<Comida> todasLasComidas = new ArrayList<>();
     private SupabaseApi supabaseApi;
-    private String tipoComida;
+    private String tipoComida, fechaDeComida;
+    private int userId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +53,30 @@ public class AniadirComidaActivity extends AppCompatActivity {
 
         etBuscarComida = findViewById(R.id.etBuscarComida);
         rvResultados = findViewById(R.id.rvResultados);
+        btnAtras = findViewById(R.id.btnBack);
 
         rvResultados.setLayoutManager(new LinearLayoutManager(this));
 
         tipoComida = getIntent().getStringExtra("tipo_comida");
+        fechaDeComida = getIntent().getStringExtra("fecha_comida");
+        userId = getIntent().getIntExtra("user_id",0) > 0 ? getIntent().getIntExtra("user_id", 0) : getUserId();
 
-        adapter = new ComidaAdapter(listaComidas, comida -> {
-            // Acción opcional al pulsar el botón "+"
+        adapter = new ComidaAdapter(listaComidas, new ComidaAdapter.OnComidaClickListener() {
+            @Override
+            public void onComidaClick(Comida comida) {}
+
+            @Override
+            public void onGuardarClick(Comida comida) {
+                agregarComidaAlDia(tipoComida.toLowerCase(), (long) comida.getId());
+            }
         });
 
         rvResultados.setAdapter(adapter);
+
+        btnAtras.setOnClickListener(v -> {
+            setResult(AniadirComidaActivity.RESULT_CANCELED);
+            finish();
+        });
 
         // Confirmar selección
         /*btnConfirmarSeleccion.setOnClickListener(v -> {
@@ -114,6 +137,58 @@ public class AniadirComidaActivity extends AppCompatActivity {
         });
     }
 
+    private void agregarComidaAlDia(String tipo, Long nuevoId) {
+        supabaseApi.obtenerDiaComida("eq." + userId, "eq." + fechaDeComida, tipo).enqueue(new Callback<List<Map<String, Object>>>() {
+            @Override
+            public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    Map<String, Object> registro = response.body().get(0);
+                    List<Double> idListDouble = (List<Double>) registro.getOrDefault(tipo, new ArrayList<>());
+                    List<Long> idList = new ArrayList<>();
+                    for (Double d : idListDouble) idList.add(d.longValue());
+                    idList.add(nuevoId);
+                    Map<String, Object> body = new HashMap<>();
+                    body.put(tipo, idList);
+                    supabaseApi.actualizarDiaComida("eq." + userId, "eq." + fechaDeComida, body).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            Toast.makeText(AniadirComidaActivity.this, "✅ Comida añadida", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(AniadirComidaActivity.this, "❌ Error al actualizar comida", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Map<String, Object> data = new HashMap<>();
+                    List<Long> ids = new ArrayList<>();
+                    ids.add(nuevoId);
+                    data.put("id_usuario_fk", userId);
+                    data.put("fecha", fechaDeComida);
+                    data.put("completado", false);
+                    data.put(tipo, ids);
+                    supabaseApi.insertarComida(data).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            Toast.makeText(AniadirComidaActivity.this, "✅ Comida guardada", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(AniadirComidaActivity.this, "❌ Error al guardar comida", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
+                Toast.makeText(AniadirComidaActivity.this, "❌ Error de red", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void filtrarComidas(String query) {
         List<Comida> filtradas = new ArrayList<>();
         for (Comida comida : todasLasComidas) {
@@ -124,5 +199,10 @@ public class AniadirComidaActivity extends AppCompatActivity {
         listaComidas.clear();
         listaComidas.addAll(filtradas);
         adapter.notifyDataSetChanged();
+    }
+
+    private int getUserId() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        return prefs.getInt("userId", -1);  // Retorna -1 si no encuentra el userId
     }
 }

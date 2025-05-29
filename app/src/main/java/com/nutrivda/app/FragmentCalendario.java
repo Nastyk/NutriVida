@@ -166,7 +166,7 @@ public class FragmentCalendario extends Fragment {
     private void verificarDiaCompletado(String fechaSeleccionada) {
         SupabaseApi supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
-        supabaseApi.obtenerDiaCompletado("eq." + fechaSeleccionada, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
+        /*supabaseApi.obtenerDiaCompletado("eq." + fechaSeleccionada, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
             @Override
             public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -191,7 +191,7 @@ public class FragmentCalendario extends Fragment {
             public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
                 Toast.makeText(requireContext(), "Error al conectar con Supabase: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     private void mostrarDialogoResumen(String fecha, String desayuno, String comida, String cena,

@@ -383,7 +383,7 @@ public class ActividadComida extends AppCompatActivity {
     }
 
     private void cargarDatosDelDia() {
-        supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
+        /*supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
             @Override
             public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -410,7 +410,7 @@ public class ActividadComida extends AppCompatActivity {
             public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
                 Toast.makeText(ActividadComida.this, "Error al conectar con Supabase: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
 

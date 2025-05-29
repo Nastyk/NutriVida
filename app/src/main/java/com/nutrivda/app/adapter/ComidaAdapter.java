@@ -21,6 +21,7 @@ public class ComidaAdapter extends RecyclerView.Adapter<ComidaAdapter.ViewHolder
 
     public interface OnComidaClickListener {
         void onComidaClick(Comida comida);
+        void onGuardarClick(Comida comida);
     }
 
     private final List<Comida> listaComidas;
@@ -59,6 +60,7 @@ public class ComidaAdapter extends RecyclerView.Adapter<ComidaAdapter.ViewHolder
             selectedComida = comida;
             notifyDataSetChanged();
             listener.onComidaClick(comida);
+            listener.onGuardarClick(comida);
         });
 
         // Lanzar nueva actividad al pulsar CardView

@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToMainActivity() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean onboardingCompletado = prefs.getBoolean("onboardingCompletado", false);
+        boolean onboardingCompletado = prefs.getBoolean("onboardingCompletado", true);
 
 // Si el onboarding aún no se ha completado, lanzo la actividad de onboarding
         if (!onboardingCompletado) {
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             // Si ya lo completó, sigo con el flujo normal
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
             startActivity(intent);
         }
         finish(); // cierro LoginActivity en ambos casos

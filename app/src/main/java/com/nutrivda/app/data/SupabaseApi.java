@@ -32,6 +32,16 @@ public interface SupabaseApi {
     @GET("rest/v1/comidas?select=*") // Obtiene todos los registros sin filtrar
     Call<List<Comida>> obtenerTodasLasComidas();
 
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60"
+    })
+    @GET("rest/v1/comidas")
+    Call<List<Comida>> obtenerComidaPorId(
+            @Query("id") String idFilter,  // debe ser "eq.123" por ejemplo
+            @Query("select") String selectFields // usar "*" o campos específicos
+    );
+
     /**
      *
      * @param comidaData
@@ -200,4 +210,31 @@ public interface SupabaseApi {
     })
     @POST("rest/v1/datos_usuario")
     Call<ResponseBody> registrarDatosUsuario(@Body DatosUsuario datosUsuario);
+
+
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @GET("rest/v1/dias_completados")
+    Call<List<Map<String, Object>>> obtenerDiaComida(
+            @Query("id_usuario_fk") String userId,
+            @Query("fecha") String fecha,
+            @Query("select") String campos
+    );
+
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @PATCH("rest/v1/dias_completados")
+    Call<Void> actualizarDiaComida(
+            @Query("id_usuario_fk") String userId,
+            @Query("fecha") String fecha,
+            @Body Map<String, Object> body
+    );
 }

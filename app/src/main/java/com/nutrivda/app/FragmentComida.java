@@ -277,7 +277,7 @@ public class FragmentComida extends Fragment {
     }
 
     private void cargarDatosDelDia() {
-        supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
+        /*supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
             @Override
             public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -312,7 +312,7 @@ public class FragmentComida extends Fragment {
             public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
                 Toast.makeText(requireContext(), "Error al conectar con Supabase: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     /**
