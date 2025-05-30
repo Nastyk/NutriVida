@@ -19,4 +19,6 @@
         android:layout_height="wrap_content"
         android:text="123 kcal"
         android:textSize="16sp" />
+
+
 </LinearLayout>

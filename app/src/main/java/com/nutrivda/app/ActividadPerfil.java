@@ -194,6 +194,8 @@ public class ActividadPerfil extends AppCompatActivity {
         String alturaStr = etAltura.getText().toString().trim();
         String edadStr = etEdad.getText().toString().trim();
         String actividad = "ACTIVO";
+        //TODO: esto hay que calcularlo con un algoritmo
+        double caloriasObjetivo = 2000;
 
         if (nombre.isEmpty() || pesoStr.isEmpty() || alturaStr.isEmpty() || edadStr.isEmpty() || actividad.isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
@@ -205,7 +207,7 @@ public class ActividadPerfil extends AppCompatActivity {
         int edad = Integer.parseInt(edadStr);
 
         // Actualizar tabla datos_usuario
-        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad);
+        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad, caloriasObjetivo);
         supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(Call<Response<Void>> call, Response<Response<Void>> response) {

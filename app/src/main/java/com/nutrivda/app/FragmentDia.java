@@ -50,13 +50,12 @@ public class FragmentDia extends Fragment {
 
     private static final int REQUEST_CODE = 1;
     private TextView tvFechaComida, tvTotalKcal;
-    private TextView tvDesayunoSeleccionado, tvComidaSeleccionada, tvCenaSeleccionada;
-    private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena; // Campos de calorías
-    private Button btnGuardarComida, btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
+    private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena;
+    private Button btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
     private String fechaDeComida;
     private double totalKcal = 0;
     private int userId = 0, caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
-    private ImageButton btnBorrarDesayuno, btnBorrarComida, btnBorrarCena, btnIrAtras, btnIrAdelante;
+    private ImageButton btnIrAtras, btnIrAdelante;
     private List<Long> desayunoList, comidaList, cenaList;
     private boolean isEditar = false;
     private SupabaseApi supabaseApi;
@@ -95,12 +94,9 @@ public class FragmentDia extends Fragment {
 
         // Yo conecto todos los elementos visuales
         tvFechaComida = view.findViewById(R.id.tvFechaComida);
-        tvDesayunoSeleccionado = view.findViewById(R.id.tvDesayunoSeleccionado);
-        tvComidaSeleccionada = view.findViewById(R.id.tvComidaSeleccionada);
-        tvCenaSeleccionada = view.findViewById(R.id.tvCenaSeleccionada);
-        tvCaloriasDesayuno = view.findViewById(R.id.tvCaloriasDesayuno);
-        tvCaloriasComida = view.findViewById(R.id.tvCaloriasComida);
-        tvCaloriasCena = view.findViewById(R.id.tvCaloriasCena);
+        tvCaloriasDesayuno = view.findViewById(R.id.tvKcalDesayunoTotal);
+        tvCaloriasComida = view.findViewById(R.id.tvKcalComidaTotal);
+        tvCaloriasCena = view.findViewById(R.id.tvKcalCenaTotal);
         tvTotalKcal = view.findViewById(R.id.tvTotalKcal);
 
         btnAnadirDesayuno = view.findViewById(R.id.btnAnadirDesayuno);
@@ -109,11 +105,6 @@ public class FragmentDia extends Fragment {
 
         btnIrAtras = view.findViewById(R.id.btnIrAtras);
         btnIrAdelante = view.findViewById(R.id.btnIrAdelante);
-        btnBorrarDesayuno = view.findViewById(R.id.btnBorrarDesayuno);
-        btnBorrarComida = view.findViewById(R.id.btnBorrarComida);
-        btnBorrarCena = view.findViewById(R.id.btnBorrarCena);
-
-        btnGuardarComida = view.findViewById(R.id.btnGuardarComida);
 
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
@@ -134,9 +125,6 @@ public class FragmentDia extends Fragment {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             fechaDeComida = sdf.format(currentDate.getTime());
         }
-
-        // Yo configuro la fecha actual por defectos
-        //tvFechaComida.setText("Comidas del día: " +  viewModel.getFechaSeleccionadaString().getValue());
 
         cargarDatosDelDia();
         updateDateText("");
@@ -265,95 +253,6 @@ public class FragmentDia extends Fragment {
         aniadirComidaLauncher.launch(intent);
     }
 
-    private void guardarComidas() {
-
-        String desayunoSeleccionado = StringUtil.isCadenaVacia(tvDesayunoSeleccionado.getText().toString()) ? null : tvDesayunoSeleccionado.getText().toString();
-        String comidaSeleccionada = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? null : tvComidaSeleccionada.getText().toString();
-        String cenaSeleccionada = StringUtil.isCadenaVacia(tvCenaSeleccionada.getText().toString()) ? null : tvCenaSeleccionada.getText().toString();
-
-        caloriasDesayuno = StringUtil.isCadenaVacia(tvDesayunoSeleccionado.getText().toString()) ? 0 : caloriasDesayuno;
-        caloriasComida = StringUtil.isCadenaVacia(tvComidaSeleccionada.getText().toString()) ? 0 : caloriasComida;
-        caloriasCena = StringUtil.isCadenaVacia(tvCenaSeleccionada.getText().toString()) ? 0 : caloriasCena;
-
-        boolean diaIncompleto = false;
-
-        if (diaIncompleto) {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("⚠️ Día Incompleto")
-                    .setMessage("Has registrado comidas, pero el día no será marcado como completo en el calendario. ¿Quieres continuar?")
-                    .setPositiveButton("Guardar", (dialog, which) -> guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, false, caloriasDesayuno, caloriasComida, caloriasCena))
-                    .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-                    .show();
-            return;
-        }
-
-        guardarDatosComida(desayunoSeleccionado, comidaSeleccionada, cenaSeleccionada, true, caloriasDesayuno, caloriasComida, caloriasCena);
-    }
-
-    private void guardarDatosComida(String desayuno, String comida, String cena, boolean marcarComoCompleto, int caloriasDesayuno, int caloriasComida, int caloriasCena) {
-        // Crear objeto JSON con los datos correctos para la tabla dias_completados
-        Map<String, Object> comidaData = new HashMap<>();
-        comidaData.put("completado", marcarComoCompleto);
-        comidaData.put("desayuno", comprobarCampo(desayuno));
-        comidaData.put("comida", comprobarCampo(comida));
-        comidaData.put("cena", comprobarCampo(cena));
-        comidaData.put("caloria_desayuno", caloriasDesayuno);
-        comidaData.put("caloria_comida", caloriasComida);
-        comidaData.put("caloria_cena", caloriasCena);
-
-        if (isEditar) {
-            // Si está en modo edición, hacemos un PATCH en lugar de POST
-            supabaseApi.actualizarComida("eq." + userId, "eq." + fechaDeComida, comidaData).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(requireContext(), "✅ Comida actualizada correctamente en Supabase", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(requireContext(), "❌ Error al actualizar en Supabase: " + response.message(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Toast.makeText(requireContext(), "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("NutriVida","ERROR en actualizarComida -> " + t.getMessage());
-                }
-            });
-        } else {
-            comidaData.put("id_usuario_fk", userId);
-            comidaData.put("fecha", fechaDeComida);
-            supabaseApi.insertarComida(comidaData).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(requireContext(), "✅ Comida guardada correctamente en Supabase", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(requireContext(), "❌ Error al guardar en Supabase", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Toast.makeText(requireContext(), "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("NutriVida","ERROR en actualizarComida -> " + t.getMessage());
-                }
-            });
-        }
-
-    }
-
-    private String comprobarCampo(String campo) {
-        return campo == null ? "Sin datos" : campo;
-    }
-
-    private int getCalorias(TextView tv) {
-        try {
-            return Integer.parseInt(tv.getText().toString().replaceAll("[^0-9]", ""));
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     private void cargarDatosDelDia() {
         limpiarComidasDelDia();
 
@@ -431,6 +330,10 @@ public class FragmentDia extends Fragment {
     }
 
     private void actualizarTotalKcal() {
+        tvCaloriasDesayuno.setText(caloriasDesayuno + "kcal");
+        tvCaloriasComida.setText(caloriasComida + "kcal");
+        tvCaloriasCena.setText(caloriasCena + "kcal");
+
         totalKcal = caloriasDesayuno + caloriasComida + caloriasCena;
         tvTotalKcal.setText("Total kcal: " + totalKcal);
     }

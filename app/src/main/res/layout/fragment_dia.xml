@@ -102,18 +102,41 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
-                    <!-- Cabecera fija -->
-                    <TextView
-                        android:id="@+id/tvDesayuno"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Desayuno"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:background="@color/gray"
+                        android:padding="12dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="1">
+
+                        <!-- Cabecera fija -->
+                        <TextView
+                            android:id="@+id/tvDesayuno"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"
+                            android:text="Desayuno"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvKcalDesayunoTotal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            android:text="0 kcal"
+                            android:gravity="end"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+
+
+
 
                     <!-- Lista dinámica de alimentos -->
                     <LinearLayout
@@ -145,17 +168,38 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvComida"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Comida"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:background="@color/gray"
+                        android:padding="12dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="1">
+
+                        <!-- Cabecera fija -->
+                        <TextView
+                            android:id="@+id/tvComida"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"
+                            android:text="Comida"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvKcalComidaTotal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            android:text="0 kcal"
+                            android:gravity="end"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/layoutAlimentosComida"
@@ -185,17 +229,38 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvCena"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cena"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:background="@color/gray"
+                        android:padding="12dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="1">
+
+                        <!-- Cabecera fija -->
+                        <TextView
+                            android:id="@+id/tvCena"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"
+                            android:text="Cena"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvKcalCenaTotal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            android:text="0 kcal"
+                            android:gravity="end"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/layoutAlimentosCena"

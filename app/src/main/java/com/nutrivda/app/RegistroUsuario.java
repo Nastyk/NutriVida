@@ -66,6 +66,7 @@ public class RegistroUsuario extends AppCompatActivity {
             double peso = Double.parseDouble(pesoStr);
             double altura = Double.parseDouble(alturaStr);
             int edad = Integer.parseInt(edadStr);
+            double caloriasObjetivo = 2000;
 
             // Construyo el objeto DatosUsuario
             DatosUsuario datos = new DatosUsuario(
@@ -75,7 +76,8 @@ public class RegistroUsuario extends AppCompatActivity {
                     nombre,
                     apellido1,
                     apellido2,
-                    usuario
+                    usuario,
+                    caloriasObjetivo
             );
 
             // Construyo el objeto Usuario con los datos personales

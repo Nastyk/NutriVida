@@ -40,7 +40,6 @@ public class AniadirComidaActivity extends AppCompatActivity {
     private TextView tvTipoComida;
     private RecyclerView rvResultados;
     private ImageButton btnAtras;
-    private ProgressBar progressBar;
     private ComidaAdapter adapter;
     private List<Comida> listaComidas = new ArrayList<>();
     private List<Comida> todasLasComidas = new ArrayList<>();
@@ -81,22 +80,6 @@ public class AniadirComidaActivity extends AppCompatActivity {
             setResult(AniadirComidaActivity.RESULT_CANCELED);
             finish();
         });
-
-        // Confirmar selección
-        /*btnConfirmarSeleccion.setOnClickListener(v -> {
-            Comida comidaSeleccionada = adapter.getSelectedComida();
-            if (comidaSeleccionada != null) {
-                Intent intent = new Intent();
-                intent.putExtra("recetaSeleccionada", comidaSeleccionada.getDescComida());
-                intent.putExtra("calorias", comidaSeleccionada.getCalorias());
-                intent.putExtra("tipoComida", tipoComida);
-
-                setResult(RESULT_OK, intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Selecciona una comida antes de continuar", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
