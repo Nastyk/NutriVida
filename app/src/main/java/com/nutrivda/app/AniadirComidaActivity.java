@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,7 @@ import retrofit2.Response;
 public class AniadirComidaActivity extends AppCompatActivity {
 
     private EditText etBuscarComida;
+    private TextView tvTipoComida;
     private RecyclerView rvResultados;
     private ImageButton btnAtras;
     private ProgressBar progressBar;
@@ -51,6 +53,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aniadir_comida);
 
+        tvTipoComida = findViewById(R.id.tvTipoComida);
         etBuscarComida = findViewById(R.id.etBuscarComida);
         rvResultados = findViewById(R.id.rvResultados);
         btnAtras = findViewById(R.id.btnBack);
@@ -58,6 +61,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
         rvResultados.setLayoutManager(new LinearLayoutManager(this));
 
         tipoComida = getIntent().getStringExtra("tipo_comida");
+        tvTipoComida.setText(tipoComida);
         fechaDeComida = getIntent().getStringExtra("fecha_comida");
         userId = getIntent().getIntExtra("user_id",0) > 0 ? getIntent().getIntExtra("user_id", 0) : getUserId();
 
@@ -143,9 +147,16 @@ public class AniadirComidaActivity extends AppCompatActivity {
             public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     Map<String, Object> registro = response.body().get(0);
-                    List<Double> idListDouble = (List<Double>) registro.getOrDefault(tipo, new ArrayList<>());
+                    Object listaBruta = registro.get(tipo);
+
                     List<Long> idList = new ArrayList<>();
-                    for (Double d : idListDouble) idList.add(d.longValue());
+                    if (listaBruta instanceof List<?>) {
+                        for (Object item : (List<?>) listaBruta) {
+                            if (item instanceof Number) {
+                                idList.add(((Number) item).longValue());
+                            }
+                        }
+                    }
                     idList.add(nuevoId);
                     Map<String, Object> body = new HashMap<>();
                     body.put(tipo, idList);

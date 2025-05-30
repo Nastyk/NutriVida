@@ -237,4 +237,17 @@ public interface SupabaseApi {
             @Query("fecha") String fecha,
             @Body Map<String, Object> body
     );
+
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @PATCH("rest/v1/dias_completados")
+    Call<Void> eliminarComidaDeDia(
+            @Query("id_usuario_fk") String userId,
+            @Query("fecha") String fecha,
+            @Body Map<String, Object> updateBody
+    );
 }

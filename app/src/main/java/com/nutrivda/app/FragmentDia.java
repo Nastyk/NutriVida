@@ -29,10 +29,12 @@ import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.StringUtil;
+import com.nutrivda.app.utils.Utilidades;
 import com.nutrivda.app.viewmodel.CompartidoViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +57,7 @@ public class FragmentDia extends Fragment {
     private double totalKcal = 0;
     private int userId = 0, caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
     private ImageButton btnBorrarDesayuno, btnBorrarComida, btnBorrarCena, btnIrAtras, btnIrAdelante;
+    private List<Long> desayunoList, comidaList, cenaList;
     private boolean isEditar = false;
     private SupabaseApi supabaseApi;
     private CompartidoViewModel viewModel;
@@ -159,12 +162,9 @@ public class FragmentDia extends Fragment {
         btnAnadirDesayuno.setOnClickListener(v -> abrirAniadirComida("Desayuno", fechaDeComida));
         btnAnadirComida.setOnClickListener(v -> abrirAniadirComida("Comida", fechaDeComida));
         btnAnadirCena.setOnClickListener(v -> abrirAniadirComida("Cena", fechaDeComida));
-
-        // Guardar selección de comidas
-        btnGuardarComida.setOnClickListener(v -> guardarComidas());
     }
 
-    private void añadirComida(String tipoComida, String nombre, int kcal) {
+    private void añadirComida(String tipoComida, String nombre, int kcal, long idComida) {
         if (binding == null || getContext() == null) return;
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -183,6 +183,8 @@ public class FragmentDia extends Fragment {
 
         TextView tvNombre = alimentoView.findViewById(R.id.tvNombreAlimento);
         TextView tvKcal = alimentoView.findViewById(R.id.tvKcalAlimento);
+        alimentoView.setTag(R.id.tag_id_comida, idComida);
+        alimentoView.setTag(R.id.tag_kcal_comida, kcal);
 
         tvNombre.setText(nombre);
         tvKcal.setText(kcal + " kcal");
@@ -196,6 +198,39 @@ public class FragmentDia extends Fragment {
                     if (parent != null) {
                         parent.removeView(view);
                     }
+
+                    // Recuperar datos del tag
+                    Long idComidaTag = (Long) view.getTag(R.id.tag_id_comida);
+                    int kcalTag = (int) view.getTag(R.id.tag_kcal_comida);
+
+                    // Restar kcal
+                    switch (tipoComida.toLowerCase()) {
+                        case "desayuno": caloriasDesayuno -= kcalTag; break;
+                        case "comida": caloriasComida -= kcalTag; break;
+                        case "cena": caloriasCena -= kcalTag; break;
+                    }
+
+                    actualizarTotalKcal();
+
+                    List<Long> listaActual = obtenerListaTipo(tipoComida);
+                    listaActual.remove(idComidaTag);
+
+                    int nuevasKcal = kcalTipo(tipoComida);
+                    Map<String, Object> body = Utilidades.prepararCuerpoActualizado(tipoComida, listaActual, nuevasKcal);
+
+                    supabaseApi.eliminarComidaDeDia("eq." + userId, "eq." + fechaDeComida, body).enqueue(new Callback<Void>() {
+                        @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Comida eliminada", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Comida no eliminada", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(getContext(), "Error Supabase", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 return false;
             });
@@ -320,6 +355,8 @@ public class FragmentDia extends Fragment {
     }
 
     private void cargarDatosDelDia() {
+        limpiarComidasDelDia();
+
         supabaseApi.obtenerDiaCompletado("eq." + fechaDeComida, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
             @Override
             public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
@@ -328,13 +365,14 @@ public class FragmentDia extends Fragment {
                     DiaCompletado dia = response.body().get(0);
 
                     if (dia.getDesayuno() != null && !dia.getDesayuno().isEmpty()) {
+                        desayunoList = dia.getDesayuno();
                         for (Long idAlimento : dia.getDesayuno()) {
                             supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                                         Comida comida = response.body().get(0);
-                                        añadirComida("Desayuno", comida.getDescComida(), comida.getCalorias());  // Tu método
+                                        añadirComida("Desayuno", comida.getDescComida(), comida.getCalorias(), comida.getId());
                                     }
                                 }
 
@@ -346,13 +384,14 @@ public class FragmentDia extends Fragment {
                     }
 
                     if (dia.getComida() != null && !dia.getComida().isEmpty()) {
+                        comidaList = dia.getComida();
                         for (Long idAlimento : dia.getComida()) {
                             supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                                         Comida comida = response.body().get(0);
-                                        añadirComida("Comida", comida.getDescComida(), comida.getCalorias());  // Tu método
+                                        añadirComida("Comida", comida.getDescComida(), comida.getCalorias(), comida.getId());
                                     }
                                 }
 
@@ -364,13 +403,14 @@ public class FragmentDia extends Fragment {
                     }
 
                     if (dia.getCena() != null && !dia.getCena().isEmpty()) {
+                        cenaList = dia.getCena();
                         for (Long idAlimento : dia.getCena()) {
                             supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                                         Comida comida = response.body().get(0);
-                                        añadirComida("Cena", comida.getDescComida(), comida.getCalorias());  // Tu método
+                                        añadirComida("Cena", comida.getDescComida(), comida.getCalorias(), comida.getId());
                                     }
                                 }
 
@@ -445,12 +485,41 @@ public class FragmentDia extends Fragment {
         return calendar;
     }
 
+    private List<Long> obtenerListaTipo(String tipo) {
+        switch (tipo.toLowerCase()) {
+            case "desayuno": return desayunoList;
+            case "comida": return comidaList;
+            case "cena": return cenaList;
+            default: return new ArrayList<>();
+        }
+    }
+
+    private int kcalTipo(String tipo) {
+        switch (tipo.toLowerCase()) {
+            case "desayuno": return caloriasDesayuno;
+            case "comida": return caloriasComida;
+            case "cena": return caloriasCena;
+            default: return 0;
+        }
+    }
+
     private int getUserId() {
         SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", requireContext().MODE_PRIVATE);
         return prefs.getInt("userId", -1);
     }
 
     private void limpiarComidasDelDia() {
+        if (desayunoList != null && !desayunoList.isEmpty()) {
+            desayunoList.clear();
+        }
+        if (comidaList != null && !comidaList.isEmpty()) {
+            comidaList.clear();
+        }
+        if (cenaList != null && !cenaList.isEmpty()) {
+            cenaList.clear();
+        }
+
+
         if (binding == null) return;
 
         binding.layoutAlimentosDesayuno.removeAllViews();
