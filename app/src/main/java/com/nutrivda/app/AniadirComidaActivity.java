@@ -1,18 +1,11 @@
 package com.nutrivda.app;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,10 +62,13 @@ public class AniadirComidaActivity extends AppCompatActivity {
             public void onComidaClick(Comida comida) {}
 
             @Override
+            public void onEliminarClick(Comida comida) {}
+
+            @Override
             public void onGuardarClick(Comida comida) {
                 agregarComidaAlDia(tipoComida.toLowerCase(), (long) comida.getId());
             }
-        });
+        }, null);
 
         rvResultados.setAdapter(adapter);
 
@@ -101,7 +97,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
     private void cargarComidas() {
        // progressBar.setVisibility(View.VISIBLE);
 
-        supabaseApi.obtenerTodasLasComidas().enqueue(new Callback<List<Comida>>() {
+        supabaseApi.obtenerTodasLasComidas("eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
             @Override
             public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                 //progressBar.setVisibility(View.GONE);
@@ -162,7 +158,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
                     data.put("fecha", fechaDeComida);
                     data.put("completado", false);
                     data.put(tipo, ids);
-                    supabaseApi.insertarComida(data).enqueue(new Callback<Void>() {
+                    supabaseApi.insertarDiaCompletado(data).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             Toast.makeText(AniadirComidaActivity.this, "✅ Comida guardada", Toast.LENGTH_SHORT).show();

@@ -53,7 +53,8 @@ public class FragmentDia extends Fragment {
     private TextView tvCaloriasDesayuno, tvCaloriasComida, tvCaloriasCena;
     private Button btnAnadirDesayuno, btnAnadirComida, btnAnadirCena;
     private String fechaDeComida;
-    private double totalKcal = 0;
+    private int totalKcal = 0;
+    private float caloriasObjetivo = 0;
     private int userId = 0, caloriasDesayuno = 0, caloriasComida = 0, caloriasCena = 0;
     private ImageButton btnIrAtras, btnIrAdelante;
     private List<Long> desayunoList, comidaList, cenaList;
@@ -113,7 +114,7 @@ public class FragmentDia extends Fragment {
         // Observar la fecha recibida
         this.fechaDeComida = viewModel.getFechaSeleccionadaString().getValue();
         this.userId = viewModel.getUserId().getValue()  != null ? viewModel.getUserId().getValue().intValue() : getUserId();
-
+        this.caloriasObjetivo = getCaloriasObjetivo();
 
 
         if (this.fechaDeComida != null && !this.fechaDeComida.equals("")) {
@@ -266,7 +267,7 @@ public class FragmentDia extends Fragment {
                     if (dia.getDesayuno() != null && !dia.getDesayuno().isEmpty()) {
                         desayunoList = dia.getDesayuno();
                         for (Long idAlimento : dia.getDesayuno()) {
-                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
+                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -285,7 +286,7 @@ public class FragmentDia extends Fragment {
                     if (dia.getComida() != null && !dia.getComida().isEmpty()) {
                         comidaList = dia.getComida();
                         for (Long idAlimento : dia.getComida()) {
-                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
+                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -304,7 +305,7 @@ public class FragmentDia extends Fragment {
                     if (dia.getCena() != null && !dia.getCena().isEmpty()) {
                         cenaList = dia.getCena();
                         for (Long idAlimento : dia.getCena()) {
-                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "*").enqueue(new Callback<List<Comida>>() {
+                            supabaseApi.obtenerComidaPorId("eq." + idAlimento, "eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
                                 @Override
                                 public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -330,12 +331,12 @@ public class FragmentDia extends Fragment {
     }
 
     private void actualizarTotalKcal() {
-        tvCaloriasDesayuno.setText(caloriasDesayuno + "kcal");
-        tvCaloriasComida.setText(caloriasComida + "kcal");
-        tvCaloriasCena.setText(caloriasCena + "kcal");
+        tvCaloriasDesayuno.setText(caloriasDesayuno + " kcal");
+        tvCaloriasComida.setText(caloriasComida + " kcal");
+        tvCaloriasCena.setText(caloriasCena + " kcal");
 
         totalKcal = caloriasDesayuno + caloriasComida + caloriasCena;
-        tvTotalKcal.setText("Total kcal: " + totalKcal);
+        tvTotalKcal.setText("Has consumido " + totalKcal + " de " + (int)caloriasObjetivo);
     }
 
     private void updateDateText(String fechaStr) {
@@ -409,6 +410,11 @@ public class FragmentDia extends Fragment {
     private int getUserId() {
         SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", requireContext().MODE_PRIVATE);
         return prefs.getInt("userId", -1);
+    }
+
+    private float getCaloriasObjetivo() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", requireContext().MODE_PRIVATE);
+        return prefs.getFloat("calorias_objetivo", 0);
     }
 
     private void limpiarComidasDelDia() {

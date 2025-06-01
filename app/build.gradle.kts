@@ -54,5 +54,4 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation ("androidx.cardview:cardview:1.0.0")
-    implementation ("com.airbnb.android:lottie:6.0.0")
 }

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.inicializacion.OnboardingActivity;
+import com.nutrivda.app.model.DatosUsuario;
 
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,22 @@ public class LoginActivity extends AppCompatActivity {
                             Map<String, Object> user = response.body().get(0);
                             int userId = ((Double) user.get("id")).intValue();  // Obtener ID del usuario
 
-                            saveLoginState(userId);
+                            supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new Callback<List<DatosUsuario>>() {
+                                @Override
+                                public void onResponse(Call<List<DatosUsuario>> call, Response<List<DatosUsuario>> response) {
+                                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                                        DatosUsuario datos = response.body().get(0);
+                                        saveLoginState(userId, datos.getCalorias_objetivo());
+                                    } else {
+                                        saveLoginState(userId, 0);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<DatosUsuario>> call, Throwable t) {
+                                }
+                            });
+                            //saveLoginState(userId);
                             goToMainActivity();
                         } else {
                             Toast.makeText(LoginActivity.this, "❌ Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
@@ -84,11 +100,12 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveLoginState(int userId) {
+    private void saveLoginState(int userId, double caloriasObjetivo) {
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isLoggedIn", true);
         editor.putInt("userId", userId);
+        editor.putFloat("calorias_objetivo", (float) caloriasObjetivo);
         editor.apply();
     }
 

@@ -1,14 +1,9 @@
 package com.nutrivda.app;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -18,23 +13,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.widget.Spinner;
-import android.app.DatePickerDialog;
 import android.widget.Toast;
 
-import com.nutrivda.app.callback.CaloriasCallback;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.database.DatabaseHelper;
-import com.nutrivda.app.model.Comida;
-import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.StringUtil;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -341,7 +328,7 @@ public class ActividadComida extends AppCompatActivity {
 
         if (isEditar) {
             // Si está en modo edición, hacemos un PATCH en lugar de POST
-            supabaseApi.actualizarComida("eq." + userId, "eq." + fechaDeComida, comidaData).enqueue(new Callback<Void>() {
+            supabaseApi.actualizarDiaCompletado("eq." + userId, "eq." + fechaDeComida, comidaData).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
@@ -361,7 +348,7 @@ public class ActividadComida extends AppCompatActivity {
         } else {
             comidaData.put("id_usuario_fk", userId);
             comidaData.put("fecha", fechaDeComida);
-            supabaseApi.insertarComida(comidaData).enqueue(new Callback<Void>() {
+            supabaseApi.insertarDiaCompletado(comidaData).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {

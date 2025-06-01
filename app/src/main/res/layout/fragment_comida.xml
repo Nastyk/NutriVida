@@ -1,309 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/fondomain"
     android:padding="16dp">
 
-    <!-- Encabezado con fecha -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="8dp">
-
-        <ImageButton
-            android:id="@+id/btnIrAtras"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_atras"
-            android:contentDescription="Día anterior"
-            app:tint="@color/black" />
+        android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/tvFechaComida"
+            android:id="@+id/tvTipoComida"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hoy"
-            android:textAlignment="center"
-            android:textSize="18sp"
+            android:text="Lista de alimentos/comidas"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black" />
-
-        <ImageButton
-            android:id="@+id/btnIrAdelante"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_adelante"
-            android:contentDescription="Día siguiente"
-            app:tint="@color/black" />
+            android:gravity="center"
+            android:layout_marginEnd="40dp" />
     </LinearLayout>
 
-    <ScrollView
+    <EditText
+        android:id="@+id/etBuscarComida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Busca un alimento"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:padding="12dp"
+        android:inputType="text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvResultados"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_marginTop="10dp" />
 
-        <LinearLayout
-            android:id="@+id/layoutContenidoScroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Desayuno -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvDesayuno"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Desayuno: "
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-        <!--
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"> -->
-
-                <TextView
-                    android:id="@+id/tvDesayunoSeleccionado"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="Ninguno"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black"/>
-
-                <ImageButton
-                    android:id="@+id/btnBorrarDesayuno"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:visibility="gone"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Borrar desayuno"
-                    android:src="@drawable/ic_borrar"
-                    app:tint="@color/red" />
-
-
-            <TextView
-                android:id="@+id/tvCaloriasDesayuno"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Calorías: 0"
-                android:textSize="16sp"
-                android:layout_marginBottom="5dp"/>
-            </LinearLayout>
-            <!--
-            <CheckBox
-                android:id="@+id/cbDesayuno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Marcar como hecho"/>
-            -->
-            <Button
-                android:id="@+id/btnAnadirDesayuno"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_boton_cuadrado"
-                android:text="Añadir Desayuno"
-                android:textColor="@android:color/white" />
-
-            </LinearLayout>
-
-            <!-- Comida -->
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvComida"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Comida: "
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-            <!-- <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"> -->
-
-                        <TextView
-                            android:id="@+id/tvComidaSeleccionada"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:text="Ninguna"
-                            android:textSize="18sp"
-                            android:textColor="@android:color/black"/>
-
-                        <ImageButton
-                            android:id="@+id/btnBorrarComida"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:visibility="gone"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="Borrar comida"
-                            android:src="@drawable/ic_borrar"
-                            app:tint="@color/red" />
-                    <!-- </LinearLayout> -->
-
-                    <TextView
-                        android:id="@+id/tvCaloriasComida"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Calorías: 0"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="5dp"/>
-                        </LinearLayout>
-                    <Button
-                        android:id="@+id/btnAnadirComida"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_boton_selector"
-                        android:text="Añadir Comida"
-                        android:textColor="@android:color/white" />
-                    </LinearLayout>
-                    <!--
-                    <CheckBox
-                        android:id="@+id/cbComida"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Marcar como hecho"/>
-                    -->
-
-                    <!-- Cena -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="10dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/tvCena"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cena: "
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                          <!--  <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="10dp"
-                                android:gravity="center_vertical"> -->
-
-                                <TextView
-                                    android:id="@+id/tvCenaSeleccionada"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:maxLines="1"
-                                    android:ellipsize="end"
-                                    android:text="Ninguna"
-                                    android:textSize="18sp"
-                                    android:textColor="@android:color/black"/>
-
-                                <ImageButton
-                                    android:id="@+id/btnBorrarCena"
-                                    android:layout_width="40dp"
-                                    android:layout_height="40dp"
-                                    android:visibility="gone"
-                                    android:background="?attr/selectableItemBackgroundBorderless"
-                                    android:contentDescription="Borrar cena"
-                                    android:src="@drawable/ic_borrar"
-                                    app:tint="@color/red" />
-                            <!-- </LinearLayout> -->
-
-                            <TextView
-                                android:id="@+id/tvCaloriasCena"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Calorías: 0"
-                                android:textSize="16sp"
-                                android:layout_marginBottom="5dp"/>
-                        </LinearLayout>
-
-                            <Button
-                                android:id="@+id/btnAnadirCena"
-                                android:layout_width="120dp"
-                                android:layout_height="wrap_content"
-                                android:text="Añadir Cena"
-                                android:background="@drawable/bg_boton_selector"
-                                android:textColor="@android:color/white" />
-                    </LinearLayout>
-                   <!-- <CheckBox
-                        android:id="@+id/cbCena"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Marcar como hecho"/>
-                    -->
-
-                    <!-- Total de kcal -->
-                    <TextView
-                        android:id="@+id/tvTotalKcal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Total kcal: 0"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:layout_marginTop="15dp"/>
-
-                    <!-- Botón Guardar -->
-
-                    <Button
-                        android:id="@+id/btnGuardarComida"
-                        android:layout_width="190dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/bg_boton_selector"
-                        android:text="Guardar Comidas"
-                        android:textColor="@android:color/white"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="center"/>
-            </LinearLayout>
-    </ScrollView>
 </LinearLayout>

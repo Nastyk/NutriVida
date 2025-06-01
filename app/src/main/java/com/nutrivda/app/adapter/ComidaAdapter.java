@@ -6,9 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nutrivda.app.DetalleComidaActivity;
@@ -22,19 +25,33 @@ public class ComidaAdapter extends RecyclerView.Adapter<ComidaAdapter.ViewHolder
     public interface OnComidaClickListener {
         void onComidaClick(Comida comida);
         void onGuardarClick(Comida comida);
+        void onEliminarClick(Comida comida);
     }
 
     private final List<Comida> listaComidas;
     private final OnComidaClickListener listener;
     private Comida selectedComida;
+    private boolean mostrarBoton = true;
+    private boolean esEdicion = false;
+    private final ActivityResultLauncher<Intent> launcher;
 
-    public ComidaAdapter(List<Comida> listaComidas, OnComidaClickListener listener) {
+    public ComidaAdapter(List<Comida> listaComidas, OnComidaClickListener listener, @Nullable ActivityResultLauncher<Intent> launcher) {
         this.listaComidas = listaComidas;
         this.listener = listener;
+        this.launcher = launcher;
     }
 
     public Comida getSelectedComida() {
         return selectedComida;
+    }
+
+    public void setMostrarBoton(boolean mostrar) {
+        this.mostrarBoton = mostrar;
+        notifyDataSetChanged(); // refresca la lista
+    }
+
+    public void setEsEdicion(boolean esEdicion) {
+        this.esEdicion = esEdicion;
     }
 
     @NonNull
@@ -56,6 +73,8 @@ public class ComidaAdapter extends RecyclerView.Adapter<ComidaAdapter.ViewHolder
                 ", " + comida.getGrasas() + "g gras";
         holder.tvDetalle.setText(detalle);
 
+        holder.btnAdd.setVisibility(mostrarBoton ? View.VISIBLE : View.GONE);
+
         holder.btnAdd.setOnClickListener(v -> {
             selectedComida = comida;
             notifyDataSetChanged();
@@ -66,12 +85,32 @@ public class ComidaAdapter extends RecyclerView.Adapter<ComidaAdapter.ViewHolder
         // Lanzar nueva actividad al pulsar CardView
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetalleComidaActivity.class);
-            intent.putExtra("descComida", comida.getDescComida());
-            intent.putExtra("calorias", comida.getCalorias());
-            intent.putExtra("proteinas", comida.getProteinas());
-            //intent.putExtra("marca", comida.getMarca());
-            //intent.putExtra("cantidad", comida.getCantidad());
-            context.startActivity(intent);
+            intent.putExtra("idAlimento", comida.getId());
+            intent.putExtra("esEdicion", esEdicion);
+            if (launcher != null) {
+                launcher.launch(intent); // desde Fragment
+            } else {
+                context.startActivity(intent); // desde Activity
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (esEdicion) {
+                PopupMenu popup = new PopupMenu(v.getContext(), v);
+                popup.getMenuInflater().inflate(R.menu.menu_comida_item, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.action_eliminar) {
+                        listener.onEliminarClick(comida);
+                        return true;
+                    }
+                    return false;
+                });
+
+                popup.show();
+                return true;
+            }
+            return false;
         });
 
         // Cambiar ícono si está seleccionada
