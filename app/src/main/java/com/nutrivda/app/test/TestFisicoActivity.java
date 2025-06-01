@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nutrivda.app.ActividadComida;
+import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
 
 public class TestFisicoActivity extends AppCompatActivity {
@@ -18,6 +21,7 @@ public class TestFisicoActivity extends AppCompatActivity {
     private RadioGroup rgEjercicio, rgSedentarismo, rgLimitacion;
     private Button btnEvaluarFisico;
     private String riesgoEmocional; // Variable para guardar el resultado anterior
+    private ImageButton btnIrAtras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,8 @@ public class TestFisicoActivity extends AppCompatActivity {
         rgSedentarismo = findViewById(R.id.rgSedentarismo);
         rgLimitacion = findViewById(R.id.rgLimitacion);
         btnEvaluarFisico = findViewById(R.id.btnEvaluarFisico);
+        btnIrAtras = findViewById(R.id.btnIrAtras);
+
 
         // Recupero el dato de la pantalla anterior (emocional)
         riesgoEmocional = getIntent().getStringExtra("riesgoEmocional");
@@ -61,6 +67,12 @@ public class TestFisicoActivity extends AppCompatActivity {
                 intent.putExtra("resumen", resumen);
             startActivity(intent);
             finish();
+        });
+
+        // Ir atrás
+        btnIrAtras.setOnClickListener(v -> {
+            Intent intentVolver = new Intent(TestFisicoActivity.this, TestEmocionalActivity.class);
+            startActivity(intentVolver);
         });
     }
 

@@ -17,6 +17,7 @@ public class TestEmocionalActivity extends AppCompatActivity {
     private RadioGroup rgMotivacion, rgHumor, rgSueno;
     private Button btnSiguiente;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class TestEmocionalActivity extends AppCompatActivity {
                     "\n• Sueño: " + r3;
 
             // Yo paso los datos a la pantalla de resultado
-            Intent intent = new Intent(TestEmocionalActivity.this, ResultadoActivity.class);
+            Intent intent = new Intent(TestEmocionalActivity.this, TestFisicoActivity.class);
             intent.putExtra("tipoTest", "emocional");
             intent.putExtra("resultado", resultado);
             intent.putExtra("resumen", resumen);

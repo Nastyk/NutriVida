@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nutrivda.app.ActividadComida;
+import com.nutrivda.app.BaseActivity;
+import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
 
 public class TestProfesionalActivity extends AppCompatActivity {
@@ -18,6 +22,7 @@ public class TestProfesionalActivity extends AppCompatActivity {
     private RadioGroup rgJornada, rgImpactoAlimentacion, rgDesorganizacion;
     private Button btnEvaluarProfesional;
     private String riesgoEmocional, riesgoFisico; // Variables para traer los datos anteriores
+    private ImageButton btnIrAtras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,7 @@ public class TestProfesionalActivity extends AppCompatActivity {
         rgImpactoAlimentacion = findViewById(R.id.rgImpactoAlimentacion);
         rgDesorganizacion = findViewById(R.id.rgDesorganizacion);
         btnEvaluarProfesional = findViewById(R.id.btnEvaluarProfesional);
+        btnIrAtras = findViewById(R.id.btnIrAtras);
 
         // Recupero los valores de riesgo emocional y físico
         riesgoEmocional = getIntent().getStringExtra("riesgoEmocional");
@@ -51,16 +57,20 @@ public class TestProfesionalActivity extends AppCompatActivity {
                     "\n• Alimentación afectada: " + r2 +
                     "\n• Rutina diaria: " + r3;
 
-            Intent intent = new Intent(TestProfesionalActivity.this, ResultadoActivity.class);
+            Intent intent = new Intent(TestProfesionalActivity.this, BaseActivity.class);
             intent.putExtra("tipoTest", "profesional");
             intent.putExtra("resultado", resultado);
             intent.putExtra("resumen", resumen);
             startActivity(intent);
             finish();
         });
+        // Ir atrás
+        btnIrAtras.setOnClickListener(v -> {
+            Intent intentVolver = new Intent(TestProfesionalActivity.this, TestFisicoActivity.class);
+            startActivity(intentVolver);
+        });
     }
 
-    // Esta función procesa las respuestas y calcula el nivel de riesgo profesional
     // Esta función procesa las respuestas y calcula el nivel de riesgo profesional
     private void evaluarProfesional() {
         int jornada = obtenerValorDesdeRadioGroup(rgJornada);
@@ -77,7 +87,7 @@ public class TestProfesionalActivity extends AppCompatActivity {
         editor.apply();
 
         // Paso los tres resultados acumulados a la pantalla de resultados finales
-        Intent intent = new Intent(TestProfesionalActivity.this, ResultadoActivity.class);
+        Intent intent = new Intent(TestProfesionalActivity.this, HistorialResultadoActivity.class);
         intent.putExtra("riesgoEmocional", riesgoEmocional);
         intent.putExtra("riesgoFisico", riesgoFisico);
         intent.putExtra("riesgoProfesional", resultado);
