@@ -10,8 +10,9 @@ public class DatosUsuario {
     private String apellido2;
     private String actividad_fisica;
     private double calorias_objetivo;
+    private boolean cuestionario_hecho;
 
-    public DatosUsuario(int  id_usuario_fk, double peso, double altura, int edad, String nombre, String apellido1, String apellido2, String actividadFisica, double calorias_objetivo) {
+    public DatosUsuario(int  id_usuario_fk, double peso, double altura, int edad, String nombre, String apellido1, String apellido2, String actividadFisica, double calorias_objetivo, boolean cuestionario_hecho) {
         this.id_usuario_fk = id_usuario_fk;
         this.peso = peso;
         this.altura = altura;
@@ -21,9 +22,10 @@ public class DatosUsuario {
         this.apellido2 = apellido2;
         this.actividad_fisica = actividadFisica;
         this.calorias_objetivo = calorias_objetivo;
+        this.cuestionario_hecho = cuestionario_hecho;
     }
 
-    public DatosUsuario(double peso, double altura, int edad, String nombre, String apellido1, String apellido2, String actividadFisica, double calorias_objetivo) {
+    public DatosUsuario(double peso, double altura, int edad, String nombre, String apellido1, String apellido2, String actividadFisica, double calorias_objetivo, boolean cuestionario_hecho) {
         this.peso = peso;
         this.altura = altura;
         this.edad = edad;
@@ -32,6 +34,7 @@ public class DatosUsuario {
         this.apellido2 = apellido2;
         this.actividad_fisica = actividadFisica;
         this.calorias_objetivo = calorias_objetivo;
+        this.cuestionario_hecho = cuestionario_hecho;
     }
 
     public int getId_usuario_fk() {
@@ -102,5 +105,13 @@ public class DatosUsuario {
 
     public void setCalorias_objetivo(double calorias_objetivo) {
         this.calorias_objetivo = calorias_objetivo;
+    }
+
+    public boolean isCuestionario_hecho() {
+        return cuestionario_hecho;
+    }
+
+    public void setCuestionario_hecho(boolean cuestionario_hecho) {
+        this.cuestionario_hecho = cuestionario_hecho;
     }
 }

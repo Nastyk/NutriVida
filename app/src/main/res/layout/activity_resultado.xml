@@ -14,25 +14,79 @@
         android:layout_gravity="center"
         android:paddingBottom="48dp">
 
-        <!-- Tarjeta visual centrada con sombra -->
+        <!-- Tarjeta visual para plan nutricional -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"
             android:layout_marginHorizontal="8dp"
             android:padding="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp">
 
-            <TextView
-                android:id="@+id/tvResultado"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aquí aparecerá tu plan personalizado"
-                android:textSize="16sp"
-                android:textColor="#444444"
-                android:lineSpacingExtra="6dp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvIMC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="IMC:"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tvClasificacionIMC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Clasificación:"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvCalorias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Calorías recomendadas:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvMacros"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Macros (g/día):"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvNivelActividad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nivel de actividad recomendado:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvTiempo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiempo estimado para lograr el objetivo:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvAnalisis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Análisis personalizado:"
+                    android:layout_marginTop="12dp"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Botón para comenzar los tests -->

@@ -207,7 +207,7 @@ public class ActividadPerfil extends AppCompatActivity {
         int edad = Integer.parseInt(edadStr);
 
         // Actualizar tabla datos_usuario
-        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad, caloriasObjetivo);
+        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad, caloriasObjetivo, false);
         supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(Call<Response<Void>> call, Response<Response<Void>> response) {

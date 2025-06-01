@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (isUserLoggedIn()) {
-            goToMainActivity();
+            goToMainActivity(true);
             return;
         }
 
@@ -77,8 +77,10 @@ public class LoginActivity extends AppCompatActivity {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                                         DatosUsuario datos = response.body().get(0);
                                         saveLoginState(userId, datos.getCalorias_objetivo());
+                                        goToMainActivity(datos.isCuestionario_hecho());
                                     } else {
                                         saveLoginState(userId, 0);
+                                        goToMainActivity(false);
                                     }
                                 }
 
@@ -87,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                             //saveLoginState(userId);
-                            goToMainActivity();
                         } else {
                             Toast.makeText(LoginActivity.this, "❌ Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                         }
@@ -114,11 +115,11 @@ public class LoginActivity extends AppCompatActivity {
         return prefs.getBoolean("isLoggedIn", false);
     }
 
-    private void goToMainActivity() {
+    private void goToMainActivity(boolean swCuesitonario) {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean onboardingCompletado = prefs.getBoolean("onboardingCompletado", true);
+        boolean onboardingCompletado = swCuesitonario;
 
-// Si el onboarding aún no se ha completado, lanzo la actividad de onboarding
+        // Si el onboarding aún no se ha completado, lanzo la actividad de onboarding
         if (!onboardingCompletado) {
             Intent intent = new Intent(LoginActivity.this, OnboardingActivity.class);
             startActivity(intent);

@@ -1,19 +1,23 @@
 package com.nutrivda.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.nutrivda.app.callback.UserIdCallback;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.Usuario;
-import com.nutrivda.app.test.TestEmocionalActivity;
+
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,10 +32,10 @@ public class RegistroUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_usuario);
 
-        // Inicializo la API
+        // Inicializar API
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
-        // Referencio los elementos del formulario
+        // Referencias a los elementos
         etUsuario = findViewById(R.id.etUsuario);
         etPassword = findViewById(R.id.etPassword);
         etNombre = findViewById(R.id.etNombre);
@@ -40,94 +44,117 @@ public class RegistroUsuario extends AppCompatActivity {
         etPeso = findViewById(R.id.etPeso);
         etAltura = findViewById(R.id.etAltura);
         etEdad = findViewById(R.id.etEdad);
-
         Button btnRegistrar = findViewById(R.id.btnRegistrar);
+        Button btnAtras = findViewById(R.id.btnAtras);
+        btnAtras.setOnClickListener(v -> {
+            goToLogin();
+        });
+
         btnRegistrar.setOnClickListener(v -> registrarUsuario());
     }
 
     private void registrarUsuario() {
-        // Capturo los datos del formulario
-        String usuario = etUsuario.getText().toString();
-        String password = etPassword.getText().toString();
-        String nombre = etNombre.getText().toString();
-        String apellido1 = etApellido1.getText().toString();
-        String apellido2 = etApellido2.getText().toString();
-        String pesoStr = etPeso.getText().toString();
-        String alturaStr = etAltura.getText().toString();
-        String edadStr = etEdad.getText().toString();
+        // Obtener valores
+        String usuario = etUsuario.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+        String nombre = etNombre.getText().toString().trim();
+        String apellido1 = etApellido1.getText().toString().trim();
+        String apellido2 = etApellido2.getText().toString().trim();
+        String pesoStr = etPeso.getText().toString().trim();
+        String alturaStr = etAltura.getText().toString().trim();
+        String edadStr = etEdad.getText().toString().trim();
 
-        // Validación simple
-        if (usuario.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Usuario y contraseña son obligatorios", Toast.LENGTH_SHORT).show();
+        // Validar que todos los campos estén llenos
+        if (usuario.isEmpty() || password.isEmpty() || nombre.isEmpty() || apellido1.isEmpty() ||
+                pesoStr.isEmpty() || alturaStr.isEmpty() || edadStr.isEmpty()) {
+            Toast.makeText(this, "⚠️ Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        try {
-            double peso = Double.parseDouble(pesoStr);
-            double altura = Double.parseDouble(alturaStr);
-            int edad = Integer.parseInt(edadStr);
-            double caloriasObjetivo = 2000;
+        double peso = Double.parseDouble(pesoStr);
+        double altura = Double.parseDouble(alturaStr);
+        int edad = Integer.parseInt(edadStr);
 
-            // Construyo el objeto DatosUsuario
-            DatosUsuario datos = new DatosUsuario(
-                    peso,
-                    altura,
-                    edad,
-                    nombre,
-                    apellido1,
-                    apellido2,
-                    usuario,
-                    caloriasObjetivo
-            );
+        obtenerUserId(usuario, password, new UserIdCallback() {
+            @Override
+            public void onUserIdReceived(int userId) {
+                if (userId != 0) {
+                    Toast.makeText(RegistroUsuario.this, "⚠️ El usuario ya se encuentra registrado", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Registrar usuario en la tabla usuario
+                    Usuario nuevoUsuario = new Usuario(usuario, password);
+                    supabaseApi.registrarUsuario(nuevoUsuario).enqueue(new Callback<List<Usuario>>() {
+                        @Override
+                        public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                            if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                                int userId = response.body().get(0).getId();  // ✅ Obtenemos el primer usuario de la lista
 
-            // Construyo el objeto Usuario con los datos personales
-            Usuario nuevoUsuario = new Usuario(0, password, usuario);
-
-            // Llamo a la API de Supabase para registrar
-            supabaseApi.registrarUsuario(nuevoUsuario).enqueue(new Callback<List<Usuario>>() {
-                @Override
-                public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(RegistroUsuario.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-
-                        // Marco al usuario como nuevo en SharedPreferences
-                        SharedPreferences prefs = getSharedPreferences("NutriVidaPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putBoolean("nuevoUsuario", true);
-                        editor.putBoolean("yaCompletoTest", false);
-                        editor.apply();
-
-                        // Redirijo al primer test: emocional
-                        Intent intent = new Intent(RegistroUsuario.this, TestEmocionalActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Log.e("RegistroUsuario", "Código: " + response.code());
-
-                        try {
-                            String errorBody = response.errorBody().string();
-                            Log.e("RegistroUsuario", "Error body: " + errorBody);
-                        } catch (Exception e) {
-                            Log.e("RegistroUsuario", "No se pudo leer el error: " + e.getMessage());
+                                // Ahora registrar en la tabla datos_usuario con el ID recuperado
+                                registrarDatosUsuario(userId, nombre, apellido1, apellido2, peso, altura, edad);
+                            } else {
+                                Toast.makeText(RegistroUsuario.this, "Error al registrar usuario: " + response.message(), Toast.LENGTH_SHORT).show();
+                            }
                         }
 
-                        Toast.makeText(RegistroUsuario.this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                            Toast.makeText(RegistroUsuario.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+
+    private void registrarDatosUsuario(int userId, String nombre, String apellido1, String apellido2, double peso, double altura, int edad) {
+        //int userId = obtenerUSerId(usuario, contraseña);
+
+        DatosUsuario datosUsuario = new DatosUsuario(userId, peso, altura, edad, nombre, apellido1, apellido2, "ACTIVO", 0, false);
+
+        supabaseApi.registrarDatosUsuario(datosUsuario).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 201 || response.code() == 204) {
+                    Toast.makeText(RegistroUsuario.this, "✅ Registro exitoso", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(RegistroUsuario.this, "⚠️ Error al registrar datos: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(RegistroUsuario.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void obtenerUserId(String username, String password, UserIdCallback callback) {
+        supabaseApi.verificarUsuarioPorUsername("eq." + username)
+                .enqueue(new Callback<List<Map<String, Object>>>() {
+                    @Override
+                    public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
+                        if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                            Map<String, Object> user = response.body().get(0);
+                            int userId = ((Double) user.get("id")).intValue();  // ✅ Obtener ID del usuario
+                            callback.onUserIdReceived(userId);  // ✅ Pasamos el resultado al callback
+                        } else {
+                            callback.onUserIdReceived(0);  // Usuario no encontrado
+                        }
                     }
 
-                }
+                    @Override
+                    public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
+                        callback.onUserIdReceived(0);  // Error de conexión
+                    }
+                });
+    }
 
-                @Override
-                public void onFailure(Call<List<Usuario>> call, Throwable t) {
-                    Toast.makeText(RegistroUsuario.this, "Fallo de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
 
-                    Log.e("RegistroUsuario", "ERROR de conexión al registrar usuario", t);
-
-                    Log.e("RegistroUsuario", "Mensaje: " + t.getMessage());
-                }
-            });
-
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Por favor ingresa peso, altura y edad válidos", Toast.LENGTH_SHORT).show();
-        }
+    private void goToLogin() {
+        Intent intent = new Intent(RegistroUsuario.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
