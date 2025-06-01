@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
 import com.nutrivda.app.cohereIA.CohereService;
+import com.nutrivda.app.inicializacion.OnboardingData;
 import com.nutrivda.app.test.ResultadoActivity;
 
 public class FragmentResumenOnboarding extends Fragment {
@@ -26,10 +27,10 @@ public class FragmentResumenOnboarding extends Fragment {
 
         // Muestro el resumen del onboarding al usuario
         OnboardingData data = OnboardingData.getInstance();
-        String resumen = "Actividad física: " + data.getActividadFisica() + "\n"
-                + "Prioridad: " + data.getPrioridad() + "\n"
-                + "Restricciones: " + String.join(", ", data.getRestricciones()) + "\n"
-                + "Comidas: " + data.getOrganizacionComidas();
+        String resumen  = "✅ Actividad física: " + data.getActividadFisica() + "\n\n"
+                + "🎯 Prioridad principal: " + data.getPrioridad() + "\n\n"
+                + "🥗 Restricciones: " + String.join(", ", data.getRestricciones()) + "\n\n"
+                + "🍽 Organización de comidas: " + data.getOrganizacionComidas();
         tvResumen.setText(resumen);
 
         btnGenerarPlan.setOnClickListener(v -> {
