@@ -8,7 +8,7 @@ public class Comida {
     private int grasas;
     private int carbohidratos;
     private int tRacion;
-    private int nRacion;
+    private int nRaciones;
     private int id_usuario_fk;
     private String unidadMedia;
 
@@ -20,7 +20,7 @@ public class Comida {
     public int getGrasas() { return grasas; }
     public int getCarbohidratos() { return carbohidratos; }
     public int getTamanioRacion() { return tRacion; }
-    public int getNumeroRaciones() { return nRacion; }
+    public int getNumeroRaciones() { return nRaciones; }
     public int getId_usuario_fk() { return id_usuario_fk; }
     public String getUnidadDMedida() { return unidadMedia; }
 
@@ -48,8 +48,8 @@ public class Comida {
         this.tRacion = tRacion;
     }
 
-    public void setnRacion(int nRacion) {
-        this.nRacion = nRacion;
+    public void setnRaciones(int nRaciones) {
+        this.nRaciones = nRaciones;
     }
 
     public void setId_usuario_fk(int id_usuario_fk) {

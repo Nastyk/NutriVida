@@ -8,11 +8,15 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.nutrivda.app.R;
 
 public class SemicircularGaugeView extends View {
 
     private int maxValue = 100;
     private int value = 0;
+    private int colorMorado;
 
     private Paint backgroundPaint;
     private Paint progressPaint;
@@ -43,6 +47,8 @@ public class SemicircularGaugeView extends View {
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(64);
         textPaint.setTextAlign(Paint.Align.CENTER);
+
+        colorMorado = ContextCompat.getColor(getContext(), R.color.lila_medio);
     }
 
     public void setText(String text) {
@@ -86,7 +92,7 @@ public class SemicircularGaugeView extends View {
         if (value > maxValue) {
             progressPaint.setColor(Color.RED);
         } else {
-            progressPaint.setColor(Color.BLUE);
+            progressPaint.setColor(colorMorado);
         }
 
         // Dibuja progreso

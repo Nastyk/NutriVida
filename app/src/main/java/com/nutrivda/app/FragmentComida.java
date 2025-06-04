@@ -28,6 +28,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nutrivda.app.adapter.ComidaAdapter;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
@@ -64,6 +65,7 @@ public class FragmentComida extends Fragment {
     private CompartidoViewModel viewModel;
     private FragmentComidaBinding binding;
     private ActivityResultLauncher<Intent> comidaLauncher;
+    private FloatingActionButton fabAgregarComida;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,11 +93,18 @@ public class FragmentComida extends Fragment {
 
         etBuscarComida = view.findViewById(R.id.etBuscarComida);
         rvResultados = view.findViewById(R.id.rvResultados);
+        fabAgregarComida = view.findViewById(R.id.fabAgregarComida);
 
         rvResultados.setLayoutManager(new LinearLayoutManager(getContext()));
 
         viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
         this.userId = viewModel.getUserId().getValue()  != null ? viewModel.getUserId().getValue().intValue() : getUserId();
+
+        fabAgregarComida.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), DetalleComidaActivity.class);
+            intent.putExtra("esAdicion", true);
+            comidaLauncher.launch(intent);
+        });
 
         adapter = new ComidaAdapter(listaComidas, new ComidaAdapter.OnComidaClickListener() {
             @Override

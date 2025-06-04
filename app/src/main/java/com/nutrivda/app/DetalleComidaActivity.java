@@ -10,15 +10,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -48,7 +43,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
     private int idAlimento, userId, calorias, carbohidratos, grasas, proteinas;
     private SupabaseApi supabaseApi;
     private ImageButton btnAtras, btnEditar, btnGuardar;
-    private boolean esEdicion, valido;
+    private boolean esEdicion, valido, esAdicion;
     private Comida comidaEnMemoria;
 
     @Override
@@ -87,6 +82,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
         idAlimento = getIntent().getIntExtra("idAlimento", -1);
         userId = getIntent().getIntExtra("user_id",0) > 0 ? getIntent().getIntExtra("user_id", 0) : getUserId();
         esEdicion = getIntent().getBooleanExtra("esEdicion", false);
+        esAdicion = getIntent().getBooleanExtra("esAdicion", false);
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
         recuperarinforAlimento(idAlimento);
@@ -108,6 +104,23 @@ public class DetalleComidaActivity extends AppCompatActivity {
 
             btnEditar.setVisibility(View.VISIBLE);
             btnGuardar.setVisibility(View.GONE);
+        } else if (esAdicion) {
+            tvNombreComida.setVisibility(View.GONE);
+            etNombreComida.setVisibility(View.VISIBLE);
+
+            tvNRaciones.setVisibility(View.GONE);
+            etNRaciones.setVisibility(View.VISIBLE);
+            tvNRacionesUnidad.setVisibility(View.VISIBLE);
+
+            tvTRacion.setVisibility(View.GONE);
+            etTRacion.setVisibility(View.VISIBLE);
+
+            llCarbohidratosEdicion.setVisibility(View.VISIBLE);
+            llGrasasEdicion.setVisibility(View.VISIBLE);
+            llProteinasEdicion.setVisibility(View.VISIBLE);
+
+            btnEditar.setVisibility(View.GONE);
+            btnGuardar.setVisibility(View.VISIBLE);
         } else {
             tvUnidadMedida.setVisibility(View.GONE);
 
@@ -199,6 +212,13 @@ public class DetalleComidaActivity extends AppCompatActivity {
 
         });
 
+        btnGuardar.setOnClickListener(v -> {
+            insertarNuevaComida();
+            if (!valido) {
+                Toast.makeText(DetalleComidaActivity.this, "❌ Hay campos sin completar", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnAtras.setOnClickListener(v -> {
             setResult(DetalleComidaActivity.RESULT_CANCELED);
             finish();
@@ -287,7 +307,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
             Comida comidaNueva = new Comida();
             comidaNueva.setId_usuario_fk(userId);
             comidaNueva.setDesc_comida(etNombreComida.getText().toString());
-            comidaNueva.setnRacion(Integer.parseInt(etNRaciones.getText().toString()));
+            comidaNueva.setnRaciones(Integer.parseInt(etNRaciones.getText().toString()));
             comidaNueva.settRacion(Integer.parseInt(etTRacion.getText().toString()));
             comidaNueva.setCalorias(Integer.parseInt(etTCalorias.getText().toString()));
             comidaNueva.setCarbohidratos(Integer.parseInt(etTCarbohidratos.getText().toString()));
@@ -300,6 +320,8 @@ public class DetalleComidaActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         Log.d("API", "Comida insertada");
                         Toast.makeText(DetalleComidaActivity.this, "✅ Comida creada", Toast.LENGTH_SHORT).show();
+                        setResult(AniadirComidaActivity.RESULT_OK);
+                        finish();
                     } else {
                         Toast.makeText(DetalleComidaActivity.this, "❌ Error en el guardado", Toast.LENGTH_SHORT).show();
                     }

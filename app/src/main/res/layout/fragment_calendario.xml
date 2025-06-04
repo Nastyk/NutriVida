@@ -8,57 +8,68 @@
     android:gravity="center"
     android:background="@drawable/fondomain">
 
-    <RelativeLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="5dp">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        android:layout_marginTop="20dp">
 
-        <ImageButton
-            android:id="@+id/btnLogout"
-            android:layout_width="56dp"
-            android:layout_height="71dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="6dp"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Cerrar Sesión"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_salir"
-            app:tint="@color/verde" />
-
-        <TextView
-            android:id="@+id/tvNombreUsuario"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:fontFamily="casual"
-            android:text="NutriVida"
-            android:textColor="@color/orange"
-            android:textSize="35sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="12dp">
 
-        <ImageButton
-            android:id="@+id/btnIrPerfil"
-            android:layout_width="69dp"
-            android:layout_height="64dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Ir a Perfil"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_perfilusuario"
-            app:tint="@color/verde" />
-    </RelativeLayout>
+            <!-- Header personalizado -->
+            <LinearLayout
+                android:id="@+id/calendarHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|center"
+                android:layout_marginBottom="8dp">
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="436dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/calendar_background"
-        app:mcv_showOtherDates="all" />
+                <ImageView
+                    android:id="@+id/btnPrevMonth"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_left_custom"
+                    android:contentDescription="Mes anterior"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/txtMonthTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Junio 2025"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:id="@+id/btnNextMonth"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_custom"
+                    android:contentDescription="Mes siguiente"
+                    app:tint="@color/black" />
+            </LinearLayout>
+
+            <!-- Calendario sin encabezado nativo -->
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="420dp"
+                android:background="@drawable/calendar_background"
+                app:mcv_showOtherDates="all"
+                app:mcv_arrowColor="@android:color/transparent"
+                app:mcv_headerTextAppearance="@null" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/btnIrComida"

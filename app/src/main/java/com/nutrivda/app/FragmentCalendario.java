@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.nutrivda.app.utils.EventDecorator;
 import com.nutrivda.app.viewmodel.CompartidoViewModel;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,9 +45,10 @@ public class FragmentCalendario extends Fragment {
 
     private MaterialCalendarView materialCalendarView;
     private Button btnIrComida;
-    private DatabaseHelper dbHelper;
     private String fechaSeleccionadaCalendario;
     private int userId;
+    private TextView txtMonthTitle;
+    private ImageView btnPrevMonth, btnNextMonth;
 
     public FragmentCalendario() {}
 
@@ -57,25 +60,20 @@ public class FragmentCalendario extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        dbHelper = new DatabaseHelper(requireContext());
         userId = getUserId();
 
         // Enlazo los elementos del layout con el código
         btnIrComida = view.findViewById(R.id.btnIrComida);
         materialCalendarView = view.findViewById(R.id.calendarView);
-        ImageButton btnLogOut = view.findViewById(R.id.btnLogout);
+        txtMonthTitle = view.findViewById(R.id.txtMonthTitle);
+        btnPrevMonth = view.findViewById(R.id.btnPrevMonth);
+        btnNextMonth = view.findViewById(R.id.btnNextMonth);
 
-        // Acciones del botón de logout
-        btnLogOut.setOnClickListener(v -> {
-            SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", requireContext().MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            editor.apply();
-
-            Intent intent = new Intent(requireContext(), LoginActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
+        materialCalendarView.setTitleFormatter(new TitleFormatter() {
+            @Override
+            public CharSequence format(CalendarDay day) {
+                return "";
+            }
         });
 
         // Marcar los días completados desde Supabase
@@ -83,6 +81,24 @@ public class FragmentCalendario extends Fragment {
 
         // Configurar alarma diaria para reinicio de peso
         configurarAlarmaDiaria();
+
+        // Actualizar título con el mes actual
+        updateMonthTitle(materialCalendarView.getCurrentDate(), txtMonthTitle);
+
+        btnPrevMonth.setOnClickListener(v -> {
+            materialCalendarView.goToPrevious();
+            updateMonthTitle(materialCalendarView.getCurrentDate(), txtMonthTitle);
+        });
+
+        btnNextMonth.setOnClickListener(v -> {
+            materialCalendarView.goToNext();
+            updateMonthTitle(materialCalendarView.getCurrentDate(), txtMonthTitle);
+        });
+
+        // Si el usuario cambia el mes con swipe, actualiza el texto también
+        materialCalendarView.setOnMonthChangedListener((widget, date) -> {
+            updateMonthTitle(date, txtMonthTitle);
+        });
 
         // Acceder al registro de comida
         btnIrComida.setOnClickListener(v -> {
@@ -113,7 +129,6 @@ public class FragmentCalendario extends Fragment {
         materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
             String fechaSeleccionada = String.format(Locale.getDefault(), "%04d-%02d-%02d", date.getYear(), (date.getMonth() + 1), date.getDay());
             fechaSeleccionadaCalendario = fechaSeleccionada;
-            verificarDiaCompletado(fechaSeleccionada);
         });
     }
 
@@ -163,90 +178,6 @@ public class FragmentCalendario extends Fragment {
         });
     }
 
-    private void verificarDiaCompletado(String fechaSeleccionada) {
-        SupabaseApi supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
-
-        /*supabaseApi.obtenerDiaCompletado("eq." + fechaSeleccionada, "eq." + userId).enqueue(new Callback<List<DiaCompletado>>() {
-            @Override
-            public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    DiaCompletado dia = response.body().get(0);
-
-                    String desayuno = dia.getDesayuno() != null ? dia.getDesayuno() : "No registrado";
-                    String comida = dia.getComida() != null ? dia.getComida() : "No registrado";
-                    String cena = dia.getCena() != null ? dia.getCena() : "No registrado";
-                    boolean diaIncompleto = !dia.isSwDesayuno() || !dia.isSwComida() || !dia.isSwCena();
-
-                    String checkDesayuno = dia.isSwDesayuno() ? "✅" : "❌";
-                    String checkComida = dia.isSwComida() ? "✅" : "❌";
-                    String checkCena = dia.isSwCena() ? "✅" : "❌";
-
-                    mostrarDialogoResumen(fechaSeleccionada, desayuno, comida, cena, checkDesayuno, checkComida, checkCena, diaIncompleto);
-                } else {
-                    Toast.makeText(requireContext(), "Este día no ha sido completado", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
-                Toast.makeText(requireContext(), "Error al conectar con Supabase: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
-    }
-
-    private void mostrarDialogoResumen(String fecha, String desayuno, String comida, String cena,
-                                       String checkDesayuno, String checkComida, String checkCena, boolean diaIncompleto) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.pop_up_resumen_dia, null);
-
-        TextView tvFecha = dialogView.findViewById(R.id.tvFecha);
-        TextView tvDesayuno = dialogView.findViewById(R.id.tvDesayuno);
-        TextView tvComida = dialogView.findViewById(R.id.tvComida);
-        TextView tvCena = dialogView.findViewById(R.id.tvCena);
-        TextView tvEstado = dialogView.findViewById(R.id.tvEstado);
-        TextView tvCheckDesayuno = dialogView.findViewById(R.id.tvCheckDesayuno);
-        TextView tvCheckComida = dialogView.findViewById(R.id.tvCheckComida);
-        TextView tvCheckCena = dialogView.findViewById(R.id.tvCheckCena);
-        Button btnEditar = dialogView.findViewById(R.id.btnEditar);
-        Button btnCerrar = dialogView.findViewById(R.id.btnCerrar);
-
-        tvFecha.setText("📅 Día: " + fecha);
-        tvDesayuno.setText("🍽️ Desayuno: " + desayuno);
-        tvComida.setText("🍛 Comida: " + comida);
-        tvCena.setText("🍲 Cena: " + cena);
-        tvCheckDesayuno.setText(checkDesayuno);
-        tvCheckComida.setText(checkComida);
-        tvCheckCena.setText(checkCena);
-
-        if (diaIncompleto) {
-            tvEstado.setVisibility(View.VISIBLE);
-        }
-
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(dialogView)
-                .create();
-
-        btnEditar.setOnClickListener(v -> {
-            CompartidoViewModel viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
-
-            // Enviar la fecha seleccionada
-            viewModel.setFechaSeleccionadaString(fechaSeleccionadaCalendario);
-            viewModel.setUserId(userId);
-
-            FragmentComida fragmentComida = new FragmentComida();
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragmentComida)
-                    .addToBackStack(null)
-                    .commit();
-
-            dialog.dismiss();
-        });
-
-        btnCerrar.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
-    }
-
     private void configurarAlarmaDiaria() {
         AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(requireContext().ALARM_SERVICE);
         Intent intent = new Intent(requireContext(), ResetPesoReceiver.class);
@@ -258,6 +189,15 @@ public class FragmentCalendario extends Fragment {
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    // Método para formatear el texto del mes
+    private void updateMonthTitle(CalendarDay date, TextView textView) {
+        Locale locale = new Locale("es", "ES"); // Español
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", locale);
+        String mes = sdf.format(date.getDate());
+        mes = mes.substring(0, 1).toUpperCase(locale) + mes.substring(1); // Capitalizar
+        textView.setText(mes);
     }
 
     private int getUserId() {

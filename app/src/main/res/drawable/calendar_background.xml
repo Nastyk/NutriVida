@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-
     <!-- Color de fondo del calendario -->
     <solid android:color="@color/white" />
-
-    <!-- Bordes redondeados -->
-    <corners android:radius="20dp" />
-
     <!-- Sombra alrededor -->
     <padding android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp" />
-
-    <!-- Borde del calendario -->
-    <stroke android:width="3dp" android:color="@color/verde" />
 </shape>
