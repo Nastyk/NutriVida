@@ -17,6 +17,8 @@ import com.nutrivda.app.adapter.ComidaAdapter;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.data.SupabaseApi;
+import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +68,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
 
             @Override
             public void onGuardarClick(Comida comida) {
-                agregarComidaAlDia(tipoComida.toLowerCase(), (long) comida.getId());
+                agregarComidaAlDia(tipoComida.toLowerCase(), comida);
             }
         }, null);
 
@@ -120,25 +122,65 @@ public class AniadirComidaActivity extends AppCompatActivity {
         });
     }
 
-    private void agregarComidaAlDia(String tipo, Long nuevoId) {
-        supabaseApi.obtenerDiaComida("eq." + userId, "eq." + fechaDeComida, tipo).enqueue(new Callback<List<Map<String, Object>>>() {
-            @Override
-            public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    Map<String, Object> registro = response.body().get(0);
-                    Object listaBruta = registro.get(tipo);
+    private void agregarComidaAlDia(String tipo, Comida comida) {
+        String tipoCalorias = "";
+        if ("desayuno".equalsIgnoreCase(tipo)) {
+            tipoCalorias = "caloria_desayuno";
+        } else if ("comida".equalsIgnoreCase(tipo)) {
+            tipoCalorias = "caloria_comida";
+        } else if ("cena".equalsIgnoreCase(tipo)) {
+            tipoCalorias = "caloria_cena";
+        }
 
-                    List<Long> idList = new ArrayList<>();
-                    if (listaBruta instanceof List<?>) {
-                        for (Object item : (List<?>) listaBruta) {
-                            if (item instanceof Number) {
-                                idList.add(((Number) item).longValue());
-                            }
-                        }
+        StringBuilder camposSelect = new StringBuilder();
+        camposSelect.append(tipo);
+        if (!StringUtil.isCadenaVacia(tipoCalorias)) {
+            camposSelect.append(",");
+            camposSelect.append(tipoCalorias);
+        }
+
+        Long nuevoId = (long) comida.getId();
+        supabaseApi.obtenerDiaComida("eq." + userId, "eq." + fechaDeComida, camposSelect.toString()).enqueue(new Callback<List<DiaCompletado>>() {
+            @Override
+            public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    DiaCompletado diaCompletado = response.body().get(0);
+                    List<Long> idListComidas =  new ArrayList<>();
+                    if ("desayuno".equalsIgnoreCase(tipo)) {
+                        idListComidas = diaCompletado.getDesayuno();
+                    } else if ("comida".equalsIgnoreCase(tipo)) {
+                        idListComidas = diaCompletado.getComida();
+                    } else if ("cena".equalsIgnoreCase(tipo)) {
+                        idListComidas = diaCompletado.getCena();
                     }
-                    idList.add(nuevoId);
+
+                    int caloriasComida = 0;
+                    if ("desayuno".equalsIgnoreCase(tipo)) {
+                        caloriasComida = diaCompletado.getCaloria_desayuno();
+                    } else if ("comida".equalsIgnoreCase(tipo)) {
+                        caloriasComida = diaCompletado.getCaloria_comida();
+                    } else if ("cena".equalsIgnoreCase(tipo)) {
+                        caloriasComida = diaCompletado.getCaloria_cena();
+                    }
+
+                    caloriasComida += comida.getCalorias();
+
+                    if (idListComidas != null) {
+                        idListComidas.add(nuevoId);
+                    } else {
+                        idListComidas =  new ArrayList<>();
+                        idListComidas.add(nuevoId);
+                    }
+
                     Map<String, Object> body = new HashMap<>();
-                    body.put(tipo, idList);
+                    body.put(tipo, idListComidas);
+                    if ("desayuno".equalsIgnoreCase(tipo)) {
+                        body.put("caloria_desayuno", caloriasComida);
+                    } else if ("comida".equalsIgnoreCase(tipo)) {
+                        body.put("caloria_comida", caloriasComida);
+                    } else if ("cena".equalsIgnoreCase(tipo)) {
+                        body.put("caloria_cena", caloriasComida);
+                    }
                     supabaseApi.actualizarDiaComida("eq." + userId, "eq." + fechaDeComida, body).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -156,8 +198,15 @@ public class AniadirComidaActivity extends AppCompatActivity {
                     ids.add(nuevoId);
                     data.put("id_usuario_fk", userId);
                     data.put("fecha", fechaDeComida);
-                    data.put("completado", false);
+                    data.put("completado", true);
                     data.put(tipo, ids);
+                    if ("desayuno".equalsIgnoreCase(tipo)) {
+                        data.put("caloria_desayuno", comida.getCalorias());
+                    } else if ("comida".equalsIgnoreCase(tipo)) {
+                        data.put("caloria_comida", comida.getCalorias());
+                    } else if ("cena".equalsIgnoreCase(tipo)) {
+                        data.put("caloria_cena", comida.getCalorias());
+                    }
                     supabaseApi.insertarDiaCompletado(data).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -173,7 +222,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
+            public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
                 Toast.makeText(AniadirComidaActivity.this, "❌ Error de red", Toast.LENGTH_SHORT).show();
             }
         });

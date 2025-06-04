@@ -221,6 +221,9 @@ public class FragmentDia extends Fragment {
                         }
                     });
                 }
+
+                comprobarDia();
+
                 return false;
             });
             popup.show();
@@ -237,6 +240,51 @@ public class FragmentDia extends Fragment {
         }
 
         actualizarTotalKcal();
+    }
+
+
+    private void comprobarDia() {
+
+        StringBuilder camposSelect = new StringBuilder();
+        camposSelect.append("desayuno");
+        camposSelect.append(",");
+        camposSelect.append("comida");
+        camposSelect.append(",");
+        camposSelect.append("cena");
+        supabaseApi.obtenerDiaComida("eq." + userId, "eq." + fechaDeComida, camposSelect.toString()).enqueue(new Callback<List<DiaCompletado>>() {
+            @Override
+            public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    DiaCompletado diaCompletado = response.body().get(0);
+                    List<Long> desayuno = diaCompletado.getDesayuno();
+                    List<Long> comida = diaCompletado.getComida();
+                    List<Long> cena = diaCompletado.getCena();
+
+                    boolean sinComidas = (desayuno == null || desayuno.isEmpty()) && (comida == null || comida.isEmpty()) && (cena == null || cena.isEmpty());
+
+                    if(sinComidas) {
+                        supabaseApi.eliminarDiaComida("eq." + userId, "eq." + fechaDeComida).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.isSuccessful()) {
+                                    Toast.makeText(getContext(), "Dia eliminado", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DiaCompletado>> call, Throwable t) {
+                Toast.makeText(getContext(), "❌ Error de red", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

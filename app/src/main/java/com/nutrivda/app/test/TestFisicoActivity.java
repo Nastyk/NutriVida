@@ -61,7 +61,7 @@ public class TestFisicoActivity extends AppCompatActivity {
                     "\n• Limitación física: " + r3;
 
             // Enviar al ResultadoActivity
-            Intent intent = new Intent(TestFisicoActivity.this, ResultadoActivity.class);
+            Intent intent = new Intent(TestFisicoActivity.this, TestProfesionalActivity.class);
                 intent.putExtra("tipoTest", "física");
                 intent.putExtra("resultado", resultado);
                 intent.putExtra("resumen", resumen);

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.nutrivda.app.MainActivity;
@@ -49,6 +50,15 @@ public class FragmentResumenOnboarding extends Fragment {
         tvResumen.setText(resumen);
 
         btnGenerarPlan.setOnClickListener(v -> {
+
+            // Creo el diálogo de carga con Lottie
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            View dialogView = inflater.inflate(R.layout.dialog_cargando_plan, null);
+            builder.setView(dialogView);
+            builder.setCancelable(false);
+            AlertDialog loadingDialog = builder.create();
+            loadingDialog.show();
+
             // Creo una instancia del servicio que me conecta con la IA de Cohere
             CohereService ia = new CohereService(supabaseApi, datosUsuario);
 
@@ -57,6 +67,11 @@ public class FragmentResumenOnboarding extends Fragment {
                 @Override
                 public void onSuccess(PlanNutricional planNutricional) {
 
+                    // 🔒 Guardo que el onboarding ha sido completado
+                    SharedPreferences prefs = requireActivity().getSharedPreferences("NutriVidaPrefs", Context.MODE_PRIVATE);
+                    prefs.edit().putBoolean("onboardingCompletado", true).apply();
+
+
                     // 2. Lanzo ResultadoActivity para mostrar la respuesta de la IA
                     Intent intent = new Intent(getActivity(), ResultadoActivity.class);
                     intent.putExtra("planNutricional", planNutricional); // Le paso la respuesta como extra
@@ -64,14 +79,21 @@ public class FragmentResumenOnboarding extends Fragment {
 
                     // 3. Cierro el onboarding para no volver atrás
                     requireActivity().finish();
+
+                    loadingDialog.dismiss();
+
                 }
 
                 @Override
                 public void onError(String error) {
                     // Si algo falla con la IA, muestro el error al usuario
                     Toast.makeText(getContext(), "Error con IA: " + error, Toast.LENGTH_LONG).show();
+
+                    loadingDialog.dismiss();
+
                 }
             });
+
         });
 
 

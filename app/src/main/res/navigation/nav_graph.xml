@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FragmentPerfil"
-        android:name="com.nutrivda.app.FragmentPerfil"
+        android:name="com.nutrivda.app.FragmentEstadisticas"
         android:label="@string/fragment_perfil"
-        tools:layout="@layout/fragment_perfil">
+        tools:layout="@layout/fragment_estadisticas">
     </fragment>
     <fragment
         android:id="@+id/FragmentCalendario"

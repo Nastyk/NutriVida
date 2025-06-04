@@ -1,26 +1,30 @@
 package com.nutrivda.app;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.nutrivda.app.inicializacion.OnboardingActivity;
 import com.nutrivda.app.test.HistorialResultadoActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.nutrivda.app.test.ExportarResultadoActivity;
-
 public class FragmentConfiguracion extends Fragment {
 
-    private LinearLayout itemPerfil, itemExportar, itemLogout;
+    private LinearLayout itemPerfil, itemTestNutricional, itemLogout;
     private Switch switchModoOscuro, switchNotificaciones;
 
     public FragmentConfiguracion() {}
@@ -39,7 +43,7 @@ public class FragmentConfiguracion extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         itemPerfil = view.findViewById(R.id.itemPerfil);
-        itemExportar = view.findViewById(R.id.itemExportar);
+        itemTestNutricional = view.findViewById(R.id.itemTestNutricional);
         itemLogout = view.findViewById(R.id.itemLogout);
         switchModoOscuro = view.findViewById(R.id.switchModoOscuro);
         switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
@@ -59,20 +63,46 @@ public class FragmentConfiguracion extends Fragment {
 
         // Al hacer clic en "Editar perfil", muestro el fragmento de perfil
         itemPerfil.setOnClickListener(v -> {
-            FragmentPerfil fragmentPerfil = new FragmentPerfil();
+            FragmentEstadisticas fragmentEstadisticas = new FragmentEstadisticas();
             FragmentTransaction transaction = requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction();
-            transaction.replace(R.id.fragment_container, fragmentPerfil);
+            transaction.replace(R.id.fragment_container, fragmentEstadisticas);
             transaction.addToBackStack(null); // Para que pueda volver atrás
             transaction.commit();
         });
 
-        // Al hacer clic en "Exportar resultados", abro la actividad de exportar
-        itemExportar.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), ExportarResultadoActivity.class);
-            startActivity(intent);
+        // Al hacer clic en "Lanazo la actividad Onboarding, que tiene los tests"
+        itemTestNutricional.setOnClickListener(v -> {
+            Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_test);
+
+            AlertDialog dialog = new AlertDialog.Builder(requireActivity(), R.style.DialogSlideFadeAnimation)
+                    .setIcon(icon)
+                    .setTitle("¿Reiniciar tests nutricionales?")
+                    .setMessage("Esto restablecerá tus calorías objetivo así como tus estadísticas actuales.")
+                    .setPositiveButton("Continuar", null)
+                    .setNegativeButton("Cancelar", null)
+                    .create();
+
+            dialog.setOnShowListener(dlg -> {
+                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                positive.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
+                negative.setTextColor(ContextCompat.getColor(requireContext(), R.color.red));
+
+                positive.setOnClickListener(btn -> {
+                    Intent intent = new Intent(requireContext(), OnboardingActivity.class);
+                    startActivity(intent);
+                    dialog.dismiss();
+                });
+
+                negative.setOnClickListener(btn -> dialog.dismiss());
+            });
+
+            dialog.show();
         });
+
 
         // Al hacer clic en "Cerrar sesión", borro preferencias y regreso al login
         itemLogout.setOnClickListener(v -> {

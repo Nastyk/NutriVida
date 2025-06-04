@@ -208,7 +208,7 @@ public class ActividadPerfil extends AppCompatActivity {
 
         // Actualizar tabla datos_usuario
         DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad, caloriasObjetivo, false);
-        supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
+        /*supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(Call<Response<Void>> call, Response<Response<Void>> response) {
                 if (response.code() == 204) {
@@ -224,6 +224,6 @@ public class ActividadPerfil extends AppCompatActivity {
             public void onFailure(Call<Response<Void>> call, Throwable t) {
                 Toast.makeText(ActividadPerfil.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 }

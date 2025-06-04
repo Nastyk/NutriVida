@@ -58,6 +58,40 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Opción: Realizar test nutricional -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:id="@+id/itemTestNutricional"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:contentDescription="Icono realizar tests"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_test"
+                    app:tint="@color/verde" />
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:text="Realizar test nutricional"
+                    android:textSize="16sp"
+                    android:textColor="#333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Opción: Exportar resultados -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -67,7 +101,7 @@
             card_view:cardElevation="6dp">
 
             <LinearLayout
-                android:id="@+id/itemExportar"
+                android:id="@+id/hacerTest"
                 android:orientation="horizontal"
                 android:padding="16dp"
                 android:layout_width="match_parent"
@@ -76,7 +110,7 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <ImageView
-                    android:contentDescription="Icono de editar perfil"
+                    android:contentDescription="Icono de hacer test"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_exportar"

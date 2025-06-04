@@ -89,12 +89,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Botón para comenzar los tests -->
+        <!-- Botón para comenzar el plan nutricional -->
         <Button
-            android:id="@+id/btnComenzarTests"
+            android:id="@+id/btnComenzarPlan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Comenzar tests de salud"
+            android:text="Empexar plan nutricional"
             android:backgroundTint="@color/verde"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
