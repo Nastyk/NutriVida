@@ -28,7 +28,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/tvIMC"
@@ -92,13 +93,13 @@
         <!-- Botón para comenzar el plan nutricional -->
         <Button
             android:id="@+id/btnComenzarPlan"
-            android:layout_width="match_parent"
+            android:layout_width="254dp"
             android:layout_height="wrap_content"
-            android:text="Empexar plan nutricional"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/verde"
+            android:text="Empezar plan nutricional"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>

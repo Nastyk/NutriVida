@@ -55,6 +55,6 @@
         android:layout_margin="16dp"
         android:contentDescription="Agregar comida"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/lila_medio" />
+        app:backgroundTint="@color/verde" />
 
 </FrameLayout>

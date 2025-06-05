@@ -15,8 +15,8 @@
         <!-- Botón de ir atrás con icono -->
         <ImageButton
             android:id="@+id/btnIrAtras"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentStart="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_atras"
@@ -143,6 +143,7 @@
                 android:id="@+id/btnEvaluarFisico"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/verde"
                 android:text="Siguiente"
                 android:layout_marginTop="32dp" />
         </LinearLayout>
