@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -69,6 +70,12 @@
         <activity
             android:name=".test.TestEmocionalActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".test.ExportarResultadoActivity"
+            android:exported="false"/>
+
+
     </application>
 
 </manifest>

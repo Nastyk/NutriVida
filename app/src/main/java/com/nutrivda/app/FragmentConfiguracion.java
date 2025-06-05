@@ -1,6 +1,9 @@
 package com.nutrivda.app;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -14,6 +17,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.nutrivda.app.inicializacion.OnboardingActivity;
+import com.nutrivda.app.test.ExportarResultadoActivity;
 import com.nutrivda.app.test.HistorialResultadoActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +51,6 @@ public class FragmentConfiguracion extends Fragment {
         itemLogout = view.findViewById(R.id.itemLogout);
         switchModoOscuro = view.findViewById(R.id.switchModoOscuro);
         switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
-        LinearLayout itemHistorial = view.findViewById(R.id.itemHistorial);
 
         // Yo uso SharedPreferences para guardar ajustes del usuario
         SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", 0);
@@ -61,15 +64,18 @@ public class FragmentConfiguracion extends Fragment {
         boolean notificacionesActivas = prefs.getBoolean("notificaciones", false);
         switchNotificaciones.setChecked(notificacionesActivas);
 
-        // Al hacer clic en "Editar perfil", muestro el fragmento de perfil
+        // Al hacer clic en "Editar perfil", abro la actividad ActividadPerfil
         itemPerfil.setOnClickListener(v -> {
-            FragmentEstadisticas fragmentEstadisticas = new FragmentEstadisticas();
-            FragmentTransaction transaction = requireActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction();
-            transaction.replace(R.id.fragment_container, fragmentEstadisticas);
-            transaction.addToBackStack(null); // Para que pueda volver atrás
-            transaction.commit();
+            Intent intent = new Intent(requireContext(), ActividadPerfil.class);
+            startActivity(intent);
+        });
+
+        //Exportar el historial guardado
+        LinearLayout itemExportar = view.findViewById(R.id.exportarTest);
+
+        itemExportar.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), ExportarResultadoActivity.class);
+            startActivity(intent);
         });
 
         // Al hacer clic en "Lanazo la actividad Onboarding, que tiene los tests"
@@ -121,16 +127,23 @@ public class FragmentConfiguracion extends Fragment {
         });
 
         // Si el usuario activa o desactiva las notificaciones, lo guardo
-        switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("notificaciones", isChecked).apply();
-            Toast.makeText(requireContext(),
-                    isChecked ? "🔔 Notificaciones activadas" : "🔕 Notificaciones desactivadas",
-                    Toast.LENGTH_SHORT).show();
-        });
+        Switch switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
 
-        itemHistorial.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), HistorialResultadoActivity.class);
-            startActivity(intent);
+        switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Enviar una notificación de prueba a los 5 segundos
+                AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(requireContext(), ResetPesoReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                long triggerTime = System.currentTimeMillis() + 5000; // en 5 segundos
+
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+                Toast.makeText(requireContext(), "Notificación programada en 5 segundos", Toast.LENGTH_SHORT).show();
+            } else {
+                // Puedes cancelar la notificación si quieres
+                Toast.makeText(requireContext(), "Notificaciones desactivadas", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

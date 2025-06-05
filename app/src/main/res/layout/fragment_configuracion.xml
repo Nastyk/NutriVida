@@ -101,65 +101,30 @@
             card_view:cardElevation="6dp">
 
             <LinearLayout
-                android:id="@+id/hacerTest"
-                android:orientation="horizontal"
-                android:padding="16dp"
+                android:id="@+id/exportarTest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
-                android:foreground="?attr/selectableItemBackground">
+                android:orientation="horizontal"
+                android:padding="16dp">
 
                 <ImageView
-                    android:contentDescription="Icono de hacer test"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="Icono de hacer test"
                     android:src="@drawable/ic_exportar"
                     app:tint="@color/verde" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="Exportar resultados"
-                    android:textSize="16sp"
                     android:textColor="#333"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:textSize="16sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!-- Opción: Ver historial de resultados -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
-
-            <LinearLayout
-                android:id="@+id/itemHistorial"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:foreground="?attr/selectableItemBackground">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_historial"
-                    app:tint="@color/verde"
-                    android:contentDescription="Icono historial" />
-
-                <TextView
-                    android:layout_marginStart="16dp"
-                    android:text="Ver historial"
-                    android:textSize="16sp"
-                    android:textColor="#333"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
 
         <!-- Modo oscuro -->
         <Switch
