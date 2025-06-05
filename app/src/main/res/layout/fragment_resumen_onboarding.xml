@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:background="#FFFFFF"
     android:padding="24dp">
 
@@ -30,10 +31,10 @@
     <!-- Botón con estilo profesional -->
     <Button
         android:id="@+id/btnGenerarPlan"
-        android:layout_width="match_parent"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="Generar Plan Personalizado"
         android:backgroundTint="@color/verde"
+        android:text="Generar Plan Personalizado"
         android:textColor="@android:color/white"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 </LinearLayout>

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="⬅ Atrás"
             android:layout_gravity="start"
-            android:backgroundTint="@color/gray"
+            android:backgroundTint="@color/verde"
             android:textColor="@android:color/white"
             android:layout_marginBottom="10dp"/>
 

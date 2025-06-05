@@ -44,17 +44,18 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_marginTop="10dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregarComida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="Agregar comida"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/verde" />
     </LinearLayout>
 
     <!-- Botón flotante -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAgregarComida"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="Agregar comida"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/verde" />
 
 </FrameLayout>

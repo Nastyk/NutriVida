@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:padding="24dp">
-    <LinearLayout android:orientation="vertical"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:text="¿Cuál es tu prioridad principal en este momento?"
-            android:textSize="20sp" android:textStyle="bold"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <RadioGroup
             android:id="@+id/rgPrioridad"
@@ -42,8 +47,11 @@
                 android:text="Mejorar mi estado emocional"/>
         </RadioGroup>
 
-        <Button android:id="@+id/btnSiguiente" android:text="Siguiente"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
+        <Button android:id="@+id/btnSiguiente"
+            android:text="Siguiente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/verde"
             android:layout_marginTop="32dp"/>
     </LinearLayout>
 </ScrollView>

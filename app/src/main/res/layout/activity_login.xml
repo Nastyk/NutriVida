@@ -25,13 +25,13 @@
 
     <EditText
         android:id="@+id/etUsername"
-        android:layout_width="335dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Usuario" />
 
     <EditText
         android:id="@+id/etPassword"
-        android:layout_width="335dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Contraseña"
         android:inputType="textPassword" />
