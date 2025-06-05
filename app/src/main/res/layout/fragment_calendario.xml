@@ -8,6 +8,14 @@
     android:gravity="center"
     android:background="@drawable/fondomain">
 
+    <ImageView
+        android:id="@+id/logoNutriVida"
+        android:layout_width="193dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="Logo NutriVida"
+        android:src="@drawable/logoText1" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
