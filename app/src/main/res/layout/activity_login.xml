@@ -13,7 +13,7 @@
         android:layout_height="85dp"
         android:layout_marginBottom="12dp"
         android:contentDescription="Logo NutriVida"
-        android:src="@drawable/logo1" />
+        android:src="@drawable/corazon_nutrivida" />
 
     <ImageView
         android:id="@+id/logoNutriVida"
@@ -21,17 +21,17 @@
         android:layout_height="70dp"
         android:layout_marginBottom="12dp"
         android:contentDescription="Logo NutriVida"
-        android:src="@drawable/logoText1" />
+        android:src="@drawable/nutrividatext" />
 
     <EditText
         android:id="@+id/etUsername"
-        android:layout_width="335dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Usuario" />
 
     <EditText
         android:id="@+id/etPassword"
-        android:layout_width="335dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Contraseña"
         android:inputType="textPassword" />

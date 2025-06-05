@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondomain"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
     android:padding="24dp">
 
     <LinearLayout
@@ -11,8 +11,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:layout_gravity="center"
         android:paddingBottom="48dp">
 
+        <!-- Tarjeta visual para plan nutricional -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,9 +22,8 @@
             android:layout_marginBottom="24dp"
             android:layout_marginHorizontal="8dp"
             android:padding="24dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="12dp"
-            android:backgroundTint="#F8F8F8">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -30,157 +31,66 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@color/gray"
-                    android:padding="12dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tvDesayuno"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PLAN NUTRICIONAL"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@android:color/white"
-                        android:gravity="center" />
-                </LinearLayout>
-
-
-                <!-- IMC -->
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="IMC"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvIMC"
-                    android:text="24.6"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Clasificación -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Clasificación"
+                    android:text="IMC:"
                     android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"/>
+                    android:textSize="16sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvClasificacionIMC"
-                    android:text="Normal"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Calorías -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Calorías recomendadas"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"/>
+                    android:text="Clasificación:"
+                    android:textSize="14sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvCalorias"
-                    android:text="2200 kcal"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Macros -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Distribución de macros (g/día)"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"/>
+                    android:text="Calorías recomendadas:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvMacros"
-                    android:text="Proteínas: 120g, Carbs: 250g, Grasas: 70g"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Actividad -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nivel de actividad recomendado"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"/>
+                    android:text="Macros (g/día):"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvNivelActividad"
-                    android:text="Moderada"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Tiempo objetivo -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tiempo estimado para lograr el objetivo"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"/>
+                    android:text="Nivel de actividad recomendado:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvTiempo"
-                    android:text="3 meses"
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Análisis -->
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Análisis personalizado"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#444"
-                    android:layout_marginTop="12dp"/>
+                    android:text="Tiempo estimado para lograr el objetivo:"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvAnalisis"
-                    android:text="Tu plan está adaptado a tus necesidades y estilo de vida actual."
-                    android:textSize="15sp"
-                    android:textColor="#000"
-                    android:lineSpacingExtra="6dp"
-                    android:layout_marginBottom="4dp"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Análisis personalizado:"
+                    android:layout_marginTop="12dp"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Botón para comenzar el plan nutricional -->
         <Button
             android:id="@+id/btnComenzarPlan"
             android:layout_width="254dp"
@@ -190,5 +100,6 @@
             android:text="Empezar plan nutricional"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
+
     </LinearLayout>
 </ScrollView>

@@ -124,6 +124,7 @@
                 android:id="@+id/btnSiguiente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/verde"
                 android:text="Siguiente"
                 android:layout_marginTop="32dp"/>
         </LinearLayout>

@@ -1,133 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/fondomain"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
     android:padding="24dp">
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
 
-    <!-- Botón para retroceder (parte superior izquierda) -->
-    <ImageButton
-        android:id="@+id/btnIrAtras"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_chevron_left_custom"
-        android:visibility="invisible"
-        android:contentDescription="Volver al cuestionario anterior" />
+        <TextView
+            android:text="¿Cuál es tu prioridad principal en este momento?"
+            android:textSize="20sp" android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 
-    <!-- Botón para avanzar (parte superior derecha) -->
-    <ImageButton
-        android:id="@+id/btnIrAdelante"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_chevron_right_custom"
-        android:visibility="invisible"
-        android:contentDescription="Ir al siguiente cuestionario" />
-
-    <!-- Scroll con CardView abajo del botón -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/btnIrAdelante"
-        android:layout_marginTop="16dp">
-
-        <LinearLayout
-            android:orientation="vertical"
+        <RadioGroup
+            android:id="@+id/rgPrioridad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
+            <RadioButton
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp"
-                android:layout_marginBottom="16dp">
+                android:layout_width="wrap_content"
+                android:id="@+id/rbSalud"
+                android:text="Mejorar mi salud"/>
+            <RadioButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/rbGrasa"
+                android:text="Perder grasa"/>
+            <RadioButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/rbMusculo"
+                android:text="Ganar músculo"/>
+            <RadioButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/rbEnergia"
+                android:text="Tener más energía"/>
+            <RadioButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/rbEmocional"
+                android:text="Mejorar mi estado emocional"/>
+        </RadioGroup>
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@color/gray"
-                        android:padding="12dp"
-                        android:gravity="center_vertical"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:text="¿Cuál es tu objetivo principal en este momento?"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_weight="0.6"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/white" />
-
-                    </LinearLayout>
-
-                    <RadioGroup
-                        android:id="@+id/rgPrioridad"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/rbSalud"
-                            android:text="Mejorar mi salud"/>
-                        <RadioButton
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/rbGrasa"
-                            android:text="Perder grasa"/>
-                        <RadioButton
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/rbMusculo"
-                            android:text="Ganar músculo"/>
-                        <RadioButton
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/rbEnergia"
-                            android:text="Tener más energía"/>
-                        <RadioButton
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/rbEmocional"
-                            android:text="Mejorar mi estado emocional"/>
-                    </RadioGroup>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <Button
-                            android:id="@+id/btnSiguiente"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Siguiente"
-                            android:layout_marginTop="12dp"
-                            android:background="@drawable/bg_boton_selector"
-                            android:textColor="@android:color/white" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</RelativeLayout>
+        <Button android:id="@+id/btnSiguiente" android:text="Siguiente"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"/>
+    </LinearLayout>
+</ScrollView>
