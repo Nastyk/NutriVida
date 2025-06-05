@@ -297,7 +297,7 @@
                     android:id="@+id/tvCalorias"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="35\nCalorías"
+                    android:text="0\nCalorías"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     android:textColor="@android:color/black"
@@ -307,7 +307,7 @@
                     android:id="@+id/tvCarbs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="88%\n7g\nCarbohidratos"
+                    android:text="0%\n0g\nCarbohidratos"
                     android:textAlignment="center"
                     android:layout_marginEnd="16dp" />
 
@@ -323,7 +323,7 @@
                     android:id="@+id/tvProteinas"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="12%\n1g\nProteínas"
+                    android:text="0%\n0g\nProteínas"
                     android:textAlignment="center" />
             </LinearLayout>
         </LinearLayout>

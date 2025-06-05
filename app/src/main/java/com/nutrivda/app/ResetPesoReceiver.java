@@ -46,7 +46,7 @@ public class ResetPesoReceiver extends BroadcastReceiver {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "nutrividanotif")
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // o cualquier ícono que tengas
+                .setSmallIcon(R.drawable.logo1) // o cualquier ícono que tengas
                 .setContentTitle("¡Hora de tu test nutricional!")
                 .setContentText("Abre NutriVida y mantén tu progreso actualizado 💪")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
