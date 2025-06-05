@@ -9,6 +9,7 @@ import android.widget.*;
 import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
@@ -19,35 +20,53 @@ import com.nutrivda.app.inicializacion.OnboardingData;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.pojo.PlanNutricional;
 import com.nutrivda.app.test.ResultadoActivity;
+import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FragmentResumenOnboarding extends Fragment {
 
     private int userId;
     private SupabaseApi supabaseApi;
     private DatosUsuario datosUsuario;
+    private Button btnGenerarPlan, btnRealizarTests;
+    private TextView tvActividadFisica, tvObjetivo, tvRestricciones, tvOrganizacion;
+    private SharedViewModelOnboarding viewModelOnboarding;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isVisible()) {
+            // Muestro el resumen del onboarding al usuario
+            tvActividadFisica.setText(viewModelOnboarding.getActividadFisica().getValue());
+            tvObjetivo.setText(viewModelOnboarding.getObjetivo().getValue());
+            tvRestricciones.setText(String.join(", ", Objects.requireNonNull(viewModelOnboarding.getRestricciones().getValue())));
+            tvOrganizacion.setText(viewModelOnboarding.getOrganizacion().getValue());
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_resumen_onboarding, container, false);
 
-        TextView tvResumen = view.findViewById(R.id.tvResumen);
-        Button btnGenerarPlan = view.findViewById(R.id.btnGenerarPlan);
+        tvActividadFisica = view.findViewById(R.id.tvActividadFisica);
+        tvObjetivo = view.findViewById(R.id.tvObjetivo);
+        tvRestricciones = view.findViewById(R.id.tvRestricciones);
+        tvOrganizacion = view.findViewById(R.id.tvOrganizacion);
+        btnGenerarPlan = view.findViewById(R.id.btnGenerarPlan);
+        btnRealizarTests = view.findViewById(R.id.btnRealizarTests);
+        viewModelOnboarding = new ViewModelProvider(requireActivity()).get(SharedViewModelOnboarding.class);
 
         // Inicializar API de Supabase
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
         userId = getUserId();
         obtenerDatosUsusario();
 
-        // Muestro el resumen del onboarding al usuario
-        OnboardingData data = OnboardingData.getInstance();
-        String resumen  = "✅ Actividad física: " + data.getActividadFisica() + "\n\n"
-                + "🎯 Prioridad principal: " + data.getPrioridad() + "\n\n"
-                + "🥗 Restricciones: " + String.join(", ", data.getRestricciones()) + "\n\n"
-                + "🍽 Organización de comidas: " + data.getOrganizacionComidas();
-        tvResumen.setText(resumen);
+        btnRealizarTests.setOnClickListener(v -> {
+            ((OnboardingActivity) requireActivity()).getViewPager().setCurrentItem(0, true);
+        });
 
         btnGenerarPlan.setOnClickListener(v -> {
 
@@ -63,7 +82,7 @@ public class FragmentResumenOnboarding extends Fragment {
             CohereService ia = new CohereService(supabaseApi, datosUsuario);
 
             // Le paso los datos del usuario y defino qué hacer con la respuesta
-            ia.generarPlan(OnboardingData.getInstance(), new CohereService.Callback() {
+            ia.generarPlan(viewModelOnboarding, new CohereService.Callback() {
                 @Override
                 public void onSuccess(PlanNutricional planNutricional) {
 
@@ -86,8 +105,31 @@ public class FragmentResumenOnboarding extends Fragment {
 
                 @Override
                 public void onError(String error) {
-                    // Si algo falla con la IA, muestro el error al usuario
-                    Toast.makeText(getContext(), "Error con IA: " + error, Toast.LENGTH_LONG).show();
+                    // Si la primera peticion falla, lanzo una nueva
+                    ia.generarPlan(viewModelOnboarding, new CohereService.Callback() {
+                        @Override
+                        public void onSuccess(PlanNutricional planNutricional) {
+                            // 🔒 Guardo que el onboarding ha sido completado
+                            SharedPreferences prefs = requireActivity().getSharedPreferences("NutriVidaPrefs", Context.MODE_PRIVATE);
+                            prefs.edit().putBoolean("onboardingCompletado", true).apply();
+
+
+                            // 2. Lanzo ResultadoActivity para mostrar la respuesta de la IA
+                            Intent intent = new Intent(getActivity(), ResultadoActivity.class);
+                            intent.putExtra("planNutricional", planNutricional); // Le paso la respuesta como extra
+                            startActivity(intent);
+
+                            // 3. Cierro el onboarding para no volver atrás
+                            requireActivity().finish();
+
+                            loadingDialog.dismiss();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
 
                     loadingDialog.dismiss();
 

@@ -1,51 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondomain"
     android:padding="24dp">
-    <LinearLayout android:orientation="vertical"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
 
-        <TextView
-            android:text="¿Tienes alguna restricción alimentaria o preferencia?"
-            android:textSize="20sp" android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <!-- Botón para retroceder (parte superior izquierda) -->
+    <ImageButton
+        android:id="@+id/btnIrAtras"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_chevron_left_custom"
+        android:visibility="invisible"
+        android:contentDescription="Volver al cuestionario anterior" />
 
-        <CheckBox
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/cbVegetariano"
-            android:text="Vegetariano"/>
-        <CheckBox
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/cbVegano"
-            android:text="Vegano"/>
-        <CheckBox
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/cbSinGluten"
-            android:text="Sin gluten"/>
-        <CheckBox
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/cbSinLactosa"
-            android:text="Sin lactosa"/>
-        <CheckBox
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/cbNinguna"
-            android:text="Ninguna"/>
-        <EditText
-            android:id="@+id/etOtra"
-            android:hint="Otra (especificar)"
-            android:layout_marginTop="12dp"
+    <!-- Botón para avanzar (parte superior derecha) -->
+    <ImageButton
+        android:id="@+id/btnIrAdelante"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_chevron_right_custom"
+        android:visibility="invisible"
+        android:contentDescription="Ir al siguiente cuestionario" />
+
+    <!-- Scroll con CardView abajo del botón -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnIrAdelante"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/btnSiguiente" android:text="Siguiente"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"/>
-    </LinearLayout>
-</ScrollView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@color/gray"
+                        android:padding="12dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:text="¿Tienes alguna restriccion alimentaria?"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_weight="0.6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white" />
+
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/cbVegetariano"
+                        android:text="Vegetariano"/>
+                    <CheckBox
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/cbVegano"
+                        android:text="Vegano"/>
+                    <CheckBox
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/cbSinGluten"
+                        android:text="Sin gluten"/>
+                    <CheckBox
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/cbSinLactosa"
+                        android:text="Sin lactosa"/>
+                    <CheckBox
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/cbNinguna"
+                        android:text="Ninguna"/>
+                    <EditText
+                        android:id="@+id/etOtra"
+                        android:hint="Otra (especificar)"
+                        android:layout_marginTop="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/btnSiguiente"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Siguiente"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/bg_boton_selector"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

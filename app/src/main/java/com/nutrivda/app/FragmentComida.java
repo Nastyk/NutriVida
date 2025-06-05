@@ -6,15 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,21 +27,11 @@ import com.nutrivda.app.adapter.ComidaAdapter;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.databinding.FragmentComidaBinding;
-import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.Comida;
-import com.nutrivda.app.model.DiaCompletado;
-import com.nutrivda.app.utils.StringUtil;
-import com.nutrivda.app.viewmodel.CompartidoViewModel;
+import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +46,7 @@ public class FragmentComida extends Fragment {
     private List<Comida> todasLasComidas = new ArrayList<>();
     private SupabaseApi supabaseApi;
     private int userId = 0;
-    private CompartidoViewModel viewModel;
+    private SharedViewModelCalendarioDia viewModel;
     private FragmentComidaBinding binding;
     private ActivityResultLauncher<Intent> comidaLauncher;
     private FloatingActionButton fabAgregarComida;
@@ -97,7 +81,7 @@ public class FragmentComida extends Fragment {
 
         rvResultados.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModelCalendarioDia.class);
         this.userId = viewModel.getUserId().getValue()  != null ? viewModel.getUserId().getValue().intValue() : getUserId();
 
         fabAgregarComida.setOnClickListener(v -> {

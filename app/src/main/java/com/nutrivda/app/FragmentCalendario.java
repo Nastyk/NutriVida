@@ -9,23 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.database.DatabaseHelper;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.EventDecorator;
-import com.nutrivda.app.viewmodel.CompartidoViewModel;
+import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
@@ -107,7 +102,7 @@ public class FragmentCalendario extends Fragment {
                 fechaSeleccionadaCalendario = sdf.format(Calendar.getInstance().getTime());
             }
 
-            CompartidoViewModel viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
+            SharedViewModelCalendarioDia viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModelCalendarioDia.class);
 
             // Enviar la fecha seleccionada
             viewModel.setFechaSeleccionadaString(fechaSeleccionadaCalendario);

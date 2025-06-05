@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,16 +25,14 @@ import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DiaCompletado;
-import com.nutrivda.app.utils.StringUtil;
 import com.nutrivda.app.utils.Utilidades;
-import com.nutrivda.app.viewmodel.CompartidoViewModel;
+import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +55,7 @@ public class FragmentDia extends Fragment {
     private List<Long> desayunoList, comidaList, cenaList;
     private boolean isEditar = false;
     private SupabaseApi supabaseApi;
-    private CompartidoViewModel viewModel;
+    private SharedViewModelCalendarioDia viewModel;
     private ActivityResultLauncher<Intent> aniadirComidaLauncher;
     private Calendar currentDate;
     private FragmentDiaBinding binding;
@@ -109,7 +104,7 @@ public class FragmentDia extends Fragment {
 
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(CompartidoViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModelCalendarioDia.class);
 
         // Observar la fecha recibida
         this.fechaDeComida = viewModel.getFechaSeleccionadaString().getValue();

@@ -27,6 +27,16 @@ public class OnboardingPagerAdapter extends FragmentStateAdapter {
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        return itemId >= 0 && itemId < getItemCount();
+    }
+
+    @Override
     public int getItemCount() {
         return 5; // Tengo 5 pantallas/fragments en total
     }

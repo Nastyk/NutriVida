@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.Date;
 
-public class CompartidoViewModel extends ViewModel {
+public class SharedViewModelCalendarioDia extends ViewModel {
 
     private final MutableLiveData<Date> fechaSeleccionada = new MutableLiveData<>();
     private final MutableLiveData<String> fechaSeleccionadaString = new MutableLiveData<>();
     private final MutableLiveData<Integer> userId = new MutableLiveData<>();
-    //private final MutableLiveData<MiObjeto> objetoSeleccionado = new MutableLiveData<>();
 
     public void setFecha(Date fecha) {
         fechaSeleccionada.setValue(fecha);
@@ -36,12 +35,4 @@ public class CompartidoViewModel extends ViewModel {
     public MutableLiveData<Integer> getUserId() {
         return this.userId;
     }
-
-   /* public void setObjeto(MiObjeto obj) {
-        objetoSeleccionado.setValue(obj);
-    }
-
-    public LiveData<MiObjeto> getObjeto() {
-        return objetoSeleccionado;
-    }*/
 }

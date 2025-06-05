@@ -52,7 +52,6 @@ public class FragmentEstadisticas extends Fragment {
     private ImageView fotoPerfil;
 
     public FragmentEstadisticas() {
-        // Constructor público vacío requerido por Android
     }
 
     @Override
@@ -77,7 +76,7 @@ public class FragmentEstadisticas extends Fragment {
         fotoPerfil = view.findViewById(R.id.fotoPerfil);
 
         supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
-        caloriasObjetivo = getCaloriasObjetivo();
+        //caloriasObjetivo = getCaloriasObjetivo();
         userId = getUserId();
 
         obtenerCantidadDiasDelMesActual();
@@ -149,6 +148,8 @@ public class FragmentEstadisticas extends Fragment {
                     tvNombreUsuario.setText(datos.getNombre() + " " + datos.getApellido1() + " " +  datos.getApellido2());
                     tvAlturaUsuario.setText("Altura: " + datos.getAltura() + " cm");
                     tvPesoUsuario.setText("Peso " + datos.getPeso() + " kg");
+                    caloriasObjetivo = (int) datos.getCalorias_objetivo();
+                    configurarGraficoCalorias();
                 }
             }
 
@@ -199,8 +200,8 @@ public class FragmentEstadisticas extends Fragment {
                     } else {
                         diaDeHoy = null;
                     }
+                    obtenerDatosUsuario();
                 }
-                configurarGraficoCalorias();
             }
 
             @Override

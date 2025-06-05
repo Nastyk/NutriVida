@@ -11,10 +11,12 @@ import com.nutrivda.app.inicializacion.OnboardingData;
 import com.nutrivda.app.conf.Config;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.pojo.PlanNutricional;
+import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,17 +42,17 @@ public class CohereService {
         this.datosUsuario = datosUsuario;
     }
 
-    public void generarPlan(OnboardingData data, Callback callback) {
+    public void generarPlan(SharedViewModelOnboarding viewModelOnboarding, Callback callback) {
         // 1. Construyo el prompt a partir de los datos del onboarding
         String prompt = "Quiero que actúes como un nutricionista profesional. "
                 + "El usuario tiene el siguiente perfil:\n"
                 + "- Edad: " + datosUsuario.getEdad() + " años\n"
                 + "- Peso: " + datosUsuario.getPeso() + " kg\n"
                 + "- Altura: " + datosUsuario.getAltura() + " cm\n"
-                + "- Nivel de actividad física actual: " + data.getActividadFisica() + "\n"
-                + "- Prioridad actual: " + data.getPrioridad() + "\n"
-                + "- Restricciones alimentarias: " + String.join(", ", data.getRestricciones()) + "\n"
-                + "- Organización de comidas: " + data.getOrganizacionComidas() + "\n\n"
+                + "- Nivel de actividad física actual: " + viewModelOnboarding.getActividadFisica().getValue() + "\n"
+                + "- Prioridad actual: " + viewModelOnboarding.getObjetivo().getValue() + "\n"
+                + "- Restricciones alimentarias: " + String.join(", ", Objects.requireNonNull(viewModelOnboarding.getRestricciones().getValue())) + "\n"
+                + "- Organización de comidas: " + viewModelOnboarding.getOrganizacion().getValue() + "\n\n"
                 + "Con base en esta información, responde únicamente en formato JSON válido con los siguientes campos:\n\n"
                 + "{\n"
                 + "  \"imc\": <IMC calculado como número flotante>,\n"

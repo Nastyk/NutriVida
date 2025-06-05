@@ -2,6 +2,7 @@ package com.nutrivda.app.inicializacion;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.nutrivda.app.R;
@@ -39,5 +40,9 @@ public class OnboardingActivity extends AppCompatActivity {
         if (paginaActual > 0) {
             viewPager.setCurrentItem(paginaActual - 1);
         }
+    }
+
+    public ViewPager2 getViewPager() {
+        return viewPager;
     }
 }
