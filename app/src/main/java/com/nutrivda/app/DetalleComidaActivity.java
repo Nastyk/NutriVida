@@ -304,17 +304,18 @@ public class DetalleComidaActivity extends AppCompatActivity {
 
     private void insertarNuevaComida() {
         if (datosValidos()) {
-            Comida comidaNueva = new Comida();
-            comidaNueva.setId_usuario_fk(userId);
-            comidaNueva.setDesc_comida(etNombreComida.getText().toString());
-            comidaNueva.setnRaciones(Integer.parseInt(etNRaciones.getText().toString()));
-            comidaNueva.settRacion(Integer.parseInt(etTRacion.getText().toString()));
-            comidaNueva.setCalorias(Integer.parseInt(etTCalorias.getText().toString()));
-            comidaNueva.setCarbohidratos(Integer.parseInt(etTCarbohidratos.getText().toString()));
-            comidaNueva.setGrasas(Integer.parseInt(etTGrasas.getText().toString()));
-            comidaNueva.setProteinas(Integer.parseInt(etTProteinas.getText().toString()));
+            Map<String, Object> comidaData = new HashMap<>();
+            comidaData.put("id_usuario_fk", userId);
+            comidaData.put("desc_comida", etNombreComida.getText().toString());
+            comidaData.put("nRaciones", Integer.parseInt(etNRaciones.getText().toString()));
+            comidaData.put("tRacion", Integer.parseInt(etTRacion.getText().toString()));
+            comidaData.put("calorias", Integer.parseInt(etTCalorias.getText().toString()));
+            comidaData.put("carbohidratos", Integer.parseInt(etTCarbohidratos.getText().toString()));
+            comidaData.put("grasas", Integer.parseInt(etTGrasas.getText().toString()));
+            comidaData.put("proteinas", Integer.parseInt(etTProteinas.getText().toString()));
 
-            supabaseApi.insertarComida(comidaNueva).enqueue(new Callback<Void>() {
+
+            supabaseApi.insertarComida(comidaData).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {

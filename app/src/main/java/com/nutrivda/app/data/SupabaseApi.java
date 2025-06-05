@@ -50,7 +50,7 @@ public interface SupabaseApi {
             "Content-Type: application/json"
     })
     @POST("rest/v1/comidas")
-    Call<Void> insertarComida(@Body Comida comida);
+    Call<Void> insertarComida(@Body Map<String, Object> comidaData);
 
     @Headers({
             "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
