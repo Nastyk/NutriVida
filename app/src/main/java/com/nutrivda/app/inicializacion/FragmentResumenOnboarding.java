@@ -18,12 +18,20 @@ import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.inicializacion.OnboardingData;
 import com.nutrivda.app.model.DatosUsuario;
+import com.nutrivda.app.model.ResultadoTest;
 import com.nutrivda.app.model.pojo.PlanNutricional;
 import com.nutrivda.app.test.ResultadoActivity;
 import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FragmentResumenOnboarding extends Fragment {
 
@@ -91,6 +99,8 @@ public class FragmentResumenOnboarding extends Fragment {
                     prefs.edit().putBoolean("onboardingCompletado", true).apply();
 
 
+                    recuperarRespuestasTest();
+
                     // 2. Lanzo ResultadoActivity para mostrar la respuesta de la IA
                     Intent intent = new Intent(getActivity(), ResultadoActivity.class);
                     intent.putExtra("planNutricional", planNutricional); // Le paso la respuesta como extra
@@ -113,6 +123,7 @@ public class FragmentResumenOnboarding extends Fragment {
                             SharedPreferences prefs = requireActivity().getSharedPreferences("NutriVidaPrefs", Context.MODE_PRIVATE);
                             prefs.edit().putBoolean("onboardingCompletado", true).apply();
 
+                            recuperarRespuestasTest();
 
                             // 2. Lanzo ResultadoActivity para mostrar la respuesta de la IA
                             Intent intent = new Intent(getActivity(), ResultadoActivity.class);
@@ -141,6 +152,70 @@ public class FragmentResumenOnboarding extends Fragment {
 
 
         return view;
+    }
+
+    private void actualizarRespuestaDeTest() {
+        Map<String, Object> respuestasData = new HashMap<>();
+        respuestasData.put("id_usuario_fk", userId);
+        respuestasData.put("actividad_fisica_respuesta", viewModelOnboarding.getActividadFisica().getValue());
+        respuestasData.put("objetivo_respuesta", viewModelOnboarding.getObjetivo().getValue());
+        respuestasData.put("restricciones_respuesta", String.join(", ", Objects.requireNonNull(viewModelOnboarding.getRestricciones().getValue())));
+        respuestasData.put("organizacion_respuesta", viewModelOnboarding.getOrganizacion().getValue());
+
+        supabaseApi.actualizarResultadosTest("eq." + userId, respuestasData).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void recuperarRespuestasTest() {
+        supabaseApi.obtenerResultadosTest("eq." + userId, "+").enqueue(new Callback<List<ResultadoTest>>() {
+            @Override
+            public void onResponse(Call<List<ResultadoTest>> call, Response<List<ResultadoTest>> response) {
+                if (response.isSuccessful() && !response.body().isEmpty()) {
+                    ResultadoTest responseTest = response.body().get(0);
+                    if (responseTest != null) {
+                        actualizarRespuestaDeTest();
+                    }
+                } else {
+                    guardarRespuestasDeTest();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ResultadoTest>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void guardarRespuestasDeTest() {
+        Map<String, Object> respuestasData = new HashMap<>();
+        respuestasData.put("id_usuario_fk", userId);
+        respuestasData.put("actividad_fisica_respuesta", viewModelOnboarding.getActividadFisica().getValue());
+        respuestasData.put("objetivo_respuesta", viewModelOnboarding.getObjetivo().getValue());
+        respuestasData.put("restricciones_respuesta", String.join(", ", Objects.requireNonNull(viewModelOnboarding.getRestricciones().getValue())));
+        respuestasData.put("organizacion_respuesta", viewModelOnboarding.getOrganizacion().getValue());
+        supabaseApi.guardarResultadosTest("eq." + userId, respuestasData).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void obtenerDatosUsusario() {

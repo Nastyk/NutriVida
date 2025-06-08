@@ -3,6 +3,7 @@ package com.nutrivda.app.data;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.model.ResultadoTest;
 import com.nutrivda.app.model.Usuario;
 
 import java.util.List;
@@ -312,4 +313,48 @@ public interface SupabaseApi {
     @DELETE("rest/v1/dias_completados")
     Call<Void> eliminarDiaComida( @Query("id_usuario_fk") String userId,
                                   @Query("fecha") String fecha);
+
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @PATCH("rest/v1/resultados_test")
+    Call<ResponseBody> actualizarResultadosTest(@Query("id_usuario_fk") String userId,
+                                             @Body Map<String, Object> respuestasData);
+
+
+
+
+    /**
+     *
+     * @param userId
+     * @param respuestasData
+     * @return
+     *
+     * Guardar las respuestas de los test
+     */
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @POST("rest/v1/resultados_test")
+    Call<ResponseBody> guardarResultadosTest(@Query("id_usuario_fk") String userId,
+            @Body Map<String, Object> respuestasData);
+
+
+    @Headers({
+            "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    @GET("rest/v1/resultados_test")
+    Call<List<ResultadoTest>> obtenerResultadosTest(
+            @Query("id_usuario_fk") String userId,
+            @Query("select") String select
+    );
 }

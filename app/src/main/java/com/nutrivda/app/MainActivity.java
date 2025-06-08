@@ -2,37 +2,26 @@ package com.nutrivda.app;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.database.DatabaseHelper;
 import com.nutrivda.app.model.DiaCompletado;
 import com.nutrivda.app.utils.EventDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private Button  btnIrComida;
     private ImageButton btnIrPerfil;
     private MaterialCalendarView materialCalendarView;
-    private DatabaseHelper dbHelper;
-    private double imc = 0;
     private String fechaSeleccionadaCalendario;
     private int userId = 0;
 
@@ -56,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Inicializar base de datosf
-        dbHelper = new DatabaseHelper(this);
 
         // Vincular elementos del layout con el código
         btnIrComida = findViewById(R.id.btnIrComida);
