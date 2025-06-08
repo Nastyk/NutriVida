@@ -14,6 +14,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -31,7 +32,8 @@ public interface SupabaseApi {
     })
     @GET("rest/v1/comidas?select=*") // Obtiene todos los registros filtrando por id de usuario
     Call<List<Comida>> obtenerTodasLasComidas(@Query("id_usuario_fk") String userId,
-                                              @Query("select") String selectFields);
+                                              @Query("select") String selectFields,
+                                              @Header("Cache-Control") String cacheControl);
 
     @Headers({
             "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60",
@@ -184,7 +186,7 @@ public interface SupabaseApi {
             "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tZ3NlZHRja2ZwZWNheWF6aWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTYwMjQsImV4cCI6MjA1NTg3MjAyNH0.tcJGKWsDY5pdBdJ7nyfbRVgqxQK7XH4ueON86XoaK60"
     })
     @GET("rest/v1/datos_usuario")
-    Call<List<DatosUsuario>> obtenerDatosUsuario(@Query("id_usuario_fk") String userId);
+    Call<List<DatosUsuario>> obtenerDatosUsuario(@Query("id_usuario_fk") String userId, @Header("Cache-Control") String cacheControl);
 
     /**
      *
@@ -260,7 +262,8 @@ public interface SupabaseApi {
     @GET("rest/v1/dias_completados")
     Call<List<DiaCompletado>> obtenerDiasCompletadosDeUsuario(
             @Query("id_usuario_fk") String userId,
-            @Query("select") String campos
+            @Query("select") String campos,
+            @Header("Cache-Control") String cacheControl
     );
 
     @Headers({

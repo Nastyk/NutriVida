@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/fondomain">
 
 
     <LinearLayout
@@ -15,48 +16,13 @@
 
         <!-- Título -->
         <TextView
-            android:text="Configuración"
+            android:text="Más opciones"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#333333"
             android:layout_marginBottom="24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <!-- Opción: Editar perfil -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            card_view:cardCornerRadius="16dp"
-            card_view:cardElevation="6dp">
-
-            <LinearLayout
-                android:id="@+id/itemPerfil"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:foreground="?attr/selectableItemBackground"> <!-- BONUS efecto ripple -->
-
-                <ImageView
-                    android:contentDescription="Icono de editar perfil"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_perfilusuario"
-                    app:tint="@color/verde" />
-
-                <TextView
-                    android:layout_marginStart="16dp"
-                    android:text="Editar perfil"
-                    android:textSize="16sp"
-
-                    android:textColor="#333"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
         <!-- Opción: Realizar test nutricional -->
         <androidx.cardview.widget.CardView
@@ -125,14 +91,6 @@
                     android:textSize="16sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!-- Modo oscuro -->
-        <Switch
-            android:id="@+id/switchModoOscuro"
-            android:text="🌙 Modo Oscuro"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="16dp" />
 
         <!-- Notificaciones -->
         <Switch

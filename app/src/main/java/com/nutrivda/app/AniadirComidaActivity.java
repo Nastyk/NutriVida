@@ -18,6 +18,8 @@ import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.utils.ApiHelper;
+import com.nutrivda.app.utils.CacheControlUtil;
 import com.nutrivda.app.utils.StringUtil;
 
 import java.util.ArrayList;
@@ -97,9 +99,16 @@ public class AniadirComidaActivity extends AppCompatActivity {
     }
 
     private void cargarComidas() {
-       // progressBar.setVisibility(View.VISIBLE);
+        //Peticion get con caché de 5 mins habiliutada
+        Call<List<Comida>> conCache = supabaseApi.obtenerTodasLasComidas(
+                "eq." + userId, "*", "public, max-age=300"
+        );
+        //Peticion si caché, para recuperar datos nuevos
+        Call<List<Comida>> sinCache = supabaseApi.obtenerTodasLasComidas(
+                "eq." + userId, "*", "no-cache"
+        );
 
-        supabaseApi.obtenerTodasLasComidas("eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
+        ApiHelper.ejecutarGetConControlCache(this, "todas_comidas", conCache, sinCache, new Callback<List<Comida>>() {
             @Override
             public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                 //progressBar.setVisibility(View.GONE);
@@ -184,6 +193,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
                     supabaseApi.actualizarDiaComida("eq." + userId, "eq." + fechaDeComida, body).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
+                            CacheControlUtil.marcarParaRefrescar(AniadirComidaActivity.this, "dias_completados");
                             Toast.makeText(AniadirComidaActivity.this, "✅ Comida añadida", Toast.LENGTH_SHORT).show();
                         }
 
@@ -210,6 +220,7 @@ public class AniadirComidaActivity extends AppCompatActivity {
                     supabaseApi.insertarDiaCompletado(data).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
+                            CacheControlUtil.marcarParaRefrescar(AniadirComidaActivity.this, "dias_completados");
                             Toast.makeText(AniadirComidaActivity.this, "✅ Comida guardada", Toast.LENGTH_SHORT).show();
                         }
 

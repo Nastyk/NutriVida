@@ -23,6 +23,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.Comida;
+import com.nutrivda.app.utils.CacheControlUtil;
 import com.nutrivda.app.utils.StringUtil;
 
 import java.util.ArrayList;
@@ -319,6 +320,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
+                        CacheControlUtil.debeRefrescar(DetalleComidaActivity.this , "todas_comidas");
                         Log.d("API", "Comida insertada");
                         Toast.makeText(DetalleComidaActivity.this, "✅ Comida creada", Toast.LENGTH_SHORT).show();
                         setResult(AniadirComidaActivity.RESULT_OK);
@@ -351,6 +353,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Log.d("API", "Comida actualizada");
+                        CacheControlUtil.debeRefrescar(DetalleComidaActivity.this , "todas_comidas");
                         Toast.makeText(DetalleComidaActivity.this, "✅ Comida editada", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(DetalleComidaActivity.this, "❌ Error en la edicion", Toast.LENGTH_SHORT).show();

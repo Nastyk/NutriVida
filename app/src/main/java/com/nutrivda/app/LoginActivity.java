@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                             Map<String, Object> user = response.body().get(0);
                             int userId = ((Double) user.get("id")).intValue();  // Obtener ID del usuario
 
-                            supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new Callback<List<DatosUsuario>>() {
+                            supabaseApi.obtenerDatosUsuario("eq." + userId, "no-cache").enqueue(new Callback<List<DatosUsuario>>() {
                                 @Override
                                 public void onResponse(Call<List<DatosUsuario>> call, Response<List<DatosUsuario>> response) {
                                     if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {

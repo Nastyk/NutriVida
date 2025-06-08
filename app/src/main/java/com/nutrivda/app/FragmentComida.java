@@ -28,6 +28,8 @@ import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.databinding.FragmentComidaBinding;
 import com.nutrivda.app.model.Comida;
+import com.nutrivda.app.utils.ApiHelper;
+import com.nutrivda.app.utils.CacheControlUtil;
 import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 
 import java.util.ArrayList;
@@ -126,7 +128,16 @@ public class FragmentComida extends Fragment {
     }
 
     private void cargarComidas() {
-        supabaseApi.obtenerTodasLasComidas("eq." + userId, "*").enqueue(new Callback<List<Comida>>() {
+        //Peticion get con caché de 5 mins habiliutada
+        Call<List<Comida>> conCache = supabaseApi.obtenerTodasLasComidas(
+                "eq." + userId, "*", "public, max-age=300"
+        );
+        //Peticion si caché, para recuperar datos nuevos
+        Call<List<Comida>> sinCache = supabaseApi.obtenerTodasLasComidas(
+                "eq." + userId, "*", "no-cache"
+        );
+
+        ApiHelper.ejecutarGetConControlCache(getContext(), "todas_comidas", conCache, sinCache, new Callback<List<Comida>>() {
             @Override
             public void onResponse(Call<List<Comida>> call, Response<List<Comida>> response) {
                 //progressBar.setVisibility(View.GONE);
@@ -169,6 +180,7 @@ public class FragmentComida extends Fragment {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
+                                CacheControlUtil.debeRefrescar(getContext() , "todas_comidas");
                                 Toast.makeText(getContext(), "Comida eliminada", Toast.LENGTH_SHORT).show();
                                 cargarComidas(); // recargar lista
                             } else {

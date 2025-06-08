@@ -25,6 +25,7 @@ import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.utils.CacheControlUtil;
 import com.nutrivda.app.utils.Utilidades;
 import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 
@@ -209,6 +210,7 @@ public class FragmentDia extends Fragment {
                             } else {
                                 Toast.makeText(getContext(), "Comida no eliminada", Toast.LENGTH_SHORT).show();
                             }
+                            comprobarDia();
                         }
 
                         @Override public void onFailure(Call<Void> call, Throwable t) {
@@ -216,8 +218,6 @@ public class FragmentDia extends Fragment {
                         }
                     });
                 }
-
-                comprobarDia();
 
                 return false;
             });

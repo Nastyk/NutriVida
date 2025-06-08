@@ -6,8 +6,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +18,20 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.Manifest;
 
 import com.nutrivda.app.inicializacion.OnboardingActivity;
 import com.nutrivda.app.test.ExportarResultadoActivity;
-import com.nutrivda.app.test.HistorialResultadoActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 public class FragmentConfiguracion extends Fragment {
 
-    private LinearLayout itemPerfil, itemTestNutricional, itemLogout;
-    private Switch switchModoOscuro, switchNotificaciones;
+    private LinearLayout itemTestNutricional, itemLogout;
+    private Switch switchNotificaciones;
 
     public FragmentConfiguracion() {}
 
@@ -46,29 +48,16 @@ public class FragmentConfiguracion extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        itemPerfil = view.findViewById(R.id.itemPerfil);
         itemTestNutricional = view.findViewById(R.id.itemTestNutricional);
         itemLogout = view.findViewById(R.id.itemLogout);
-        switchModoOscuro = view.findViewById(R.id.switchModoOscuro);
         switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
 
         // Yo uso SharedPreferences para guardar ajustes del usuario
         SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", 0);
 
-        // Recupero si el modo oscuro estaba activado
-        boolean modoOscuro = prefs.getBoolean("modo_oscuro", false);
-        switchModoOscuro.setChecked(modoOscuro);
-        aplicarModoOscuro(modoOscuro); // Lo aplico visualmente
-
         // Recupero si las notificaciones estaban activadas
         boolean notificacionesActivas = prefs.getBoolean("notificaciones", false);
         switchNotificaciones.setChecked(notificacionesActivas);
-
-        // Al hacer clic en "Editar perfil", abro la actividad ActividadPerfil
-        itemPerfil.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), ActividadPerfil.class);
-            startActivity(intent);
-        });
 
         //Exportar el historial guardado
         LinearLayout itemExportar = view.findViewById(R.id.exportarTest);
@@ -120,36 +109,59 @@ public class FragmentConfiguracion extends Fragment {
             requireActivity().finish(); // Cierro la actividad para que no pueda volver atrás
         });
 
-        // Si el usuario activa o desactiva el modo oscuro, lo aplico y lo guardo
-        switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            aplicarModoOscuro(isChecked);
-            prefs.edit().putBoolean("modo_oscuro", isChecked).apply();
-        });
-
-        // Si el usuario activa o desactiva las notificaciones, lo guardo
-        Switch switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
-
         switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Context context = getContext();
+            if (context == null) return;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    requestPermissions(
+                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                            1001
+                    );
+                    switchNotificaciones.setChecked(false); // desactivar hasta que se acepte
+                    return;
+                }
+            }
+
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, ResetPesoReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    context, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
             if (isChecked) {
-                // Enviar una notificación de prueba a los 5 segundos
-                AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(requireContext(), ResetPesoReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                    Intent permisoIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                    context.startActivity(permisoIntent);
+                    return;
+                }
 
-                long triggerTime = System.currentTimeMillis() + 5000; // en 5 segundos
-
+                long triggerTime = System.currentTimeMillis() + 5000;
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-                Toast.makeText(requireContext(), "Notificación programada en 5 segundos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Notificación programada en 5 segundos", Toast.LENGTH_SHORT).show();
             } else {
-                // Puedes cancelar la notificación si quieres
-                Toast.makeText(requireContext(), "Notificaciones desactivadas", Toast.LENGTH_SHORT).show();
+                alarmManager.cancel(pendingIntent);
+                Toast.makeText(context, "Notificaciones desactivadas", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
     }
 
-    // Esta función cambia el tema entre claro y oscuro
-    private void aplicarModoOscuro(boolean activar) {
-        AppCompatDelegate.setDefaultNightMode(
-                activar ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1001) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Permiso concedido", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Permiso denegado. No se enviarán notificaciones.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

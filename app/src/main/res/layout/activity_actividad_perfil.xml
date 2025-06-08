@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:gravity="center"
     android:background="@drawable/fondomain">
 
     <!-- Barra de botones -->
@@ -14,167 +13,131 @@
         android:layout_height="wrap_content"
         android:padding="10dp">
 
-        <!-- Botón Ir a Inicio -->
+        <!-- Botón Atrás -->
         <ImageButton
-            android:id="@+id/btnIrAmain"
+            android:id="@+id/btnAtras"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Ir a Inicio"
+            android:contentDescription="Volver"
+            android:src="@drawable/ic_chevron_left_custom"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_irinicio"
-            app:tint="@color/verde" />
-
-        <!-- Título Perfil -->
-        <TextView
-            android:id="@+id/tvTituloPerfil"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:fontFamily="casual"
-            android:text="Perfil de Usuario"
-            android:textColor="@color/azul"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <!-- Botón Editar Perfil -->
-        <ImageButton
-            android:id="@+id/btnEditarPerfil"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Editar Perfil"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_editar"
             app:tint="@color/verde" />
     </RelativeLayout>
 
-    <!-- Contenedor para los datos del usuario -->
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="325dp"
-        android:layout_marginBottom="20dp"
-        android:columnCount="2"
-        android:padding="10dp">
-
-        <TextView
-            android:text="Nombre:"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etNombre"
-            android:layout_width="219dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:text="Apellido 1:"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etApellido1"
-            android:layout_width="218dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:text="Apellido 2:"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etApellido2"
-            android:layout_width="219dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:text="Peso (kg):"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etPeso"
-            android:layout_width="219dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="numberDecimal" />
-
-        <TextView
-            android:text="Altura (cm):"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etAltura"
-            android:layout_width="219dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="numberDecimal" />
-
-        <TextView
-            android:text="IMC:"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvIMCPerfil"
-            android:layout_width="218dp"
-            android:layout_height="wrap_content"
-            android:text="--"
-            android:textSize="18sp" />
-
-        <TextView
-            android:text="Edad:"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etEdad"
-            android:layout_width="221dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="number" />
-    </GridLayout>
-
-    <!-- Línea Separadora -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/gray"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
-
-    <!-- Gráfica de peso -->
-
-    <!-- Botón Guardar Cambios -->
-
-   <!-- <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartPeso"
-        android:layout_width="264dp"
-        android:layout_height="220dp"
-        android:layout_marginTop="20dp" /> -->
-
-    <Button
-        android:id="@+id/btnGuardarPerfil"
+    <!-- CardView contenedor de datos -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/verde"
-        android:text="Guardar Cambios"
-        android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:layout_margin="12dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Contenedor para los datos del usuario -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:padding="10dp"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:text="Nombre:"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="219dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:text="Apellido 1:"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etApellido1"
+                    android:layout_width="218dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:text="Apellido 2:"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etApellido2"
+                    android:layout_width="219dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:text="Peso (kg):"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etPeso"
+                    android:layout_width="219dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:text="Altura (cm):"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etAltura"
+                    android:layout_width="219dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:text="IMC:"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvIMCPerfil"
+                    android:layout_width="218dp"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:text="Edad:"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etEdad"
+                    android:layout_width="221dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="number" />
+            </GridLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

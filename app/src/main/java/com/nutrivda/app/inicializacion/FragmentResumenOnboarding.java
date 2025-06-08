@@ -145,7 +145,7 @@ public class FragmentResumenOnboarding extends Fragment {
 
     private void obtenerDatosUsusario() {
         // Obtener datos desde la tabla datos_usuario
-        supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new retrofit2.Callback<List<DatosUsuario>>() {
+        supabaseApi.obtenerDatosUsuario("eq." + userId, "non-cache").enqueue(new retrofit2.Callback<List<DatosUsuario>>() {
             @Override
             public void onResponse(retrofit2.Call<List<DatosUsuario>> call, retrofit2.Response<List<DatosUsuario>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {

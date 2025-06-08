@@ -1,5 +1,7 @@
 package com.nutrivda.app;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,21 +14,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.nutrivda.app.cache.RetrofitClient;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.custom.view.DiasRegistradosDelMesView;
 import com.nutrivda.app.custom.view.SemicircularGaugeView;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.database.DatabaseHelper;
+import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.DiaCompletado;
+import com.nutrivda.app.utils.ApiHelper;
 import com.nutrivda.app.utils.StringUtil;
 
 import java.time.LocalDate;
@@ -46,12 +55,27 @@ public class FragmentEstadisticas extends Fragment {
     private SemicircularGaugeView graficaDiasCompletados, graficaCaloriasConsumidas;
     private DiasRegistradosDelMesView graficoDiasRegistrados;
     private int userId, diasCompletadosDelMes, diasTotalesDelMes, caloriasObjetivo;
+    private CardView infoPerfil;
     private SupabaseApi supabaseApi;
     private DiaCompletado diaDeHoy;
     private List<String> fechasCompletadasString;
     private ImageView fotoPerfil;
+    private ActivityResultLauncher<Intent> infoPerfilLauncher;
 
     public FragmentEstadisticas() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        infoPerfilLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                        obtenerDatosUsuario();
+                    }
+                });
     }
 
     @Override
@@ -74,10 +98,16 @@ public class FragmentEstadisticas extends Fragment {
         graficaCaloriasConsumidas = view.findViewById(R.id.graficaCaloriasConsumidas);
         graficoDiasRegistrados = view.findViewById(R.id.graficoDiasRegistrados);
         fotoPerfil = view.findViewById(R.id.fotoPerfil);
+        infoPerfil = view.findViewById(R.id.infoPerfil);
 
-        supabaseApi = SupabaseClient.getClient().create(SupabaseApi.class);
+        supabaseApi = RetrofitClient.getClient(getContext()).create(SupabaseApi.class);
         //caloriasObjetivo = getCaloriasObjetivo();
         userId = getUserId();
+
+        infoPerfil.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ActividadPerfil.class);
+            infoPerfilLauncher.launch(intent);
+        });
 
         obtenerCantidadDiasDelMesActual();
         recuperarDiasCompletadosDelMesEnCurso();
@@ -117,7 +147,16 @@ public class FragmentEstadisticas extends Fragment {
     }
 
     private void recuperarDiasCompletadosDelUsuario() {
-        supabaseApi.obtenerDiasCompletadosDeUsuario("eq." + userId, "fecha").enqueue(new Callback<List<DiaCompletado>>() {
+        //Peticion get con caché de 5 mins habiliutada
+        Call<List<DiaCompletado>> conCache = supabaseApi.obtenerDiasCompletadosDeUsuario(
+                "eq." + userId, "fecha", "public, max-age=300"
+        );
+        //Peticion si caché, para recuperar datos nuevos
+        Call<List<DiaCompletado>> sinCache = supabaseApi.obtenerDiasCompletadosDeUsuario(
+                "eq." + userId, "fecha", "no-cache"
+        );
+
+        ApiHelper.ejecutarGetConControlCache(getContext(), "dias_completados", conCache, sinCache, new Callback<List<DiaCompletado>>() {
             @Override
             public void onResponse(Call<List<DiaCompletado>> call, Response<List<DiaCompletado>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -140,7 +179,16 @@ public class FragmentEstadisticas extends Fragment {
     }
 
     private void obtenerDatosUsuario() {
-        supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new Callback<List<DatosUsuario>>() {
+        //Peticion get con caché de 5 mins habiliutada
+        Call<List<DatosUsuario>> conCache = supabaseApi.obtenerDatosUsuario(
+                "eq." + userId, "public, max-age=300"
+        );
+        //Peticion si caché, para recuperar datos nuevos
+        Call<List<DatosUsuario>> sinCache = supabaseApi.obtenerDatosUsuario(
+                "eq." + userId, "no-cache"
+        );
+
+        ApiHelper.ejecutarGetConControlCache(getContext(), "datos_usuario", conCache, sinCache, new Callback<List<DatosUsuario>>()  {
             @Override
             public void onResponse(Call<List<DatosUsuario>> call, Response<List<DatosUsuario>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -232,7 +280,6 @@ public class FragmentEstadisticas extends Fragment {
 
         return String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, day);
     }
-
 
     private int getUserId() {
         SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", 0);

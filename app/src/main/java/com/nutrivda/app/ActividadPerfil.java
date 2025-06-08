@@ -1,6 +1,7 @@
 package com.nutrivda.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -33,14 +34,11 @@ import retrofit2.Response;
 
 public class ActividadPerfil extends AppCompatActivity {
 
-    private EditText etNombre, etApellido1, etApellido2, etPeso, etAltura, etEdad, etActividad;
-    Spinner spinnerActividad;
+    private EditText etNombre, etApellido1, etApellido2, etPeso, etAltura, etEdad;
     private TextView tvIMC;
-    private ImageButton btnEditarPerfil, btnIrMain;
-    private Button btnGuardar;
+    private ImageButton btnAtras;
     private int userId;
     private SupabaseApi supabaseApi;
-    private LineChart chartPeso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +46,7 @@ public class ActividadPerfil extends AppCompatActivity {
         setContentView(R.layout.activity_actividad_perfil);
 
         // Obtener el userId del Intent
-        userId = getIntent().getIntExtra("userId", -1);
+        userId = getUserId();
         if (userId == -1) {
             Toast.makeText(this, "Error: ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
             finish();
@@ -65,73 +63,15 @@ public class ActividadPerfil extends AppCompatActivity {
         etPeso = findViewById(R.id.etPeso);
         etAltura = findViewById(R.id.etAltura);
         etEdad = findViewById(R.id.etEdad);
-//        etActividad = findViewById(R.id.etActividad);
         tvIMC = findViewById(R.id.tvIMCPerfil);
-        btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
-        btnGuardar = findViewById(R.id.btnGuardarPerfil);
-        btnIrMain = findViewById(R.id.btnIrAmain);
-        //chartPeso = findViewById(R.id.chartPeso);
-
-        /*spinnerActividad = findViewById(R.id.spinnerActividad);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.actividad_fisica_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerActividad.setAdapter(adapter);*/
-
-
-        btnEditarPerfil.setOnClickListener(v -> activarEdicion(true));
-        btnGuardar.setOnClickListener(v -> guardarDatos());
-        btnIrMain.setOnClickListener(v -> {
-            startActivity(new Intent(ActividadPerfil.this, MainActivity.class));
+        btnAtras = findViewById(R.id.btnAtras);
+        btnAtras.setOnClickListener(v -> {
+            setResult(DetalleComidaActivity.RESULT_CANCELED);
             finish();
         });
 
-        btnGuardar.setVisibility(View.GONE);
-
-        // Cargar datos del usuario
         cargarDatosUsuario();
-       // configurarGraficoPeso();
     }
-
-    private void activarEdicion(boolean activar) {
-        etNombre.setEnabled(activar);
-        etApellido1.setEnabled(activar);
-        etApellido2.setEnabled(activar);
-        etPeso.setEnabled(activar);
-        etAltura.setEnabled(activar);
-        etEdad.setEnabled(activar);
-        //etActividad.setEnabled(activar);
-        //spinnerActividad.setVisibility(View.VISIBLE);
-
-        if (activar) {
-            btnGuardar.setVisibility(View.VISIBLE);
-            btnEditarPerfil.setVisibility(View.GONE);
-        } else {
-            btnGuardar.setVisibility(View.GONE);
-            btnEditarPerfil.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /*private void configurarGraficoPeso() {
-        List<Entry> entradas = new ArrayList<>();
-        entradas.add(new Entry(1, 85)); // Día 1 - Peso 85kg
-        entradas.add(new Entry(2, 83)); // Día 2 - Peso 83kg
-        entradas.add(new Entry(3, 82));
-        entradas.add(new Entry(4, 81));
-        entradas.add(new Entry(5, 80));
-
-        LineDataSet dataSet = new LineDataSet(entradas, "Evolución del Peso");
-        dataSet.setColor(Color.BLUE);
-        dataSet.setValueTextSize(12f);
-
-        LineData data = new LineData(dataSet);
-        chartPeso.setData(data);
-
-        XAxis xAxis = chartPeso.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-
-        chartPeso.invalidate(); // Refrescar la gráfica
-    }*/
 
     private void cargarDatosUsuario() {
         // Obtener datos desde la tabla usuario
@@ -152,7 +92,7 @@ public class ActividadPerfil extends AppCompatActivity {
         });
 
         // Obtener datos desde la tabla datos_usuario
-        supabaseApi.obtenerDatosUsuario("eq." + userId).enqueue(new Callback<List<DatosUsuario>>() {
+        supabaseApi.obtenerDatosUsuario("eq." + userId, "no-cache").enqueue(new Callback<List<DatosUsuario>>() {
             @Override
             public void onResponse(Call<List<DatosUsuario>> call, Response<List<DatosUsuario>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
@@ -186,44 +126,8 @@ public class ActividadPerfil extends AppCompatActivity {
         }
     }
 
-    private void guardarDatos() {
-        String nombre = etNombre.getText().toString().trim();
-        String apellido1 = etApellido1.getText().toString().trim();
-        String apellido2 = etApellido2.getText().toString().trim();
-        String pesoStr = etPeso.getText().toString().trim();
-        String alturaStr = etAltura.getText().toString().trim();
-        String edadStr = etEdad.getText().toString().trim();
-        String actividad = "ACTIVO";
-        //TODO: esto hay que calcularlo con un algoritmo
-        double caloriasObjetivo = 2000;
-
-        if (nombre.isEmpty() || pesoStr.isEmpty() || alturaStr.isEmpty() || edadStr.isEmpty() || actividad.isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double peso = Double.parseDouble(pesoStr);
-        double altura = Double.parseDouble(alturaStr);
-        int edad = Integer.parseInt(edadStr);
-
-        // Actualizar tabla datos_usuario
-        DatosUsuario datosUsuario = new DatosUsuario(userId,peso, altura, edad, nombre, apellido1, apellido2, actividad, caloriasObjetivo, false);
-        /*supabaseApi.actualizarDatosUsuario("eq." + userId, datosUsuario).enqueue(new Callback<Response<Void>>() {
-            @Override
-            public void onResponse(Call<Response<Void>> call, Response<Response<Void>> response) {
-                if (response.code() == 204) {
-                    Toast.makeText(ActividadPerfil.this, "✅ Datos actualizados correctamente", Toast.LENGTH_SHORT).show();
-                    calcularIMC(peso, altura);
-                    activarEdicion(false);
-                } else {
-                    Toast.makeText(ActividadPerfil.this, "⚠️ Error al actualizar datos: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Response<Void>> call, Throwable t) {
-                Toast.makeText(ActividadPerfil.this, "❌ Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
+    private int getUserId() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        return prefs.getInt("userId", -1);  // Retorna -1 si no encuentra el userId
     }
 }
