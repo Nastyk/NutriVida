@@ -152,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:text="Añadir Alimento"
                         android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_boton_cuadrado"
+                        android:backgroundTint="@color/verde"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:text="Añadir Alimento"
                         android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_boton_selector"
+                        android:backgroundTint="@color/verde"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -274,7 +274,7 @@
                         android:layout_height="wrap_content"
                         android:text="Añadir Alimento"
                         android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_boton_selector"
+                        android:backgroundTint="@color/verde"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

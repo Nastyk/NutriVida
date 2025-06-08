@@ -28,7 +28,7 @@ public class DiasRegistradosDelMesView extends View {
 
     private void init() {
         paintBarra = new Paint();
-        paintBarra.setColor(Color.parseColor("#CFA8FF"));
+        paintBarra.setColor(Color.parseColor("#096C55"));
 
         paintTexto = new Paint();
         paintTexto.setColor(Color.BLACK);

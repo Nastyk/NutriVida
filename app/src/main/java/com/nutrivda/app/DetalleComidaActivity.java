@@ -92,13 +92,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
             tvNombreComida.setVisibility(View.GONE);
             etNombreComida.setVisibility(View.VISIBLE);
 
-            tvNRaciones.setVisibility(View.GONE);
-            etNRaciones.setVisibility(View.VISIBLE);
-            tvNRacionesUnidad.setVisibility(View.VISIBLE);
-
-            tvTRacion.setVisibility(View.GONE);
-            etTRacion.setVisibility(View.VISIBLE);
-
             llCarbohidratosEdicion.setVisibility(View.VISIBLE);
             llGrasasEdicion.setVisibility(View.VISIBLE);
             llProteinasEdicion.setVisibility(View.VISIBLE);
@@ -108,13 +101,7 @@ public class DetalleComidaActivity extends AppCompatActivity {
         } else if (esAdicion) {
             tvNombreComida.setVisibility(View.GONE);
             etNombreComida.setVisibility(View.VISIBLE);
-
-            tvNRaciones.setVisibility(View.GONE);
-            etNRaciones.setVisibility(View.VISIBLE);
-            tvNRacionesUnidad.setVisibility(View.VISIBLE);
-
-            tvTRacion.setVisibility(View.GONE);
-            etTRacion.setVisibility(View.VISIBLE);
+            etNombreComida.setText("Nombre comida");
 
             llCarbohidratosEdicion.setVisibility(View.VISIBLE);
             llGrasasEdicion.setVisibility(View.VISIBLE);
@@ -123,7 +110,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
             btnEditar.setVisibility(View.GONE);
             btnGuardar.setVisibility(View.VISIBLE);
         } else {
-            tvUnidadMedida.setVisibility(View.GONE);
 
             llCarbohidratosEdicion.setVisibility(View.GONE);
             llGrasasEdicion.setVisibility(View.GONE);

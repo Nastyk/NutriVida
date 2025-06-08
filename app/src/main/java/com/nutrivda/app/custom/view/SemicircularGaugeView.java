@@ -48,7 +48,7 @@ public class SemicircularGaugeView extends View {
         textPaint.setTextSize(64);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
-        colorMorado = ContextCompat.getColor(getContext(), R.color.lila_medio);
+        colorMorado = ContextCompat.getColor(getContext(), R.color.verde);
     }
 
     public void setText(String text) {

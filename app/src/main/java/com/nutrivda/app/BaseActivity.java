@@ -1,5 +1,7 @@
 package com.nutrivda.app;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,7 @@ public class BaseActivity extends AppCompatActivity {
         // Cargo el fragment por defecto (puedes cambiarlo si quieres empezar con otro)
         loadFragment(new FragmentEstadisticas());
 
+        bottomNavigationView.setItemRippleColor(ColorStateList.valueOf(Color.parseColor("#096C55")));
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Fragment selectedFragment;

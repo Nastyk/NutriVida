@@ -86,14 +86,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Número de raciones"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvNRaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/etNRaciones"
@@ -125,14 +127,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Tamaño de la ración"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/tvTRacion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="250 g"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:visibility="invisible" />
 
             <EditText
                 android:id="@+id/etTRacion"
