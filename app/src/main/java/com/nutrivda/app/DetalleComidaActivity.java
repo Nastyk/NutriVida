@@ -256,15 +256,12 @@ public class DetalleComidaActivity extends AppCompatActivity {
                     if (esEdicion) {
                         configurarPieChart(carbohidratos, grasas, proteinas);
                         tvNombreComida.setText(comida.getDescComida());
-                        tvTRacion.setText(montarTextoTamanioRacion(comida));
                         tvCalorias.setText(calorias + "\nCalorías");
                         tvCarbs.setText("" + Math.round(100f * carbohidratos / (carbohidratos + grasas + proteinas)) + "%\n" + carbohidratos + "g\nCarbohidratos");
                         tvGrasas.setText("" + Math.round(100f * grasas / (carbohidratos + grasas + proteinas)) + "%\n" + grasas + "g\nGrasas");
                         tvProteinas.setText("" + Math.round(100f * proteinas / (carbohidratos + grasas + proteinas)) + "%\n" + proteinas + "g\nProteínas");
 
                         etNombreComida.setText(comida.getDescComida());
-                        etNRaciones.setText(Integer.toString(comida.getNumeroRaciones()));
-                        etTRacion.setText(Integer.toString(comida.getTamanioRacion()));
                         etTCalorias.setText(Integer.toString(comida.getCalorias()));
                         etTCarbohidratos.setText(Integer.toString(comida.getCarbohidratos()));
                         etTGrasas.setText(Integer.toString(comida.getGrasas()));
@@ -272,8 +269,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
                     } else {
                         configurarPieChart(carbohidratos, grasas, proteinas);
                         tvNombreComida.setText(comida.getDescComida());
-                        tvTRacion.setText(montarTextoTamanioRacion(comida));
-                        tvNRaciones.setText(montarTextoNumeroRacion(comida));
                         tvCalorias.setText(calorias + "\nCalorías");
                         tvCarbs.setText("" + Math.round(100f * carbohidratos / (carbohidratos + grasas + proteinas)) + "%\n" + carbohidratos + "g\nCarbohidratos");
                         tvGrasas.setText("" + Math.round(100f * grasas / (carbohidratos + grasas + proteinas)) + "%\n" + grasas + "g\nGrasas");
@@ -294,8 +289,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
             Map<String, Object> comidaData = new HashMap<>();
             comidaData.put("id_usuario_fk", userId);
             comidaData.put("desc_comida", etNombreComida.getText().toString());
-            comidaData.put("nRaciones", Integer.parseInt(etNRaciones.getText().toString()));
-            comidaData.put("tRacion", Integer.parseInt(etTRacion.getText().toString()));
             comidaData.put("calorias", Integer.parseInt(etTCalorias.getText().toString()));
             comidaData.put("carbohidratos", Integer.parseInt(etTCarbohidratos.getText().toString()));
             comidaData.put("grasas", Integer.parseInt(etTGrasas.getText().toString()));
@@ -328,8 +321,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
         if (datosValidos()) {
             Map<String, Object> comidaData = new HashMap<>();
             comidaData.put("desc_comida", etNombreComida.getText().toString());
-            comidaData.put("nRaciones", Integer.parseInt(etNRaciones.getText().toString()));
-            comidaData.put("tRacion", Integer.parseInt(etTRacion.getText().toString()));
             comidaData.put("calorias", Integer.parseInt(etTCalorias.getText().toString()));
             comidaData.put("carbohidratos", Integer.parseInt(etTCarbohidratos.getText().toString()));
             comidaData.put("grasas", Integer.parseInt(etTGrasas.getText().toString()));
@@ -359,16 +350,6 @@ public class DetalleComidaActivity extends AppCompatActivity {
 
         if (etNombreComida.getText().toString().trim().isEmpty()) {
             etNombreComida.setError("Requerido");
-            valido = false;
-        }
-
-        if (etNRaciones.getText().toString().trim().isEmpty()) {
-            etNRaciones.setError("Requerido");
-            valido = false;
-        }
-
-        if (etTRacion.getText().toString().trim().isEmpty()) {
-            etTRacion.setError("Requerido");
             valido = false;
         }
 
