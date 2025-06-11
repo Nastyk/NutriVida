@@ -1,18 +1,14 @@
-package com.nutrivda.app.test;
+package com.nutrivda.app.test.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.nutrivda.app.ActividadComida;
-import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
 
 public class TestFisicoActivity extends AppCompatActivity {

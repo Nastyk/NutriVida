@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/Second2Fragment"
-        android:name="com.nutrivda.app.inicializacion.FragmentActividadFisica"
+        android:name="com.nutrivda.app.inicializacion.fragment.FragmentActividadFisica"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second2" >
 

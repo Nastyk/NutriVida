@@ -14,6 +14,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nutrivda.app.activity.ActividadComida;
+import com.nutrivda.app.activity.ActividadPerfil;
+import com.nutrivda.app.activity.LoginActivity;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.DiaCompletado;

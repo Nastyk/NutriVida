@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.Toast;
 
+import com.nutrivda.app.MainActivity;
+import com.nutrivda.app.R;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.utils.StringUtil;

@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.nutrivda.app.R;
+import com.nutrivda.app.activity.ActividadPerfil;
 import com.nutrivda.app.cache.RetrofitClient;
 import com.nutrivda.app.custom.view.DiasRegistradosDelMesView;
 import com.nutrivda.app.custom.view.SemicircularGaugeView;

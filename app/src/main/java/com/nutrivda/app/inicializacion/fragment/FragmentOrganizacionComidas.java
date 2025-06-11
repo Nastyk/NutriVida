@@ -1,4 +1,4 @@
-package com.nutrivda.app.inicializacion;
+package com.nutrivda.app.inicializacion.fragment;
 
 import android.os.Bundle;
 import android.view.*;
@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.nutrivda.app.R;
+import com.nutrivda.app.inicializacion.activity.OnboardingActivity;
 import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 public class FragmentOrganizacionComidas extends Fragment {

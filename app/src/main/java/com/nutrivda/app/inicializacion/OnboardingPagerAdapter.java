@@ -5,6 +5,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.nutrivda.app.inicializacion.fragment.FragmentActividadFisica;
+import com.nutrivda.app.inicializacion.fragment.FragmentOrganizacionComidas;
+import com.nutrivda.app.inicializacion.fragment.FragmentPrioridad;
+import com.nutrivda.app.inicializacion.fragment.FragmentRestricciones;
+import com.nutrivda.app.inicializacion.fragment.FragmentResumenOnboarding;
+
 // Este adapter lo uso para decir qué fragment va en cada página del onboarding
 public class OnboardingPagerAdapter extends FragmentStateAdapter {
 

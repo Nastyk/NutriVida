@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,12 +20,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.nutrivda.app.R;
+import com.nutrivda.app.activity.AniadirComidaActivity;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.databinding.FragmentDiaBinding;
 import com.nutrivda.app.model.Comida;
 import com.nutrivda.app.model.DiaCompletado;
-import com.nutrivda.app.utils.CacheControlUtil;
 import com.nutrivda.app.utils.Utilidades;
 import com.nutrivda.app.viewmodel.SharedViewModelCalendarioDia;
 

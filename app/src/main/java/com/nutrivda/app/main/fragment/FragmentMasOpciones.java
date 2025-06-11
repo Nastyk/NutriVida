@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.fragment;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -20,20 +20,22 @@ import android.widget.Switch;
 import android.widget.Toast;
 import android.Manifest;
 
-import com.nutrivda.app.inicializacion.OnboardingActivity;
-import com.nutrivda.app.test.ExportarResultadoActivity;
+import com.nutrivda.app.R;
+import com.nutrivda.app.ResetPesoReceiver;
+import com.nutrivda.app.activity.LoginActivity;
+import com.nutrivda.app.inicializacion.activity.OnboardingActivity;
+import com.nutrivda.app.test.activity.ExportarResultadoActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-public class FragmentConfiguracion extends Fragment {
+public class FragmentMasOpciones extends Fragment {
 
     private LinearLayout itemTestNutricional, itemLogout;
     private Switch switchNotificaciones;
 
-    public FragmentConfiguracion() {}
+    public FragmentMasOpciones() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

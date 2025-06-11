@@ -1,4 +1,4 @@
-package com.nutrivda.app.test;
+package com.nutrivda.app.test.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

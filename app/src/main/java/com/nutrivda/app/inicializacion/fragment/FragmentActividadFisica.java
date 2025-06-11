@@ -1,4 +1,4 @@
-package com.nutrivda.app.inicializacion;
+package com.nutrivda.app.inicializacion.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.nutrivda.app.R;
+import com.nutrivda.app.inicializacion.activity.OnboardingActivity;
 import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 public class FragmentActividadFisica extends Fragment {

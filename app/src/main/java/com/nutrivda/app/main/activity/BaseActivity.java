@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.activity;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -7,6 +7,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.nutrivda.app.main.fragment.FragmentCalendario;
+import com.nutrivda.app.main.fragment.FragmentComida;
+import com.nutrivda.app.main.fragment.FragmentMasOpciones;
+import com.nutrivda.app.main.fragment.FragmentDia;
+import com.nutrivda.app.main.fragment.FragmentEstadisticas;
+import com.nutrivda.app.R;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -38,7 +44,7 @@ public class BaseActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_comida) {
                 selectedFragment = new FragmentComida();
             } else if (itemId == R.id.nav_configuracion) {
-                selectedFragment = new FragmentConfiguracion();
+                selectedFragment = new FragmentMasOpciones();
             } else {
                 return false;
             }

@@ -1,19 +1,16 @@
-package com.nutrivda.app.test;
+package com.nutrivda.app.test.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.nutrivda.app.ActividadComida;
-import com.nutrivda.app.BaseActivity;
-import com.nutrivda.app.MainActivity;
+import com.nutrivda.app.main.activity.BaseActivity;
 import com.nutrivda.app.R;
 
 public class TestProfesionalActivity extends AppCompatActivity {

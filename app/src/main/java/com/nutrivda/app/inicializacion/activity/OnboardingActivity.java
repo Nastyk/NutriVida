@@ -1,11 +1,11 @@
-package com.nutrivda.app.inicializacion;
+package com.nutrivda.app.inicializacion.activity;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.nutrivda.app.R;
+import com.nutrivda.app.inicializacion.OnboardingPagerAdapter;
 
 // En esta actividad lanzo el ViewPager2 que contiene todas las pantallas del onboarding
 public class OnboardingActivity extends AppCompatActivity {

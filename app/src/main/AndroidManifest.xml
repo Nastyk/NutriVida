@@ -18,38 +18,38 @@
         android:theme="@style/Theme.NutriVida"
         tools:targetApi="31" >
         <activity
-            android:name=".inicializacion.OnboardingActivity"
+            android:name=".inicializacion.activity.OnboardingActivity"
             android:exported="false"
             android:theme="@style/Theme.NutriVida" />
         <activity
-            android:name=".DetalleComidaActivity"
+            android:name=".activity.DetalleComidaActivity"
             android:exported="false" />
         <activity
-            android:name=".test.ResumenGraficoActivity"
+            android:name=".test.activity.ResumenGraficoActivity"
             android:exported="false" />
         <activity
-            android:name=".test.ResultadoActivity"
+            android:name=".test.activity.ResultadoActivity"
             android:exported="false"
             android:theme="@style/Theme.NutriVida" />
         <activity
-            android:name=".test.TestProfesionalActivity"
+            android:name=".test.activity.TestProfesionalActivity"
             android:exported="false"
             android:theme="@style/Theme.NutriVida" />
         <activity
-            android:name=".test.TestFisicoActivity"
+            android:name=".test.activity.TestFisicoActivity"
             android:exported="false" />
         <activity
-            android:name=".BaseActivity"
+            android:name=".main.activity.BaseActivity"
             android:exported="false" />
         <activity
             android:name=".RegistroUsuario"
             android:exported="false" />
         <activity
-            android:name=".AniadirComidaActivity"
+            android:name=".activity.AniadirComidaActivity"
             android:exported="false"
             android:theme="@style/Theme.NutriVida" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,20 +58,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActividadPerfil"
+            android:name=".activity.ActividadPerfil"
             android:exported="false" />
         <activity
-            android:name=".ActividadComida"
+            android:name=".activity.ActividadComida"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".test.TestEmocionalActivity"
+            android:name=".test.activity.TestEmocionalActivity"
             android:exported="false" />
 
         <activity
-            android:name=".test.ExportarResultadoActivity"
+            android:name=".test.activity.ExportarResultadoActivity"
             android:exported="false"/>
 
 

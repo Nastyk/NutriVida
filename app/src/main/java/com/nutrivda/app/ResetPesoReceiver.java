@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 
+import com.nutrivda.app.main.activity.BaseActivity;
+
 public class ResetPesoReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nutrivda.app.DetalleComidaActivity;
+import com.nutrivda.app.activity.DetalleComidaActivity;
 import com.nutrivda.app.R;
 import com.nutrivda.app.model.Comida;
 

@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.activity;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -20,6 +20,7 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.nutrivda.app.R;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.Comida;

@@ -1,30 +1,20 @@
-package com.nutrivda.app.test;
+package com.nutrivda.app.test.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.nutrivda.app.ActividadPerfil;
-import com.nutrivda.app.BaseActivity;
+import com.nutrivda.app.main.activity.BaseActivity;
 import com.nutrivda.app.R;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.pojo.PlanNutricional;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;

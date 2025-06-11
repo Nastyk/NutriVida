@@ -1,4 +1,4 @@
-package com.nutrivda.app.test;
+package com.nutrivda.app.test.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,8 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.nutrivda.app.ActividadPerfil;
-import com.nutrivda.app.FragmentConfiguracion;
+import com.nutrivda.app.main.fragment.FragmentMasOpciones;
 import com.nutrivda.app.R;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
@@ -69,7 +68,7 @@ public class ExportarResultadoActivity extends AppCompatActivity {
 
         // Ir atrás
         btnIrAtras.setOnClickListener(v -> {
-            Intent intentVolver = new Intent(ExportarResultadoActivity.this, FragmentConfiguracion.class);
+            Intent intentVolver = new Intent(ExportarResultadoActivity.this, FragmentMasOpciones.class);
             startActivity(intentVolver);
         });
     }

@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/FragmentPerfil"
-        android:name="com.nutrivda.app.FragmentEstadisticas"
+        android:name="com.nutrivda.app.main.fragment.FragmentEstadisticas"
         android:label="@string/fragment_perfil"
         tools:layout="@layout/fragment_estadisticas">
     </fragment>
     <fragment
         android:id="@+id/FragmentCalendario"
-        android:name="com.nutrivda.app.FragmentCalendario"
+        android:name="com.nutrivda.app.main.fragment.FragmentCalendario"
         android:label="@string/fragment_calendario"
         tools:layout="@layout/fragment_calendario">
 
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/FragmentDia"
-        android:name="com.nutrivda.app.FragmentDia"
+        android:name="com.nutrivda.app.main.fragment.FragmentDia"
         android:label="@string/fragment_dia"
         tools:layout="@layout/fragment_dia">
 
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/FragmentComida"
-        android:name="com.nutrivda.app.FragmentComida"
+        android:name="com.nutrivda.app.main.fragment.FragmentComida"
         android:label="@string/fragment_comida"
         tools:layout="@layout/fragment_comida">
 

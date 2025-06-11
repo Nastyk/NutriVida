@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nutrivda.app.R;
 import com.nutrivda.app.adapter.ComidaAdapter;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.model.Comida;

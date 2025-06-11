@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.nutrivda.app.R;
+import com.nutrivda.app.activity.DetalleComidaActivity;
 import com.nutrivda.app.adapter.ComidaAdapter;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;

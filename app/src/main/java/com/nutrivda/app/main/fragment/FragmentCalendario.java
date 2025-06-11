@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.main.fragment;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -16,6 +16,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.nutrivda.app.R;
+import com.nutrivda.app.ResetPesoReceiver;
+import com.nutrivda.app.main.activity.BaseActivity;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
 import com.nutrivda.app.model.DiaCompletado;

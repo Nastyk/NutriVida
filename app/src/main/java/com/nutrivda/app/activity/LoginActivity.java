@@ -1,4 +1,4 @@
-package com.nutrivda.app;
+package com.nutrivda.app.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nutrivda.app.R;
+import com.nutrivda.app.RegistroUsuario;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.inicializacion.OnboardingActivity;
+import com.nutrivda.app.inicializacion.activity.OnboardingActivity;
+import com.nutrivda.app.main.activity.BaseActivity;
 import com.nutrivda.app.model.DatosUsuario;
 
 import java.util.List;

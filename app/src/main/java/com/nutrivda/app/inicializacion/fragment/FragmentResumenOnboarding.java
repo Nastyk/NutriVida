@@ -1,4 +1,4 @@
-package com.nutrivda.app.inicializacion;
+package com.nutrivda.app.inicializacion.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,16 +11,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.nutrivda.app.MainActivity;
 import com.nutrivda.app.R;
 import com.nutrivda.app.cohereIA.CohereService;
 import com.nutrivda.app.conf.SupabaseClient;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.inicializacion.OnboardingData;
+import com.nutrivda.app.inicializacion.activity.OnboardingActivity;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.ResultadoTest;
 import com.nutrivda.app.model.pojo.PlanNutricional;
-import com.nutrivda.app.test.ResultadoActivity;
+import com.nutrivda.app.test.activity.ResultadoActivity;
 import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 import java.util.HashMap;

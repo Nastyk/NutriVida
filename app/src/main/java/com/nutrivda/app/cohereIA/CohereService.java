@@ -1,13 +1,9 @@
 package com.nutrivda.app.cohereIA;
 import android.os.Handler;
 import android.os.Looper;
-import android.content.Context;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.nutrivda.app.ActividadPerfil;
 import com.nutrivda.app.data.SupabaseApi;
-import com.nutrivda.app.inicializacion.OnboardingData;
 import com.nutrivda.app.conf.Config;
 import com.nutrivda.app.model.DatosUsuario;
 import com.nutrivda.app.model.pojo.PlanNutricional;
@@ -15,11 +11,9 @@ import com.nutrivda.app.viewmodel.SharedViewModelOnboarding;
 
 import org.json.JSONObject;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
